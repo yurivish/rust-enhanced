@@ -107,7 +107,7 @@
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>^(\w\(\w\)*!)|(#\[[\w=\(\)_]+\])$</string>
+			<string>^(\w\(\w\)*!)|(#\[[\w=\(,\s\)_]+\])$</string>
 			<key>name</key>
 			<string>comment.block.preprocessor.rust</string>
 		</dict>
