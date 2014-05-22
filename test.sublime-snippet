@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[#[test]
-fn ${1:name}(){
+fn ${1:name}() {
 	${2}
 }]]></content>
 	<tabTrigger>test</tabTrigger>
