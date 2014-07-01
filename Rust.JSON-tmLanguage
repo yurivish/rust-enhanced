@@ -21,6 +21,10 @@
       {"include": "#rust_escaped_character"}
      ]
     },
+    {"name": "string.quoted.doube.source.rust",
+     "begin": "r##\"",
+     "end": "\"##"
+    },
     {"name": "meta.function.source.rust",
      "match": "\\b(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]?[\\w\\:,+ \\'<>]*)\\s*(?:\\()",
      "captures": {
