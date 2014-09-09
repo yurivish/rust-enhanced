@@ -166,7 +166,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>#\[</string>
+			<string>#!?\[</string>
 			<key>end</key>
 			<string>\]</string>
 			<key>name</key>
@@ -237,7 +237,7 @@
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>_</string>
+			<string>\b_\b</string>
 			<key>name</key>
 			<string>support.function.rust</string>
 		</dict>
