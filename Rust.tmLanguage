@@ -111,7 +111,7 @@
 			<key>comment</key>
 			<string>This matches the 'let x = val' style of variable intitialization.</string>
 			<key>match</key>
-			<string>(let)\s+(mut\s+)?([[:alpha:]_][[:alnum:]_]*)\s*(:.+)?(=)</string>
+			<string>(let)\s+(mut\s+)?([[:alpha:]_][[:alnum:]_]*)\s*(:.+?)?(=)</string>
 			<key>name</key>
 			<string>meta.initialization.rust</string>
 		</dict>
