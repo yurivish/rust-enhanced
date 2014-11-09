@@ -136,7 +136,7 @@
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\b(as|box|break|claim|const|continue|copy|Copy|crate|do|drop|else|extern|for|if|impl|in|let|loop|match|mod|mut|Owned|priv|pub|pure|ref|return|unsafe|use|while|mod|Send|static|trait|struct|enum|type)\b</string>
+			<string>\b(as|box|break|claim|const|continue|copy|Copy|crate|do|drop|else|extern|for|if|impl|in|let|loop|match|mod|mut|Owned|priv|pub|pure|ref|return|unsafe|use|while|mod|Send|static|trait|struct|enum|type|where)\b</string>
 			<key>name</key>
 			<string>keyword.source.rust</string>
 		</dict>
