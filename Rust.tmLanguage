@@ -32,33 +32,18 @@
 			<string>#rust_self</string>
 		</dict>
 		<dict>
+			<key>include</key>
+			<string>#rust_string</string>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>#rust_raw_string</string>
+		</dict>
+		<dict>
 			<key>match</key>
 			<string>\'([^\'\\]|\\(x\h{2}|u\{\h{1,6}\}|.))\'</string>
 			<key>name</key>
 			<string>string.quoted.single.source.rust</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>"</string>
-			<key>end</key>
-			<string>"</string>
-			<key>name</key>
-			<string>string.quoted.double.source.rust</string>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>include</key>
-					<string>#rust_escaped_character</string>
-				</dict>
-			</array>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>r(#*)"</string>
-			<key>end</key>
-			<string>"(\1)</string>
-			<key>name</key>
-			<string>string.quoted.double.raw.source.rust</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -174,10 +159,12 @@
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>match</key>
-					<string>".+?"</string>
-					<key>name</key>
-					<string>string.quoted.double</string>
+					<key>include</key>
+					<string>#rust_string</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#rust_raw_string</string>
 				</dict>
 			</array>
 		</dict>
@@ -338,6 +325,15 @@
 			<key>name</key>
 			<string>storage.modifier.lifetime.source.rust</string>
 		</dict>
+		<key>rust_raw_string</key>
+		<dict>
+			<key>begin</key>
+			<string>r(#*)"</string>
+			<key>end</key>
+			<string>"(\1)</string>
+			<key>name</key>
+			<string>string.quoted.double.raw.source.rust</string>
+		</dict>
 		<key>rust_ref_lifetime</key>
 		<dict>
 			<key>captures</key>
@@ -362,6 +358,22 @@
 			<string>\bself\b</string>
 			<key>name</key>
 			<string>variable.language.source.rust</string>
+		</dict>
+		<key>rust_string</key>
+		<dict>
+			<key>begin</key>
+			<string>"</string>
+			<key>end</key>
+			<string>"</string>
+			<key>name</key>
+			<string>string.quoted.double.source.rust</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#rust_escaped_character</string>
+				</dict>
+			</array>
 		</dict>
 	</dict>
 	<key>scopeName</key>
