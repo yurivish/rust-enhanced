@@ -10,7 +10,7 @@
     {"include": "#rust_self"},
     {
       "name": "string.quoted.single.source.rust",
-      "match": "\\'([^\\'\\\\]|\\\\(x\\h{2}|[uU](\\h{4}|\\h{8})||.))\\'"
+      "match": "\\'([^\\'\\\\]|\\\\(x\\h{2}|u\\{\\h{1,6}\\}|.))\\'"
     },
     {"name": "string.quoted.double.source.rust",
      "begin": "\"",
@@ -140,7 +140,7 @@
   "repository": {
     "rust_escaped_character": {
       "name": "constant.character.escape.source.rust",
-      "match": "\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)"
+      "match": "\\\\(x\\h{2}|u\\{\\h{1,6}\\}|.)"
     },
     "rust_comment_doc_block": {
       "name": "comment.block.documentation.source.rust",
