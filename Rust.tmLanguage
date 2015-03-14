@@ -32,33 +32,18 @@
 			<string>#rust_self</string>
 		</dict>
 		<dict>
+			<key>include</key>
+			<string>#rust_string</string>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>#rust_raw_string</string>
+		</dict>
+		<dict>
 			<key>match</key>
-			<string>\'([^\'\\]|\\(x\h{2}|[uU](\h{4}|\h{8})||.))\'</string>
+			<string>\'([^\'\\]|\\(x\h{2}|u\{\h{1,6}\}|.))\'</string>
 			<key>name</key>
 			<string>string.quoted.single.source.rust</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>"</string>
-			<key>end</key>
-			<string>"</string>
-			<key>name</key>
-			<string>string.quoted.double.source.rust</string>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>include</key>
-					<string>#rust_escaped_character</string>
-				</dict>
-			</array>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>r(#*)"</string>
-			<key>end</key>
-			<string>"(\1)</string>
-			<key>name</key>
-			<string>string.quoted.double.raw.source.rust</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -174,28 +159,30 @@
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>match</key>
-					<string>".+?"</string>
-					<key>name</key>
-					<string>string.quoted.double</string>
+					<key>include</key>
+					<string>#rust_string</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#rust_raw_string</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\b(([0-9][0-9_]*)|([0-9][0-9_]*(u|us|u8|u16|u32|u64))|([0-9][0-9_]*(i|is|i8|i16|i32|i64)))\b</string>
+			<string>\b(([0-9][0-9_]*)|([0-9][0-9_]*(usize|u8|u16|u32|u64))|([0-9][0-9_]*(isize|i8|i16|i32|i64)))\b</string>
 			<key>name</key>
 			<string>constant.numeric.integer.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\b((0x[a-fA-F0-9_]+)|(0x[a-fA-F0-9_]+(u|us|u8|u16|u32|u64))|(0x[a-fA-F0-9_]+(i|is|i8|i16|i32|i64)))\b</string>
+			<string>\b((0x[a-fA-F0-9_]+)|(0x[a-fA-F0-9_]+(usize|u8|u16|u32|u64))|(0x[a-fA-F0-9_]+(isize|i8|i16|i32|i64)))\b</string>
 			<key>name</key>
 			<string>constant.numeric.hex.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\b((0b[01_]+)|(0b[01_]+(u|us|u8|u16|u32|u64))|(0b[01_]+(i|is|i8|i16|i32|i64)))\b</string>
+			<string>\b((0b[01_]+)|(0b[01_]+(usize|u8|u16|u32|u64))|(0b[01_]+(isize|i8|i16|i32|i64)))\b</string>
 			<key>name</key>
 			<string>constant.numeric.binary.source.rust</string>
 		</dict>
@@ -319,7 +306,7 @@
 		<key>rust_escaped_character</key>
 		<dict>
 			<key>match</key>
-			<string>\\(x\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)</string>
+			<string>\\(x\h{2}|u\{\h{1,6}\}|.)</string>
 			<key>name</key>
 			<string>constant.character.escape.source.rust</string>
 		</dict>
@@ -337,6 +324,15 @@
 			<string>\'([a-zA-Z_][a-zA-Z0-9_]*)(?!\')\b</string>
 			<key>name</key>
 			<string>storage.modifier.lifetime.source.rust</string>
+		</dict>
+		<key>rust_raw_string</key>
+		<dict>
+			<key>begin</key>
+			<string>r(#*)"</string>
+			<key>end</key>
+			<string>"(\1)</string>
+			<key>name</key>
+			<string>string.quoted.double.raw.source.rust</string>
 		</dict>
 		<key>rust_ref_lifetime</key>
 		<dict>
@@ -362,6 +358,22 @@
 			<string>\bself\b</string>
 			<key>name</key>
 			<string>variable.language.source.rust</string>
+		</dict>
+		<key>rust_string</key>
+		<dict>
+			<key>begin</key>
+			<string>"</string>
+			<key>end</key>
+			<string>"</string>
+			<key>name</key>
+			<string>string.quoted.double.source.rust</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#rust_escaped_character</string>
+				</dict>
+			</array>
 		</dict>
 	</dict>
 	<key>scopeName</key>
