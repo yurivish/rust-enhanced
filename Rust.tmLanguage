@@ -139,7 +139,7 @@
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\b(true|false|Some|None|Left|Right|Ok|Err)\b</string>
+			<string>\b(true|false|Some|None|Ok|Err)\b</string>
 			<key>name</key>
 			<string>constant.language.source.rust</string>
 		</dict>
