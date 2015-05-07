@@ -120,6 +120,25 @@
 			<string>meta.import.rust</string>
 		</dict>
 		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.source.rust</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.macro.source.rust</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>\b(macro_rules!)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(?:\{)</string>
+			<key>name</key>
+			<string>meta.macro.source.rust</string>
+		</dict>
+		<dict>
 			<key>match</key>
 			<string>\b(as|box|break|claim|const|continue|copy|Copy|crate|do|drop|else|extern|for|if|impl|in|let|loop|match|mod|mut|Owned|priv|pub|pure|ref|return|unsafe|use|while|mod|Send|static|trait|struct|enum|type|where)\b</string>
 			<key>name</key>
@@ -233,6 +252,12 @@
 			<string>\b(\w+)\b(?=\()</string>
 			<key>name</key>
 			<string>support.function.rust</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\b(\w+!)(?=\()</string>
+			<key>name</key>
+			<string>support.macro.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
