@@ -5,6 +5,7 @@
   "foldingStopMarker": "^\\s*\\}",
   "patterns": [
     {"include": "#rust_comment_doc_block"},
+    {"include": "#rust_comment_block"},
     {"include": "#rust_ref_lifetime"},
     {"include": "#rust_lifetime"},
     {"include": "#rust_self"},
@@ -92,10 +93,6 @@
      "begin": "//",
      "end": "$\\n"
     },
-    {"name": "comment.block.source.rust",
-     "begin": "/\\*",
-     "end": "\\*/"
-    },
     {"name": "keyword.operator.rust",
      "match": "(=>)|(->)|[-:=*,!.+|%/&~@<>;]"
     },
@@ -156,6 +153,14 @@
       "begin": "r(#*)\"",
       "end": "\"(\\1)"
     },
+    "rust_comment_block": {
+      "name": "comment.block.source.rust",
+      "begin": "/\\*",
+      "end": "\\*/",
+      "patterns": [
+          {"include": "#rust_comment_block"}
+      ]
+    },  
     "rust_comment_doc_block": {
       "name": "comment.block.documentation.source.rust",
       "begin": "/\\*[!\\*][^\\*]",

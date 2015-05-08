@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>fileTypes</key>
@@ -18,6 +18,10 @@
 		<dict>
 			<key>include</key>
 			<string>#rust_comment_doc_block</string>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>#rust_comment_block</string>
 		</dict>
 		<dict>
 			<key>include</key>
@@ -228,14 +232,6 @@
 			<string>comment.line.double-dash.source.rust</string>
 		</dict>
 		<dict>
-			<key>begin</key>
-			<string>/\*</string>
-			<key>end</key>
-			<string>\*/</string>
-			<key>name</key>
-			<string>comment.block.source.rust</string>
-		</dict>
-		<dict>
 			<key>match</key>
 			<string>(=&gt;)|(-&gt;)|[-:=*,!.+|%/&amp;~@&lt;&gt;;]</string>
 			<key>name</key>
@@ -312,6 +308,22 @@
 	</array>
 	<key>repository</key>
 	<dict>
+		<key>rust_comment_block</key>
+		<dict>
+			<key>begin</key>
+			<string>/\*</string>
+			<key>end</key>
+			<string>\*/</string>
+			<key>name</key>
+			<string>comment.block.source.rust</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#rust_comment_block</string>
+				</dict>
+			</array>
+		</dict>
 		<key>rust_comment_doc_block</key>
 		<dict>
 			<key>begin</key>
