@@ -1,7 +1,8 @@
 <snippet>
-	<content><![CDATA[
-assert!(${1} == ${2});
+    <content><![CDATA[
+assert!(${1});
 ]]></content>
-	<tabTrigger>ast</tabTrigger>
-	<scope>source.rust</scope>
+    <tabTrigger>assert</tabTrigger>
+    <scope>source.rust</scope>
+    <description>assert!(…)</description>
 </snippet>

@@ -1,8 +1,8 @@
 <snippet>
-	<content><![CDATA[fn ${1:name}(${2:arg}: ${3:typ}) -> ${4:ret} {
-	${5:// add code here}
+    <content><![CDATA[fn ${1:name}(${2:arg}: ${3:Type}) -> ${4:RetType} {
+    ${5:// add code here}
 }]]></content>
-	<tabTrigger>fn</tabTrigger>
-	<scope>source.rust</scope>
-	<description>fn …() { … }</description>
+    <tabTrigger>fn</tabTrigger>
+    <scope>source.rust</scope>
+    <description>fn …(…) { … }</description>
 </snippet>

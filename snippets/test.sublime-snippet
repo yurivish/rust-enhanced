@@ -1,8 +1,9 @@
 <snippet>
-	<content><![CDATA[#[test]
+    <content><![CDATA[
+#[test]
 fn ${1:name}() {
-	${2:// Add code here}
+    ${2:// add code here}
 }]]></content>
-	<tabTrigger>test</tabTrigger>
-	<scope>source.rust</scope>
+    <tabTrigger>test</tabTrigger>
+    <scope>source.rust</scope>
 </snippet>
