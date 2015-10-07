@@ -105,20 +105,24 @@
             ]
         },
         {
-            "name": "constant.numeric.integer.source.rust",
-            "match": "\\b(([0-9][0-9_]*)|([0-9][0-9_]*(usize|u8|u16|u32|u64))|([0-9][0-9_]*(isize|i8|i16|i32|i64)))\\b"
+            "name": "constant.numeric.integer.decimal.source.rust",
+            "match": "\\b[0-9][0-9_]*(i8|i16|i32|i64|isize|u8|u16|u32|u64|usize)?\\b"
         },
         {
-            "name": "constant.numeric.hex.source.rust",
-            "match": "\\b((0x[a-fA-F0-9_]+)|(0x[a-fA-F0-9_]+(usize|u8|u16|u32|u64))|(0x[a-fA-F0-9_]+(isize|i8|i16|i32|i64)))\\b"
+            "name": "constant.numeric.integer.hexadecimal.source.rust",
+            "match": "\\b0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*(i8|i16|i32|i64|isize|u8|u16|u32|u64|usize)?\\b"
         },
         {
-            "name": "constant.numeric.binary.source.rust",
-            "match": "\\b((0b[01_]+)|(0b[01_]+(usize|u8|u16|u32|u64))|(0b[01_]+(isize|i8|i16|i32|i64)))\\b"
+            "name": "constant.numeric.integer.octal.source.rust",
+            "match": "\\b0o[0-7_]*[0-7][0-7_]*(i8|i16|i32|i64|isize|u8|u16|u32|u64|usize)?\\b"
+        },
+        {
+            "name": "constant.numeric.integer.binary.source.rust",
+            "match": "\\b0b[0-1_]*[0-1][0-1_]*(i8|i16|i32|i64|isize|u8|u16|u32|u64|usize)?\\b"
         },
         {
             "name": "constant.numeric.float.source.rust",
-            "match": "\\b(([0-9][0-9_]*(f32|f64|f))|([0-9][0-9_]*([eE][+-]=[0-9_]+))|([0-9][0-9_]*([eE][+-]=[0-9_]+)(f32|f64|f))|([0-9][0-9_]*\\.[0-9_]+)|([0-9][0-9_]*\\.[0-9_]+(f32|f64|f))|([0-9][0-9_]*\\.[0-9_]+%([eE][+-]=[0-9_]+))|([0-9][0-9_]*\\.[0-9_]+%([eE][+-]=[0-9_]+)(f32|f64|f)))\\b"
+            "match": "\\b[0-9][0-9_]*((f32|f64)|([eE][+-]?[0-9_]*[0-9][0-9_]*(f32|f64)?)|(\\.([0-9][0-9_]*([eE][+-]?[0-9_]*[0-9][0-9_]*)?(f32|f64)?)?))\\b"
         },
         {
             "name": "comment.line.documentation.source.rust",
