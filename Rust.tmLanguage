@@ -31,12 +31,6 @@
 			<string>#rust_raw_string</string>
 		</dict>
 		<dict>
-			<key>match</key>
-			<string>\bself\b</string>
-			<key>name</key>
-			<string>variable.language.source.rust</string>
-		</dict>
-		<dict>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -177,27 +171,45 @@
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\b(as|box|break|claim|const|continue|copy|Copy|crate|do|drop|else|extern|for|if|impl|in|let|loop|match|mod|move|mut|Owned|priv|pub|pure|ref|return|unsafe|use|while|mod|Send|static|trait|struct|enum|type|where)\b</string>
+			<string>\b(crate|enum|extern|fn|impl|let|mod|move|mut|pub|ref|static|Self|struct|super|trait|type|unsafe|use|const|where)\b</string>
 			<key>name</key>
-			<string>keyword.source.rust</string>
+			<string>keyword.other.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\b(Self|m32|m64|m128|f80|f16|f128|int|uint|isize|usize|float|char|bool|u8|u16|u32|u64|f32|f64|i8|i16|i32|i64|str|Option|Either|c_float|c_double|c_void|FILE|fpos_t|DIR|dirent|c_char|c_schar|c_uchar|c_short|c_ushort|c_int|c_uint|c_long|c_ulong|size_t|ptrdiff_t|clock_t|time_t|c_longlong|c_ulonglong|intptr_t|uintptr_t|off_t|dev_t|ino_t|pid_t|mode_t|ssize_t)\b</string>
+			<string>\b(break|else|for|if|loop|match|return|while|continue)\b</string>
 			<key>name</key>
-			<string>storage.type.source.rust</string>
+			<string>keyword.control.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\bself\b</string>
+			<string>\b(as|in|box)\b</string>
+			<key>name</key>
+			<string>keyword.operator.source.rust</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\b(virtual|proc|alignof|become|offsetof|priv|pure|sizeof|typeof|unsized|yield|do|abstract|final|override|macro)\b</string>
+			<key>name</key>
+			<string>invalid.illegal.source.rust</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\b(true|false)\b</string>
+			<key>name</key>
+			<string>constant.language.source.rust</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\b(self)\b</string>
 			<key>name</key>
 			<string>variable.language.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\b(true|false|Some|None|Ok|Err)\b</string>
+			<string>\b(i8|i16|i32|i64|isize|u8|u16|u32|u64|usize|f32|f64|bool|char|str)\b</string>
 			<key>name</key>
-			<string>constant.language.source.rust</string>
+			<string>storage.type.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
@@ -325,18 +337,6 @@
 			<string>\b(Send|Sized|Copy|Share)\b</string>
 			<key>name</key>
 			<string>support.type.kind.source.rust</string>
-		</dict>
-		<dict>
-			<key>match</key>
-			<string>\bbox\b</string>
-			<key>name</key>
-			<string>storage.modifier.box.source.rust</string>
-		</dict>
-		<dict>
-			<key>match</key>
-			<string>\bmut\b</string>
-			<key>name</key>
-			<string>storage.modifier.mut.source.rust</string>
 		</dict>
 	</array>
 	<key>repository</key>

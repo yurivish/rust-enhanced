@@ -10,10 +10,6 @@
         {"include": "#rust_string"},
         {"include": "#rust_raw_string"},
         {
-            "name": "variable.language.source.rust",
-            "match": "\\bself\\b"
-        },
-        {
             "name": "storage.modifier.lifetime.source.rust",
             "match": "\\'([a-zA-Z_][a-zA-Z0-9_]*)(?!\\')\\b",
             "captures": {
@@ -72,20 +68,32 @@
             }
         },
         {
-            "name": "keyword.source.rust",
-            "match": "\\b(as|box|break|claim|const|continue|copy|Copy|crate|do|drop|else|extern|for|if|impl|in|let|loop|match|mod|move|mut|Owned|priv|pub|pure|ref|return|unsafe|use|while|mod|Send|static|trait|struct|enum|type|where)\\b"
+            "name": "keyword.other.source.rust",
+            "match": "\\b(crate|enum|extern|fn|impl|let|mod|move|mut|pub|ref|static|Self|struct|super|trait|type|unsafe|use|const|where)\\b"
         },
         {
-            "name": "storage.type.source.rust",
-            "match": "\\b(Self|m32|m64|m128|f80|f16|f128|int|uint|isize|usize|float|char|bool|u8|u16|u32|u64|f32|f64|i8|i16|i32|i64|str|Option|Either|c_float|c_double|c_void|FILE|fpos_t|DIR|dirent|c_char|c_schar|c_uchar|c_short|c_ushort|c_int|c_uint|c_long|c_ulong|size_t|ptrdiff_t|clock_t|time_t|c_longlong|c_ulonglong|intptr_t|uintptr_t|off_t|dev_t|ino_t|pid_t|mode_t|ssize_t)\\b"
+            "name": "keyword.control.source.rust",
+            "match": "\\b(break|else|for|if|loop|match|return|while|continue)\\b"
         },
         {
-            "name": "variable.language.source.rust",
-            "match": "\\bself\\b"
+            "name": "keyword.operator.source.rust",
+            "match": "\\b(as|in|box)\\b"
+        },
+        {
+            "name": "invalid.illegal.source.rust",
+            "match": "\\b(virtual|proc|alignof|become|offsetof|priv|pure|sizeof|typeof|unsized|yield|do|abstract|final|override|macro)\\b"
         },
         {
             "name": "constant.language.source.rust",
-            "match": "\\b(true|false|Some|None|Ok|Err)\\b"
+            "match": "\\b(true|false)\\b"
+        },
+        {
+            "name": "variable.language.source.rust",
+            "match": "\\b(self)\\b"
+        },
+        {
+            "name": "storage.type.source.rust",
+            "match": "\\b(i8|i16|i32|i64|isize|u8|u16|u32|u64|usize|f32|f64|bool|char|str)\\b"
         },
         {
             "name": "support.constant.source.rust",
@@ -164,14 +172,6 @@
         {
             "match": "\\b(Send|Sized|Copy|Share)\\b",
             "name": "support.type.kind.source.rust"
-        },
-        {
-            "match": "\\bbox\\b",
-            "name": "storage.modifier.box.source.rust"
-        },
-        {
-            "match": "\\bmut\\b",
-            "name": "storage.modifier.mut.source.rust"
         }
     ],
     "repository": {
