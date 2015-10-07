@@ -212,12 +212,6 @@
 			<string>storage.type.source.rust</string>
 		</dict>
 		<dict>
-			<key>match</key>
-			<string>\b(EXIT_FAILURE|EXIT_SUCCESS|RAND_MAX|EOF|SEEK_SET|SEEK_CUR|SEEK_END|_IOFBF|_IONBF|_IOLBF|BUFSIZ|FOPEN_MAX|FILENAME_MAX|L_tmpnam|TMP_MAX|O_RDONLY|O_WRONLY|O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_TRUNC|S_IFIFO|S_IFCHR|S_IFBLK|S_IFDIR|S_IFREG|S_IFMT|S_IEXEC|S_IWRITE|S_IREAD|S_IRWXU|S_IXUSR|S_IWUSR|S_IRUSR|F_OK|R_OK|W_OK|X_OK|STDIN_FILENO|STDOUT_FILENO|STDERR_FILENO)\b</string>
-			<key>name</key>
-			<string>support.constant.source.rust</string>
-		</dict>
-		<dict>
 			<key>begin</key>
 			<string>#!?\[</string>
 			<key>end</key>
@@ -328,15 +322,15 @@
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\b(Box|Vec|StrBuf|Path|Option|Result|Reader|Writer|Stream|Seek|Buffer|IoError|IoResult|Sender|SyncSender|Receiver|Cell|RefCell|Any)\b</string>
+			<string>\b(Copy|Send|Sized|Sync|Drop|Fn|FnMut|FnOnce|Box|ToOwned|Clone|PartialEq|PartialOrd|Eq|Ord|AsRef|AsMut|Into|From|Default|Iterator|Extend|IntoIterator|DoubleEndedIterator|ExactSizeIterator|Option|Some|None|Result|Ok|Err|SliceConcatExt|String|ToString|Vec)\b</string>
 			<key>name</key>
-			<string>support.class.std.source.rust</string>
+			<string>support.type.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\b(Send|Sized|Copy|Share)\b</string>
+			<string>\b(drop)\b</string>
 			<key>name</key>
-			<string>support.type.kind.source.rust</string>
+			<string>support.function.source.rust</string>
 		</dict>
 	</array>
 	<key>repository</key>
