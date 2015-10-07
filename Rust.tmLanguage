@@ -5,7 +5,6 @@
 	<key>fileTypes</key>
 	<array>
 		<string>rs</string>
-		<string>rc</string>
 	</array>
 	<key>foldingStartMarker</key>
 	<string>^.*\bfn\s*(\w+\s*)?\([^\)]*\)(\s*\{[^\}]*)?\s*$</string>
@@ -25,18 +24,6 @@
 		</dict>
 		<dict>
 			<key>include</key>
-			<string>#rust_ref_lifetime</string>
-		</dict>
-		<dict>
-			<key>include</key>
-			<string>#rust_lifetime</string>
-		</dict>
-		<dict>
-			<key>include</key>
-			<string>#rust_self</string>
-		</dict>
-		<dict>
-			<key>include</key>
 			<string>#rust_string</string>
 		</dict>
 		<dict>
@@ -45,9 +32,55 @@
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\'([^\'\\]|\\(x\h{2}|u\{\h{1,6}\}|.))\'</string>
+			<string>\bself\b</string>
+			<key>name</key>
+			<string>variable.language.source.rust</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.lifetime.source.rust</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>\'([a-zA-Z_][a-zA-Z0-9_]*)(?!\')\b</string>
+			<key>name</key>
+			<string>storage.modifier.lifetime.source.rust</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>storage.modifier.lifetime.source.rust</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.lifetime.source.rust</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(&amp;\'([a-zA-Z_][a-zA-Z0-9_]*)(?!\'))\b</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>\'(?=([^\'\\]|\\(x\h{2}|u\{\h{1,6}\}|n|r|t|0|"|'|\\))\')</string>
+			<key>end</key>
+			<string>\'</string>
 			<key>name</key>
 			<string>string.quoted.single.source.rust</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#rust_escaped_character</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -84,7 +117,7 @@
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>variable.other.rust</string>
+					<string>variable.other.source.rust</string>
 				</dict>
 				<key>4</key>
 				<dict>
@@ -94,7 +127,7 @@
 				<key>5</key>
 				<dict>
 					<key>name</key>
-					<string>keyword.operator.rust</string>
+					<string>keyword.operator.source.rust</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -102,7 +135,7 @@
 			<key>match</key>
 			<string>(let)\s+(mut\s+)?([[:alpha:]_][[:alnum:]_]*)\s*(:.+?)?(=)</string>
 			<key>name</key>
-			<string>meta.initialization.rust</string>
+			<string>meta.initialization.source.rust</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -121,7 +154,7 @@
 			<key>match</key>
 			<string>(extern\s+crate)\s+(\w+)</string>
 			<key>name</key>
-			<string>meta.import.rust</string>
+			<string>meta.import.source.rust</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -178,7 +211,7 @@
 			<key>end</key>
 			<string>\]</string>
 			<key>name</key>
-			<string>comment.block.attribute.rust</string>
+			<string>comment.block.attribute.source.rust</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -217,9 +250,9 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>//[!/][^/\n].*</string>
+			<string>//[!/][^/].*</string>
 			<key>end</key>
-			<string>$\n</string>
+			<string>$</string>
 			<key>name</key>
 			<string>comment.line.documentation.source.rust</string>
 		</dict>
@@ -227,39 +260,39 @@
 			<key>begin</key>
 			<string>//</string>
 			<key>end</key>
-			<string>$\n</string>
+			<string>$</string>
 			<key>name</key>
-			<string>comment.line.double-dash.source.rust</string>
+			<string>comment.line.double-slash.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
 			<string>(=&gt;)|(-&gt;)|[-:=*,!.+|%/&amp;~@&lt;&gt;;]</string>
 			<key>name</key>
-			<string>keyword.operator.rust</string>
+			<string>keyword.operator.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
 			<string>\b_\b</string>
 			<key>name</key>
-			<string>support.function.rust</string>
+			<string>support.function.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
 			<string>\b(\w+)\b(?=\()</string>
 			<key>name</key>
-			<string>support.function.rust</string>
+			<string>support.function.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
 			<string>\b(\w+!)(?=\()</string>
 			<key>name</key>
-			<string>support.macro.rust</string>
+			<string>support.macro.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
 			<string>\b(\w+)::</string>
 			<key>name</key>
-			<string>meta.namespace-block.rust</string>
+			<string>meta.namespace-block.source.rust</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -267,7 +300,7 @@
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>meta.preprocessor.rust</string>
+					<string>meta.preprocessor.source.rust</string>
 				</dict>
 			</dict>
 			<key>match</key>
@@ -279,7 +312,7 @@
 			<key>match</key>
 			<string>(\[|\]|{|}|\(|\))</string>
 			<key>name</key>
-			<string>punctuation.definition.bracket.rust</string>
+			<string>punctuation.definition.bracket.source.rust</string>
 		</dict>
 		<dict>
 			<key>match</key>
@@ -322,18 +355,26 @@
 					<key>include</key>
 					<string>#rust_comment_block</string>
 				</dict>
+				<dict>
+					<key>include</key>
+					<string>#rust_comment_doc_block</string>
+				</dict>
 			</array>
 		</dict>
 		<key>rust_comment_doc_block</key>
 		<dict>
 			<key>begin</key>
-			<string>/\*[!\*][^\*]</string>
+			<string>/\*[!\*][^\*/]</string>
 			<key>end</key>
 			<string>\*/</string>
 			<key>name</key>
 			<string>comment.block.documentation.source.rust</string>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>include</key>
+					<string>#rust_comment_block</string>
+				</dict>
 				<dict>
 					<key>include</key>
 					<string>#rust_comment_doc_block</string>
@@ -343,24 +384,9 @@
 		<key>rust_escaped_character</key>
 		<dict>
 			<key>match</key>
-			<string>\\(x\h{2}|u\{\h{1,6}\}|.)</string>
+			<string>\\(x\h{2}|u\{\h{1,6}\}|n|r|t|0|"|'|\\)</string>
 			<key>name</key>
 			<string>constant.character.escape.source.rust</string>
-		</dict>
-		<key>rust_lifetime</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>entity.name.lifetime.source.rust</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>\'([a-zA-Z_][a-zA-Z0-9_]*)(?!\')\b</string>
-			<key>name</key>
-			<string>storage.modifier.lifetime.source.rust</string>
 		</dict>
 		<key>rust_raw_string</key>
 		<dict>
@@ -370,31 +396,6 @@
 			<string>"(\1)</string>
 			<key>name</key>
 			<string>string.quoted.double.raw.source.rust</string>
-		</dict>
-		<key>rust_ref_lifetime</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>storage.modifier.lifetime.source.rust</string>
-				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>entity.name.lifetime.source.rust</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>(&amp;\'([a-zA-Z_][a-zA-Z0-9_]*)(?!\'))\b</string>
-		</dict>
-		<key>rust_self</key>
-		<dict>
-			<key>match</key>
-			<string>\bself\b</string>
-			<key>name</key>
-			<string>variable.language.source.rust</string>
 		</dict>
 		<key>rust_string</key>
 		<dict>
