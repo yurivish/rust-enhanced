@@ -1,6 +1,6 @@
 <snippet>
     <content><![CDATA[fn main() {
-	${1:// Add code here}
+    ${1:// add code here}
 }]]></content>
     <tabTrigger>main</tabTrigger>
     <scope>source.rust</scope>
