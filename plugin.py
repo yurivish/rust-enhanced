@@ -9,7 +9,7 @@ class rustPluginEvents(sublime_plugin.EventListener):
         # This will fetch the line number that failed from the $ cargo run output
         # We could fetch multiple lines but this is a start
         # Lets compile it here so we don't need to compile on every save
-        self.lineRegex = re.compile(b"rs:(\d)")
+        self.lineRegex = re.compile(b"rs:(\d+)")
 
     def get_line_number(self, output):
         if self.lineRegex.search(output):
@@ -25,7 +25,7 @@ class rustPluginEvents(sublime_plugin.EventListener):
             os.chdir(os.path.dirname(view.file_name()))
             # shell=True is needed to stop the window popping up, although it looks like this is needed: http://stackoverflow.com/questions/3390762/how-do-i-eliminate-windows-consoles-from-spawned-processes-in-python-2-7
             # We only care about stderr
-            cargoRun = subprocess.Popen(['cargo', 'run'], shell=True, stderr=subprocess.PIPE)
+            cargoRun = subprocess.Popen(['cargo', 'rustc', '--', '-Zno-trans'], shell=True, stderr=subprocess.PIPE)
             output = cargoRun.communicate()[1] 
             if (output):
                 line = self.get_line_number(output)
