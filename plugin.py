@@ -31,8 +31,8 @@ def is_event_on_gutter(view, event):
     return original_pt
 
 
-def lol():
-    print('lol')
+def callback(test):
+    pass
   
 class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
 
@@ -55,15 +55,16 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
     def on_post_save_async(self, view):  
         if "source.rust" in view.scope_name(0): # Are we in rust scope?
             self.errors = {} # reset on every save
+            view.erase_regions('buildError')
             os.chdir(os.path.dirname(view.file_name()))
             # shell=True is needed to stop the window popping up, although it looks like this is needed: http://stackoverflow.com/questions/3390762/how-do-i-eliminate-windows-consoles-from-spawned-processes-in-python-2-7
             # We only care about stderr
             cargoRun = subprocess.Popen('cargo rustc -- -Zno-trans', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             output = cargoRun.communicate()
-            if (output):
-                result = self.get_line_number_and_msg(output[1])
+            result = self.get_line_number_and_msg(output[1]) if len(output) > 1 else False
+            if (result):
                 line = int(result.group(1))
-                msg = str(result.group(2))
+                msg = result.group(2).decode('utf-8')
                 if (line):
                     self.errors[line] = msg
                     self.draw_dots_to_screen(view, int(line))
@@ -72,7 +73,11 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
 
 
     def on_text_command(self, view, command_name, args):
-        event = args['event']
+        if (args and 'event' in args):
+            event = args['event']
+        else:
+            return
+
         if (is_event_on_gutter(view, event)): 
             line_clicked = view.rowcol(is_event_on_gutter(view, event))[0] + 1
-            view.show_popup_menu([self.errors[line_clicked]], lol)
+            view.show_popup_menu([self.errors[line_clicked]], callback)
