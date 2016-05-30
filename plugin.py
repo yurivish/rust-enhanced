@@ -40,7 +40,7 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
         # This will fetch the line number that failed from the $ cargo run output
         # We could fetch multiple lines but this is a start
         # Lets compile it here so we don't need to compile on every save
-        self.lineRegex = re.compile(b"rs:(\d+).*error\:\s(.*)")
+        self.lineRegex = re.compile(b"(\w*\.rs):(\d+).*error\:\s(.*)")
         self.errors = {}
 
     def get_line_number_and_msg(self, output):
@@ -63,9 +63,11 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
             output = cargoRun.communicate()
             result = self.get_line_number_and_msg(output[1]) if len(output) > 1 else False
             if (result):
-                line = int(result.group(1))
-                msg = result.group(2).decode('utf-8')
-                if (line):
+                fileName = result.group(1).decode('utf-8')
+                view_filename = os.path.basename(view.file_name())
+                line = int(result.group(2))
+                msg = result.group(3).decode('utf-8')
+                if (fileName == view_filename and line):
                     self.errors[line] = msg
                     self.draw_dots_to_screen(view, int(line))
                 else:
