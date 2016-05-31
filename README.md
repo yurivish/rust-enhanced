@@ -16,7 +16,7 @@ Open the palette (`control+shift+P` or `command+shift+P`) in Sublime Text
 and select `Package Control: Install Package` and then select `Rust` from
 the list. That's it.  
 
-# Syntax Checking
+## Syntax Checking
 The sublime-rust package now comes with syntax checking.  
 This relies on Cargo and Rust (tested with >= 1.8.0) being installed and on your system path.
 Once installed sublime will make a call to cargo to syntax check the project you're on then will feedback any line numbers which are failing by displaying a dot within the gutter of the editor. By clicking the dot you should get a tooltip of the error displayed.  
