@@ -18,7 +18,7 @@ the list. That's it.
 
 ## Syntax Checking
 The sublime-rust package now comes with syntax checking.  
-This relies on Cargo and Rust (tested with >= 1.8.0) being installed and on your system path.
+This relies on Cargo and Rust (>= 1.8.0) being installed and on your system path.
 Once installed sublime will make a call to cargo to syntax check the project you're on then will feedback any line numbers which are failing by displaying a dot within the gutter of the editor. By clicking the dot you should get a tooltip of the error displayed.  
 This feature is in Alpha stage and not on by default, so you will need to change the value of ```rust_syntax_checking``` to true within your settings (see Settings).   
 Here is an example:   
