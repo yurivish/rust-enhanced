@@ -52,8 +52,8 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
         view.add_regions('buildError', [view.line(view.text_point(line_num, 0))], 'comment', 'dot', sublime.HIDDEN)
 
 
-    def on_post_save_async(self, view):  
-        if "source.rust" in view.scope_name(0): # Are we in rust scope?
+    def on_post_save_async(self, view):
+        if "source.rust" in view.scope_name(0) and view.settings().get('rust_syntax_checking'): # Are we in rust scope and is it switched on?
             self.errors = {} # reset on every save
             view.erase_regions('buildError')
             os.chdir(os.path.dirname(view.file_name()))
