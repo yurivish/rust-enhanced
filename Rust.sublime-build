@@ -1,7 +1,7 @@
 {
     "cmd": ["rustc", "$file"],
     "selector": "source.rust",
-    "file_regex": "  --> ([^:]+):([0-9]+):([0-9]+)$",
+    "file_regex": "--> ([^:]+):([0-9]+):([0-9]+)$",
     "osx":
     {
         "path": "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
