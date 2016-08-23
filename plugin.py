@@ -2,6 +2,8 @@ import sublime, sublime_plugin
 import subprocess
 import os
 import re
+import html
+import json
 
 
 def is_event_on_gutter(view, event):
@@ -31,26 +33,7 @@ def is_event_on_gutter(view, event):
     return original_pt
 
 
-def callback(test):
-    pass
-  
 class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
-
-    def __init__(self):
-        # This will fetch the line number that failed from the $ cargo run output
-        # We could fetch multiple lines but this is a start
-        # Lets compile it here so we don't need to compile on every save
-        self.lineRegex = re.compile(b"(\w*\.rs):(\d+).*error\:\s(.*)")
-        self.errors = {}
-
-    def get_line_number_and_msg(self, output):
-        if self.lineRegex.search(output):
-            return self.lineRegex.search(output)
-
-    def draw_dots_to_screen(self, view, line_num):
-        line_num -= 1 # line numbers are zero indexed on the sublime API, so take off 1
-        view.add_regions('buildError', [view.line(view.text_point(line_num, 0))], 'comment', 'dot', sublime.HIDDEN)
-
 
     def on_post_save_async(self, view):
         if "source.rust" in view.scope_name(0) and view.settings().get('rust_syntax_checking'): # Are we in rust scope and is it switched on?
@@ -59,27 +42,56 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
             os.chdir(os.path.dirname(view.file_name()))
             # shell=True is needed to stop the window popping up, although it looks like this is needed: http://stackoverflow.com/questions/3390762/how-do-i-eliminate-windows-consoles-from-spawned-processes-in-python-2-7
             # We only care about stderr
-            cargoRun = subprocess.Popen('cargo rustc -- -Zno-trans', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            cargoRun = subprocess.Popen('cargo rustc -- -Zno-trans -Zunstable-options --error-format=json',
+                shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
+                universal_newlines = True
+            )
+            view.erase_regions('buildError')
+            view.erase_phantoms('buildErrorLine')
             output = cargoRun.communicate()
-            result = self.get_line_number_and_msg(output[1]) if len(output) > 1 else False
-            if (result):
-                fileName = result.group(1).decode('utf-8')
-                view_filename = os.path.basename(view.file_name())
-                line = int(result.group(2))
-                msg = result.group(3).decode('utf-8')
-                if (fileName == view_filename and line):
-                    self.errors[line] = msg
-                    self.draw_dots_to_screen(view, int(line))
-                else:
-                    view.erase_regions('buildError')
+            view_filename = view.file_name()
+
+            for line in output[1].split(os.linesep):
+                if line == '' or line[0] != '{':
+                    continue
+                info = json.loads(line)
+                # Can't show without spans
+                if len(info['spans']) == 0:
+                    continue
+
+                msg = info['message']
+                base_color = "#F00"
+                if info['level'] != "error":
+                    base_color = "#FF0"
+
+                for span in info['spans']:
+                    if not view_filename.endswith(span['file_name']):
+                        continue
+                    color = base_color
+                    char = "^"
+                    if not span['is_primary']:
+                        color = "#0FF"
+                        char = "-"
+                    area = sublime.Region(
+                        view.text_point(span['line_start'] - 1, span['column_start'] - 1),
+                        view.text_point(span['line_end'] - 1, span['column_end'] - 1)
+                    )
+                    underline = char * (span['column_end'] - span['column_start'])
+                    label = span['label']
+                    if not label:
+                        label = ''
+                    view.add_phantom(
+                        'buildErrorLine', area,
+                        "<span style=\"color:{}\">{} {}</span>"
+                        .format(color, underline, html.escape(label, quote=False)),
+                        sublime.LAYOUT_BELOW
+                    )
+                    if span['is_primary']:
+                        view.add_phantom(
+                            'buildErrorLine', area,
+                            "<span style=\"color:{}\">{}</span>"
+                            .format(color,  html.escape(msg, quote=False)),
+                            sublime.LAYOUT_BELOW
+                        )
 
 
-    def on_text_command(self, view, command_name, args):
-        if (args and 'event' in args):
-            event = args['event']
-        else:
-            return
-
-        if (is_event_on_gutter(view, event)): 
-            line_clicked = view.rowcol(is_event_on_gutter(view, event))[0] + 1
-            view.show_popup_menu([self.errors[line_clicked]], callback)
