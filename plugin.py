@@ -51,7 +51,7 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
             output = cargoRun.communicate()
             view_filename = view.file_name()
 
-            for line in output[1].split(os.linesep):
+            for line in output[1].split('\n'):
                 if line == '' or line[0] != '{':
                     continue
                 info = json.loads(line)
