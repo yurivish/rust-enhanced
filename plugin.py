@@ -4,34 +4,6 @@ import os
 import html
 import json
 
-
-def is_event_on_gutter(view, event):
-    """Determine if a mouse event points to the gutter.
-
-    Because this is inapplicable for empty lines,
-    returns `None` to let the caller decide on what do to.
-    """
-    original_pt = view.window_to_text((event["x"], event["y"]))
-    if view.rowcol(original_pt)[1] != 0:
-        return False
-
-    # If the line is empty,
-    # we will always get the same textpos
-    # regardless of x coordinate.
-    # Return `None` in this case and let the caller decide.
-    if view.line(original_pt).empty():
-        return None
-
-    # ST will put the caret behind the first character
-    # if we click on the second half of the char.
-    # Use view.em_width() / 2 to emulate this.
-    adjusted_pt = view.window_to_text((event["x"] + view.em_width() / 2, event["y"]))
-    if adjusted_pt != original_pt:
-        return False
-
-    return original_pt
-
-
 class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
 
     def on_post_save_async(self, view):
