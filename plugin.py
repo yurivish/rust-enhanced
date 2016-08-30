@@ -1,7 +1,6 @@
 import sublime, sublime_plugin
 import subprocess
 import os
-import re
 import html
 import json
 
@@ -36,7 +35,10 @@ def is_event_on_gutter(view, event):
 class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
 
     def on_post_save_async(self, view):
-        if "source.rust" in view.scope_name(0) and view.settings().get('rust_syntax_checking'): # Are we in rust scope and is it switched on?
+        # Are we in rust scope and is it switched on?
+        # We use phantoms which were added in 3118
+        enabled = view.settings().get('rust_syntax_checking') and int(sublime.version()) >= 3118
+        if "source.rust" in view.scope_name(0) and enabled:
             self.errors = {} # reset on every save
             view.erase_regions('buildError')
             os.chdir(os.path.dirname(view.file_name()))
