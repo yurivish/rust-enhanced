@@ -11,8 +11,6 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
         # We use phantoms which were added in 3118
         enabled = view.settings().get('rust_syntax_checking') and int(sublime.version()) >= 3118
         if "source.rust" in view.scope_name(0) and enabled:
-            self.errors = {} # reset on every save
-            view.erase_regions('buildError')
             os.chdir(os.path.dirname(view.file_name()))
             # shell=True is needed to stop the window popping up, although it looks like this is needed: http://stackoverflow.com/questions/3390762/how-do-i-eliminate-windows-consoles-from-spawned-processes-in-python-2-7
             # We only care about stderr
@@ -20,9 +18,8 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
                 shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
                 universal_newlines = True
             )
-            view.erase_regions('buildError')
-            view.erase_phantoms('buildErrorLine')
             output = cargoRun.communicate()
+            view.erase_phantoms('buildErrorLine')
             view_filename = view.file_name()
 
             for line in output[1].split('\n'):
