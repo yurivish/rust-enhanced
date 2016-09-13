@@ -1,4 +1,4 @@
 {
 	// Enable the syntax checking plugin, which will highlight any errors during build
-	"rust_syntax_checking": false
+	"rust_syntax_checking": true
 }
