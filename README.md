@@ -27,7 +27,7 @@ This feature is in Alpha stage and not on by default, so you will need to change
 }
 ```
 Here is an example:   
-![preview](https://cloud.githubusercontent.com/assets/936006/15657328/b90c2636-26a7-11e6-8c35-ff6dcd880bac.gif)
+![testingrust](https://cloud.githubusercontent.com/assets/936006/18091147/938cb244-6ebf-11e6-9db1-b74e5bf4eebc.gif)
 
 ## Settings
 You can customize the behaviour of sublime-rust by creating a settings file in your User package. This can be accessed from within SublimeText by going to the menu Preferences > Browse Packages.... Create a file named Rust.sublime-settings or alternatively copy the default settings file Packages/sublime-rust/Rust.sublime-settings to your User package and edit it to your liking.
