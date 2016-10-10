@@ -37,16 +37,15 @@ Rust Enhanced has the following build functions:
 - Rust Run
 
 
-### Cargo Testing plus highlighting
-Thanks to @urschrei we have Highlighting for:
+### Cargo tests with highlighting
+Thanks to [urschrei](https://github.com/urschrei/)  we have Highlighting for:
 - passed test
 - failed test
 - failed test source line (clickable)
 - total number of passed tests
 - total number of failed tests > 0
 - total number of ignored tests > 0
-- total number of measured tests > 0
-We support cargo testing
+- total number of measured tests > 0  
 
 Example:   
 ![highlight_rust_test](https://cloud.githubusercontent.com/assets/936006/19247437/3cf6e056-8f23-11e6-9bbe-d8c542287db6.png)
