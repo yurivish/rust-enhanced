@@ -25,6 +25,7 @@ and select `Package Control: Install Package` and then select `Rust Enhanced` fr
 the list. That's it.  
 
 ## Features
+### Go To Definition
 ### Build functionality
 Rust Enhanced has the following build functions:
 - Cargo Run
