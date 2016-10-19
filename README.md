@@ -49,7 +49,7 @@ Thanks to [urschrei](https://github.com/urschrei/)  we have Highlighting for:
 - total number of ignored tests > 0
 - total number of measured tests > 0
 
-Example:
+Example:   
 ![highlight_rust_test](https://cloud.githubusercontent.com/assets/936006/19247437/3cf6e056-8f23-11e6-9bbe-d8c542287db6.png)
 
 ### Syntax Checking
