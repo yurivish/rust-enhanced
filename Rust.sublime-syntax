@@ -27,10 +27,11 @@ contexts:
     - match: ';'
       scope: punctuation.terminator
 
-    - match: '({{identifier}})\s*(:)'
+    - match: '''({{identifier}})\s*(:)'
       captures:
         1: entity.name.label.rust
         2: punctuation.separator.rust
+
     - match: '''{{identifier}}(?!\'')\b'
       scope: storage.modifier.lifetime.rust
 
@@ -371,13 +372,21 @@ contexts:
       pop: true
 
   generic-angles-contents:
+    - include: comments
     - match: \bextern\b
       scope: keyword.other.rust
       push:
         - include: strings
         - match: '(?=\S)'
           pop: true
-    - match: '(?=>|[^ \$=<_+''(),&:[:alnum:]])'
+    - match: '\['
+      scope: punctuation.definition.group.begin.rust
+      push:
+        - match: '\]'
+          scope: punctuation.definition.group.end.rust
+          pop: true
+        - include: type-any-identifier
+    - match: '(?=>|[^\s\$=<_+''(),&:[:alnum:]])'
       pop: true
     - match: '<'
       scope: punctuation.definition.generic.begin.rust
@@ -489,17 +498,13 @@ contexts:
           scope: storage.modifier.rust
         - match: '{{identifier}}(?=\s*:)'
           scope: variable.other.member.rust
-        # - match: '\b{{identifier}}'
-        #   scope: storage.type.rust
           push:
             - match: ',|(?=\})'
               pop: true
             - include: comments
             - match: ':'
               scope: punctuation.separator.rust
-            - include: basic-identifiers
-            - match: '(?=<)'
-              push: generic-angles
+            - include: type-any-identifier
 
   macro-block:
     - meta_scope: meta.macro.rust
@@ -645,6 +650,18 @@ contexts:
       set: impl-body
     - match: \bwhere\b
       scope: keyword.other.rust
+    - match: \bfor\b
+      scope: keyword.other.rust
+      push:
+        - match: '(?=<)'
+          push: generic-angles
+        - include: basic-identifiers
+        - match: '&'
+          scope: keyword.operator.rust
+        - match: '''{{identifier}}(?!\'')\b'
+          scope: storage.modifier.lifetime.rust
+        - match: '(?=\S)'
+          pop: true
     - include: basic-identifiers
     - match: ':'
       scope: punctuation.separator.rust
@@ -681,6 +698,7 @@ contexts:
       scope: punctuation.definition.parameters.begin.rust
       push:
         - meta_scope: meta.function.parameters.rust
+        - include: comments
         - match: '(?=\))'
           pop: true
         - match: \bself\b
@@ -710,6 +728,18 @@ contexts:
       set: fn-body
     - match: \bwhere\b
       scope: keyword.other.rust
+    - match: \bfor\b
+      scope: keyword.other.rust
+      push:
+        - match: '(?=<)'
+          push: generic-angles
+        - include: basic-identifiers
+        - match: '&'
+          scope: keyword.operator.rust
+        - match: '''{{identifier}}(?!\'')\b'
+          scope: storage.modifier.lifetime.rust
+        - match: '(?=\S)'
+          pop: true
     - include: basic-identifiers
     - match: ':'
       scope: punctuation.separator.rust
