@@ -54,6 +54,7 @@ if n < 0 {
 //       ^ meta.block punctuation.definition.block.begin
 // <- keyword.control
     print!("{} is negative", n);
+//                             ^ punctuation.terminator
 } else if n > 0 {
 // <- meta.block punctuation.definition.block.end
 // ^^^ keyword.control

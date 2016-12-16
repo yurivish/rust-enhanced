@@ -49,7 +49,8 @@ contexts:
       push:
         - meta_scope: meta.module.rust
         - match: ';'
-          set: after-operator
+          scope: punctuation.terminator.rust
+          pop: true
         - include: statements-block
 
     - match: '\b({{identifier}})\s*(=)\s*(?=\|)'
@@ -196,14 +197,22 @@ contexts:
         - match: '\]'
           scope: punctuation.definition.group.end.rust
           pop: true
+        - match: ';'
+          scope: punctuation.separator.rust
         - include: statements
 
     - include: return-type
     - include: symbols
     - include: keywords
 
+    - match: ','
+      scope: punctuation.separator.rust
+      push: after-operator
+
+
     - match: '\b[[:lower:]_][[:lower:][:digit:]_]*(?=\()'
       scope: support.function.rust
+
 
     - match: '{{identifier}}'
 
@@ -385,6 +394,9 @@ contexts:
           pop: true
         - include: type-any-identifier
 
+    - match: ','
+      scope: punctuation.separator.rust
+
   closure:
     - meta_content_scope: meta.function.closure.rust
     - match: '\|'
@@ -521,6 +533,8 @@ contexts:
         - match: '\)'
           scope: punctuation.definition.type.end.rust
           pop: true
+        - match: ','
+          scope: punctuation.separator.rust
         - include: type-any-identifier
     - match: \bextern\b
       scope: keyword.other.rust
@@ -608,6 +622,8 @@ contexts:
         - include: comments
         - include: visibility
         - include: type-any-identifier
+        - match: ','
+          scope: punctuation.separator.rust
 
   struct-classic:
     - meta_scope: meta.struct.rust
@@ -631,7 +647,10 @@ contexts:
     - match: '{{identifier}}(?=\s*:)'
       scope: variable.other.member.rust
       push:
-        - match: ',|(?=\})'
+        - match: ','
+          scope: punctuation.separator.rust
+          pop: true
+        - match: '(?=\})'
           pop: true
         - include: comments
         - match: ':'
@@ -721,6 +740,7 @@ contexts:
     - match: '(?=\})'
       pop: true
     - match: ','
+      scope: punctuation.separator.rust
       pop: true
     - match: '='
       set: enum-discriminant
@@ -1036,7 +1056,7 @@ contexts:
     - match: \bwhere\b
       scope: keyword.other.rust
     - include: type-any-identifier
-    - match: ':'
+    - match: '[:,]'
       scope: punctuation.separator.rust
     - match: ';'
       pop: true
@@ -1337,9 +1357,7 @@ contexts:
     - match: '=(?!=)'
       scope: keyword.operator.rust
 
-    - match: '[;,]'
-
-    - match: ':'
+    - match: '[:;,]'
       scope: punctuation.separator.rust
 
     - match: '\.\.\.'

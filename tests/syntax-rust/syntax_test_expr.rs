@@ -41,6 +41,16 @@ let x = arr[1];
 //          ^ constant.numeric.integer.decimal
 //           ^ punctuation.definition.group.end
 
+// Array expression.
+let x = [1; 2];
+//      ^^^^^^ meta.group
+//      ^ punctuation.definition.group.begin
+//        ^ punctuation.separator
+//          ^ constant.numeric.integer.decimal
+//            ^ punctuation.terminator
+let x = [1; SOME_CONST];
+//          ^^^^^^^^^^ constant.other
+
 // Borrow expression.
 let xsl = &xs;
 //        ^ keyword.operator

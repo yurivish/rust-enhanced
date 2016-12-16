@@ -19,6 +19,7 @@ mod bar;
 // <- meta.module storage.type.module
 //^^^^^^ meta.module
 //  ^^^ entity.name.module
+//     ^ punctuation.terminator
 
 pub mod my_mod {
 //  ^^^^^^^^^^^^ meta.module

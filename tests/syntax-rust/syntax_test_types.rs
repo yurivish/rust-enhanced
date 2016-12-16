@@ -109,6 +109,7 @@ let xs: [i32; 5] = [1, 2, 3, 4, 5];
 //      ^^^^^^^^ meta.group
 //      ^ punctuation.definition.group.begin
 //       ^^^ storage.type
+//          ^ punctuation.separator
 //            ^ constant.numeric.integer.decimal
 //             ^ punctuation.definition.group.end
 //                 ^^^^^^^^^^^^^^^ meta.group
