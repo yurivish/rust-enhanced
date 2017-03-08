@@ -31,6 +31,18 @@ let r = r#"This is a raw string, no escapes! \x00 \0 \n"#;
 //      ^ storage.type
 //       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ string.quoted.double - constant.character.escape
 
+let s = "\
+//       ^ string.quoted.double punctuation.separator.continuation.line
+continued \
+//        ^ string.quoted.double punctuation.separator.continuation.line
+line";
+let b = b"\
+//        ^ punctuation.separator.continuation.line
+";
+println!("Continuation in format \
+//                               ^ punctuation.separator.continuation.line
+");
+
 let bytes = b"This won't escape unicode \u{0123}, but will do \x01_\"_\'_\\_\r_\n_\t_\0";
 // <- storage.type
 //        ^ keyword.operator
