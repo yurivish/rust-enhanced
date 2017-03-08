@@ -1086,11 +1086,13 @@ contexts:
   comments:
     - include: block-comments
     - match: "//[!/]"
+      scope: punctuation.definition.comment.rust
       push:
         - meta_scope: comment.line.documentation.rust
         - match: $\n?
           pop: true
     - match: //
+      scope: punctuation.definition.comment.rust
       push:
         - meta_scope: comment.line.double-slash.rust
         - match: $\n?
@@ -1098,15 +1100,19 @@ contexts:
 
   block-comments:
     - match: '/\*[!\*][^\*/]'
+      scope: punctuation.definition.comment.rust
       push:
         - meta_scope: comment.block.documentation.rust
         - match: \*/
+          scope: punctuation.definition.comment.rust
           pop: true
         - include: block-comments
     - match: /\*
+      scope: punctuation.definition.comment.rust
       push:
         - meta_scope: comment.block.rust
         - match: \*/
+          scope: punctuation.definition.comment.rust
           pop: true
         - include: block-comments
 
