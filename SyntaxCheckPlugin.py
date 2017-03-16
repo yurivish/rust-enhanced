@@ -89,6 +89,7 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
         """Args should be an array of arguments for cargo.
         Returns list of dictionaries of the parsed JSON output.
         """
+
         # When sublime is launched from the dock in OSX, it does not have the user's environment set. So the $PATH env is reset.
         # This means ~./cargo/bin won't be added (causing rustup to fail), we can manually add it back in here. [This is a hack, hopefully Sublime fixes this natively]
         # fixes https://github.com/rust-lang/sublime-rust/issues/126
@@ -100,7 +101,7 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
         print('Running %r' % cmd)
         # shell=True is needed to stop the window popping up, although it looks like this is needed:
         # http://stackoverflow.com/questions/3390762/how-do-i-eliminate-windows-consoles-from-spawned-processes-in-python-2-7
-        cproc = subprocess.Popen(cmd,
+        cproc = subprocess.Popen(cmd, cwd=cwd,
             shell=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, env=env)
 
         output = cproc.communicate()
@@ -133,7 +134,7 @@ class rustPluginSyntaxCheckEvent(sublime_plugin.EventListener):
             if settings.get('rust_syntax_checking_include_tests', True):
                 if not ('--test' in target_args or '--bench' in target_args):
                     args.append('--test')
-            yield (target_src, self.run_cargo(args))
+            yield (target_src, self.run_cargo(args, cwd))
 
     def determine_targets(self, settings, file_name):
         """Detect the target/filters needed to pass to Cargo to compile
