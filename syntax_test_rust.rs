@@ -272,6 +272,12 @@ let tuple = (1.0, 0i32, "Hello");
 //                      ^^^^^^^ string.quoted.double
 //                             ^ punctuation.definition.group.end
 
+// Looks like tuples use meta.group so we'll use that for tuple arguments too
+// fixes https://github.com/rust-lang/sublime-rust/issues/164
+let f = |(x, y)| { x + y };
+//      ^ punctuation.definition.parameters.begin
+//       ^^^^^^ meta.group
+
 let xs: [i32; 5] = [1, 2, 3, 4, 5];
 //    ^ punctuation.separator
 //      ^^^^^^^^ meta.group
