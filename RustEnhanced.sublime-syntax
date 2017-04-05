@@ -7,7 +7,9 @@ file_extensions:
 scope: source.rust
 variables:
   non_raw_ident: '[[:alpha:]][_[:alnum:]]*|_[_[:alnum:]]+'
-  identifier: '(?:(?:r\#)?{{non_raw_ident}})'
+  # include a word boundary at the end to ensure all possible characters are
+  # consumed, to prevent catastrophic backtracking
+  identifier: '(?:(?:(?:r\#)?{{non_raw_ident}})\b)'
   camel_ident: '\b_*[A-Z][a-zA-Z0-9_]*[a-z][a-zA-Z0-9_]*\b'
   lifetime: '''(?:_|{{non_raw_ident}})(?!\'')\b'
   escaped_byte: '\\([nrt0\"''\\]|x\h{2})'
