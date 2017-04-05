@@ -10,25 +10,25 @@ let big_n =
 //                 ^ keyword.operator
 //                   ^ keyword.operator
 //                    ^^ constant.numeric.integer.decimal
-//                       ^ meta.block punctuation.definition.block.begin
+//                       ^ meta.block punctuation.section.block.begin
         10 * n
 //         ^ meta.block keyword.operator
     } else {
-//  ^ meta.block punctuation.definition.block.end
-//         ^ meta.block punctuation.definition.block.begin
+//  ^ meta.block punctuation.section.block.end
+//         ^ meta.block punctuation.section.block.begin
         n / 2
 //        ^ meta.block keyword.operator
     };
-//  ^ meta.block punctuation.definition.block.end
+//  ^ meta.block punctuation.section.block.end
 
 let tuple = (1.0, 0i32, "Hello");
 //          ^^^^^^^^^^^^^^^^^^^^ meta.group
-//          ^ punctuation.definition.group.begin
+//          ^ punctuation.section.group.begin
 //           ^^^ constant.numeric.float
 //                ^ constant.numeric.integer.decimal
 //                 ^^^ storage.type
 //                      ^^^^^^^ string.quoted.double
-//                             ^ punctuation.definition.group.end
+//                             ^ punctuation.section.group.end
 
 // Tuple access.
 let x = tuple.1;
@@ -37,14 +37,14 @@ let x = tuple.1;
 // Array access.
 let x = arr[1];
 //         ^^^ meta.group
-//         ^ punctuation.definition.group.begin
+//         ^ punctuation.section.group.begin
 //          ^ constant.numeric.integer.decimal
-//           ^ punctuation.definition.group.end
+//           ^ punctuation.section.group.end
 
 // Array expression.
 let x = [1; 2];
 //      ^^^^^^ meta.group
-//      ^ punctuation.definition.group.begin
+//      ^ punctuation.section.group.begin
 //        ^ punctuation.separator
 //          ^ constant.numeric.integer.decimal
 //            ^ punctuation.terminator
@@ -71,13 +71,13 @@ assert_eq!(*x, 7);
 
 // Block expression.
 let z = {
-//      ^ meta.block punctuation.definition.block.begin
+//      ^ meta.block punctuation.section.block.begin
     2 * 5
 //  ^ constant.numeric.integer.decimal
 //    ^ keyword.operator
 //      ^ constant.numeric.integer.decimal
 };
-// <- meta.block punctuation.definition.block.end
+// <- meta.block punctuation.section.block.end
 
 // Various operators.
 let x = !6;

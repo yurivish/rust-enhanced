@@ -81,12 +81,12 @@ type Pair<'a> = (i32, &'a str);
 //          ^ keyword.operator
 //            ^ keyword.operator
 //              ^^^^^^^^^^^^^^ meta.group
-//              ^ punctuation.definition.group.begin
+//              ^ punctuation.section.group.begin
 //               ^^^ storage.type
 //                    ^ keyword.operator
 //                     ^^ storage.modifier.lifetime
 //                        ^^^ storage.type
-//                           ^ punctuation.definition.group.end
+//                           ^ punctuation.section.group.end
 //                            ^ punctuation.terminator
 let p: Pair<'static> = (10, "ten");
 // <- storage.type
@@ -97,31 +97,31 @@ let p: Pair<'static> = (10, "ten");
 //                 ^ punctuation.definition.generic.end
 //                   ^ keyword.operator
 //                     ^^^^^^^^^^^ meta.group
-//                     ^ punctuation.definition.group.begin
+//                     ^ punctuation.section.group.begin
 //                      ^^ constant.numeric.integer.decimal
 //                          ^^^^^ string.quoted.double
-//                               ^ punctuation.definition.group.end
+//                               ^ punctuation.section.group.end
 //                                ^ punctuation.terminator
 
 // Array types.
 let xs: [i32; 5] = [1, 2, 3, 4, 5];
 //    ^ punctuation.separator
 //      ^^^^^^^^ meta.group
-//      ^ punctuation.definition.group.begin
+//      ^ punctuation.section.group.begin
 //       ^^^ storage.type
 //          ^ punctuation.separator
 //            ^ constant.numeric.integer.decimal
-//             ^ punctuation.definition.group.end
+//             ^ punctuation.section.group.end
 //                 ^^^^^^^^^^^^^^^ meta.group
-//                 ^ punctuation.definition.group.begin
-//                               ^ punctuation.definition.group.end
+//                 ^ punctuation.section.group.begin
+//                               ^ punctuation.section.group.end
 
 // Slice types.
 let slice: &[i32];
 //         ^ keyword.operator
 //          ^^^^^ meta.group
-//          ^ punctuation.definition.group.begin
-//              ^ punctuation.definition.group.end
+//          ^ punctuation.section.group.begin
+//              ^ punctuation.section.group.end
 //           ^^^ storage.type
 
 

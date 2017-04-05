@@ -17,15 +17,15 @@ impl<A> Thing for &'a mut A {}
 // Various tests on `where`.
 fn f<'b: 'a>(self) -> &'b mut [i32] where 'a: 'b { }
 //                 ^^^^^^^^^^^^^^ meta.function meta.function.return-type
-//                            ^ meta.function meta.function.return-type punctuation.definition.group.begin
+//                            ^ meta.function meta.function.return-type punctuation.section.group.begin
 //                             ^^^ meta.function meta.function.return-type storage.type
-//                                ^ meta.function meta.function.return-type punctuation.definition.group.end
+//                                ^ meta.function meta.function.return-type punctuation.section.group.end
 //                                  ^^^^^ meta.function meta.where keyword.other
 //                                        ^^ meta.function meta.where storage.modifier.lifetime
 //                                          ^ meta.function meta.where punctuation.separator
 //                                            ^^ meta.function meta.where storage.modifier.lifetime
-//                                               ^ meta.function meta.block punctuation.definition.block.begin
-//                                                 ^ meta.function meta.block punctuation.definition.block.end
+//                                               ^ meta.function meta.block punctuation.section.block.begin
+//                                                 ^ meta.function meta.block punctuation.section.block.end
 
 fn f<F>(func: F) -> usize
 //               ^^ meta.function meta.function.return-type punctuation.separator
@@ -35,13 +35,13 @@ fn f<F>(func: F) -> usize
 //        ^^^^^^^^^^^^^^^^^^^^^ meta.function meta.where
 //         ^ punctuation.separator
 //           ^^ support.type
-//             ^ punctuation.definition.type.begin
+//             ^ punctuation.section.group.begin
 //              ^^^^^ storage.type
-//                   ^ punctuation.definition.type.end
+//                   ^ punctuation.section.group.end
 //                     ^^ meta.function.return-type punctuation.separator
 //                        ^^^^^ meta.function.return-type storage.type
-//                              ^ meta.function meta.block punctuation.definition.block.begin
-//                               ^ meta.function meta.block punctuation.definition.block.end
+//                              ^ meta.function meta.block punctuation.section.block.begin
+//                               ^ meta.function meta.block punctuation.section.block.end
 
 fn f<L, R>(lhs: L, rhs: R)
     where L: IntoIterator<Item=(&'a i32, &'a i32)>,
@@ -50,41 +50,41 @@ fn f<L, R>(lhs: L, rhs: R)
 //           ^^^^^^^^^^^^ support.type
 //                       ^^^^^^^^^^^^^^^^^^^^^^^^^ meta.generic
 //                       ^ punctuation.definition.generic.begin
-//                             ^ punctuation.definition.type.begin
+//                             ^ punctuation.section.group.begin
 //                              ^ keyword.operator
 //                               ^^ storage.modifier.lifetime
 //                                  ^^^ storage.type
 //                                       ^ keyword.operator
 //                                        ^^ storage.modifier.lifetime
 //                                           ^^^ storage.type
-//                                              ^ punctuation.definition.type.end
+//                                              ^ punctuation.section.group.end
 //                                               ^ punctuation.definition.generic.end
           R: IntoIterator<Item=(&'a i32, &'a i32)>, {}
 //        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function meta.where
-//                                                  ^ meta.function meta.block punctuation.definition.block.begin
-//                                                   ^ meta.function meta.block punctuation.definition.block.end
+//                                                  ^ meta.function meta.block punctuation.section.block.begin
+//                                                   ^ meta.function meta.block punctuation.section.block.end
 fn f<F: Fn(usize) -> usize>(func: f) {}
 //  ^^^^^^^^^^^^^^^^^^^^^^^ meta.generic
 //  ^ meta.generic punctuation.definition.generic.begin
 //    ^ meta.generic punctuation.separator
 //      ^^ meta.generic support.type
-//        ^ meta.generic punctuation.definition.type.begin
+//        ^ meta.generic punctuation.section.group.begin
 //         ^^^^^ meta.generic storage.type
-//              ^ meta.generic punctuation.definition.type.end
+//              ^ meta.generic punctuation.section.group.end
 //                   ^^^^^ meta.generic meta.function.return-type storage.type
 //                        ^ meta.generic punctuation.definition.generic.end
-//                         ^ meta.function meta.function.parameters punctuation.definition.parameters.begin
+//                         ^ meta.function meta.function.parameters punctuation.section.parameters.begin
 //                          ^^^^ meta.function meta.function.parameters variable.parameter
 fn f<L: IntoIterator<Item=(&'a i32, &'a i32)>>(lhs: L) {}
 //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.generic
 //  ^ punctuation.definition.generic.begin
 //                  ^ punctuation.definition.generic.begin
-//                        ^ punctuation.definition.type.begin
+//                        ^ punctuation.section.group.begin
 //                          ^^ storage.modifier.lifetime
 //                             ^^^ storage.type
 //                                          ^ punctuation.definition.generic.begin
 //                                           ^ punctuation.definition.generic.end
-//                                            ^ meta.function meta.function.parameters punctuation.definition.parameters.begin
+//                                            ^ meta.function meta.function.parameters punctuation.section.parameters.begin
 
 struct A<T>(T) where T: AsRef<str>;
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.struct
@@ -105,7 +105,7 @@ pub struct IterHolder<A> where A: Number {
 //                   ^^^ meta.struct meta.generic
 //                       ^^^^^ meta.struct meta.where keyword.other
 //                                ^^^^^^ meta.struct meta.where
-//                                       ^ meta.struct punctuation.definition.block.begin
+//                                       ^ meta.struct punctuation.section.block.begin
     num: A
 }
 
@@ -173,8 +173,8 @@ impl<T> Iterator for Fibonacci<T>
 }
 
 pub const FOO: Option<[i32; 1]> = Some([1]);
-//                    ^ punctuation.definition.group.begin
-//                           ^ punctuation.definition.group.end
+//                    ^ punctuation.section.group.begin
+//                           ^ punctuation.section.group.end
 
 #[derive(Clone)]
 pub struct GobletMiddleware<B: Backend + ?Sized + 'static> {
@@ -226,10 +226,10 @@ fn numbers() -> impl Iterator<Item = u64> {
 fn collect_vec() {
     let _: Vec<(usize, usize)> = (0..10).enumerate().collect::<Vec<_>>();
 //         ^^^^^^^^^^^^^^^^^^^ meta.generic
-//             ^ punctuation.definition.type.begin
+//             ^ punctuation.section.group.begin
 //              ^^^^^ storage.type
 //                     ^^^^^ storage.type
-//                          ^ punctuation.definition.type.end
+//                          ^ punctuation.section.group.end
 //                                                            ^^^^^^^^ meta.generic
 //                                                             ^^^^^^ meta.generic meta.generic
 //                                                                 ^ keyword.operator
@@ -324,9 +324,9 @@ fn factory() -> Box<Fn(i32) -> i32> {
 // ^^^^^^^ entity.name.function
 //                 ^^^^^^^^^^^^^^^^ meta.generic
 //                  ^^ support.type
-//                    ^ punctuation.definition.type.begin
+//                    ^ punctuation.section.group.begin
 //                     ^^^ storage.type
-//                        ^ punctuation.definition.type.end
+//                        ^ punctuation.section.group.end
 //                          ^^ punctuation.separator
 //                             ^^^ storage.type
     Box::new(|x| x + 1)

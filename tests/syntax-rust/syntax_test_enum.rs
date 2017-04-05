@@ -5,7 +5,7 @@ enum OperatingSystem
 // ^^^^^^^^^^^^^^^^^ meta.enum
 //   ^^^^^^^^^^^^^^^ entity.name.enum
 {
-// <- meta.enum punctuation.definition.block.begin
+// <- meta.enum punctuation.section.block.begin
     Osx,
 //  ^^^ meta.enum storage.type.source
     Windows,
@@ -13,12 +13,12 @@ enum OperatingSystem
     Bsd(String),
     //  ^^^^^^ support.type
     Info { field: i32, value: str }
-    //   ^ punctuation.definition.block.begin
+    //   ^ punctuation.section.block.begin
     //            ^^^ storage.type
     //                        ^^^ storage.type
-    //                            ^ meta.block punctuation.definition.block.end
+    //                            ^ meta.block punctuation.section.block.end
 }
-// <- meta.enum punctuation.definition.block.end
+// <- meta.enum punctuation.section.block.end
 
 let q = Message::Quit;
 //      ^^^^^^^ storage.type.source

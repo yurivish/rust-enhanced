@@ -41,7 +41,7 @@ match n {
 match my_func() {
 // ^^ keyword.control
 //    ^^^^^^^ support.function
-//              ^ meta.block punctuation.definition.block.begin
+//              ^ meta.block punctuation.section.block.begin
     0 => println!("None"),
 //  ^ constant.numeric.integer.decimal
 //    ^^ keyword.operator
@@ -54,4 +54,4 @@ match my_func() {
 //  ^ source
 //    ^^ keyword.operator
 }
-// <- meta.block punctuation.definition.block.end
+// <- meta.block punctuation.section.block.end

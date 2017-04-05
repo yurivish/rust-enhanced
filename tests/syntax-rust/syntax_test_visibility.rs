@@ -2,23 +2,23 @@
 
 pub ( crate ) struct S {}
 // <- storage.modifier
-//  ^ punctuation.definition.group.begin
+//  ^ punctuation.section.group.begin
 //    ^^^^^ keyword.other
-//          ^ punctuation.definition.group.end
+//          ^ punctuation.section.group.end
 //            ^^^^^^^^^^^ meta.struct
 pub ( in foo::bar ) union U {}
-//  ^ punctuation.definition.group.begin
+//  ^ punctuation.section.group.begin
 //    ^^ keyword.other
 //       ^^^^^^^^ meta.path
-//                ^ punctuation.definition.group.end
+//                ^ punctuation.section.group.end
 //                  ^^^^^^^^^^ meta.union
 pub ( in foo :: bar ) type T = i32;
-//  ^ punctuation.definition.group.begin
+//  ^ punctuation.section.group.begin
 //    ^^ keyword.other
 //       ^^^ meta.path
 //           ^^ meta.path
 //              ^^^ meta.path
-//                  ^ punctuation.definition.group.end
+//                  ^ punctuation.section.group.end
 //                    ^^^^ storage.type.type
 pub ( in ::foo ) fn f() {}
 //       ^^^^^ meta.path
@@ -50,17 +50,17 @@ struct S {
 //      ^^ meta.struct variable.other.member
     pub(crate) f2: i32,
 //  ^^^ meta.struct storage.modifier
-//     ^ meta.struct punctuation.definition.group.begin
+//     ^ meta.struct punctuation.section.group.begin
 //      ^^^^^ meta.struct keyword.other
-//           ^ meta.struct punctuation.definition.group.end
+//           ^ meta.struct punctuation.section.group.end
 //             ^^ meta.struct variable.other.member
     pub(in super::foo) f3: i32,
 //  ^^^ meta.struct storage.modifier
-//     ^ meta.struct punctuation.definition.group.begin
+//     ^ meta.struct punctuation.section.group.begin
 //      ^^ meta.struct keyword.other
 //         ^^^^^ meta.struct keyword.other
 //              ^^^^^ meta.struct meta.path
-//                   ^ meta.struct punctuation.definition.group.end
+//                   ^ meta.struct punctuation.section.group.end
 //                     ^^ meta.struct variable.other.member
 }
 
@@ -70,15 +70,15 @@ struct S (
 //      ^^^ meta.struct storage.type
     pub(crate) i32,
 //  ^^^ meta.struct storage.modifier
-//     ^ meta.struct punctuation.definition.group.begin
+//     ^ meta.struct punctuation.section.group.begin
 //      ^^^^^ meta.struct keyword.other
-//           ^ meta.struct punctuation.definition.group.end
+//           ^ meta.struct punctuation.section.group.end
 //             ^^^ meta.struct storage.type
     pub(in super) i32,
 //  ^^^ meta.struct storage.modifier
-//     ^ meta.struct punctuation.definition.group.begin
+//     ^ meta.struct punctuation.section.group.begin
 //      ^^ meta.struct keyword.other
 //         ^^^^^ meta.struct keyword.other
-//              ^ meta.struct punctuation.definition.group.end
+//              ^ meta.struct punctuation.section.group.end
 //                ^^^ meta.struct storage.type
 );

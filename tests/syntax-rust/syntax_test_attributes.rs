@@ -4,9 +4,9 @@
 // <- meta.annotation
 //^^^^^^^^^^^^^^ meta.annotation
 // ^^^^ support.function
-//     ^ meta.group punctuation.definition.group.begin
+//     ^ meta.group punctuation.section.group.begin
 //      ^^^^^^ meta.group
-//            ^ meta.group punctuation.definition.group.end
+//            ^ meta.group punctuation.section.group.end
 
 #[macro_use]
 // <- meta.annotation
