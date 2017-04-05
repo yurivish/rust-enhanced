@@ -35,23 +35,28 @@ pub use self::trafile::*;
 //  ^^^ keyword.other
 //      ^^^^ variable.language
 //      ^^^^^^^^^^^^^^^ meta.path
+//                   ^^ punctuation.accessor
 //                     ^ keyword.operator
 //                      ^ punctuation.terminator
 
 use std::fmt;
 // <- keyword.other
 //  ^^^^^ meta.path
+//     ^^ punctuation.accessor
 //       ^^^ - meta.path
 //          ^ punctuation.terminator
 use foo::i32;
 //  ^^^^^ meta.path
+//     ^^ punctuation.accessor
 //       ^^^ - meta.path storage.type
 use foo::Bar;
 //  ^^^^^ meta.path
+//     ^^ punctuation.accessor
 //       ^^^ storage.type.source
 
 use foo::{Baz, QUX, quux};
 //  ^^^^^ meta.path
+//     ^^ punctuation.accessor.rust
 //       ^^^^^^^^^^^^^^^^ meta.block
 //       ^ punctuation.section.block.begin
 //        ^^^ storage.type.source

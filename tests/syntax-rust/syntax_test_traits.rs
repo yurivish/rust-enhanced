@@ -32,6 +32,7 @@ impl fmt::Display for PrintableStruct {
 // <- storage.type.impl
 //^^ storage.type.impl
 //   ^^^^^ meta.path
+//      ^^ punctuation.accessor
 //                ^^^ keyword.other
 //                    ^^^^^^^^^^^^^^^ entity.name.impl
 //                                    ^ meta.block punctuation.section.block.begin

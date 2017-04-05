@@ -572,14 +572,17 @@ contexts:
               pop: true
         - include: type-any-identifier
     - include: lifetime
-    - match: '\b([[:upper:]]|_*[[:upper:]][[:alnum:]_]*[[:lower:]][[:alnum:]_]*)\b::'
+    - match: '\b([[:upper:]]|_*[[:upper:]][[:alnum:]_]*[[:lower:]][[:alnum:]_]*)\b(::)'
       scope: meta.path.rust storage.type.rust
       captures:
         1: storage.type.rust
-    - match: '{{identifier}}::'
+        2: punctuation.accessor.rust
+    - match: '{{identifier}}(::)'
       scope: meta.path.rust
-    - match: '::(?={{identifier}})'
-      scope: meta.path.rust
+      captures:
+        1: punctuation.accessor.rust
+    - match: '(::)(?={{identifier}})'
+      scope: meta.path.rust punctuation.accessor.rust
     - match: '(?=<)'
       push: generic-angles
     - match: '\('
@@ -1392,9 +1395,12 @@ contexts:
         - meta_scope: meta.path.rust
         - include: no-path-identifiers
         - match: '::'
+          scope: punctuation.accessor.rust
           set: no-type-names
-    - match: '::(?={{identifier}})'
+    - match: '(::)(?={{identifier}})'
       scope: meta.path.rust
+      captures:
+        1: punctuation.accessor.rust
       push: no-type-names
     - include: no-path-identifiers
 
