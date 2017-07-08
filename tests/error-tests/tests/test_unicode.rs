@@ -2,5 +2,6 @@
 
 fn main() {
     let foo = "❤";
-    // ^WARN unused variable
+//      ^^^WARN unused variable
+//      ^^^NOTE(>=1.17.0) #[warn(unused_variables)]
 }

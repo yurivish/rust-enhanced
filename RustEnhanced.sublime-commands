@@ -1,6 +1,26 @@
 [
-    { 
-        "caption": "Rust: Toggle Syntax Checking", 
+    {
+        "caption": "Rust: Toggle Syntax Checking",
         "command": "toggle_rust_syntax_setting"
-    }
+    },
+    {
+        "caption": "Rust: Next Message",
+        "command": "rust_next_message"
+    },
+    {
+        "caption": "Rust: Prev Message",
+        "command": "rust_prev_message"
+    },
+    {
+        "caption": "Rust: Cancel Build",
+        "command": "rust_cancel"
+    },
+    {
+        "caption": "Rust: Create New Cargo Build Variant",
+        "command": "cargo_create_new_build"
+    },
+    {
+        "caption": "Rust: Configure Cargo Build",
+        "command": "cargo_configure"
+    },
 ]

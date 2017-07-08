@@ -5,6 +5,13 @@ build = "build.rs"
 
 [dependencies]
 
+[features]
+nightly = []
+default = ["feat1"]
+feat1 = []
+feat2 = []
+feat3 = []
+
 [[bin]]
 name = "otherbin"
 path = "src/altmain.rs"
@@ -12,6 +19,7 @@ path = "src/altmain.rs"
 [[bin]]
 name = "multi-targets"
 path = "src/main.rs"
+doc = false
 
 # If you specify an explicit bin, the Cargo will no automatically detect bins
 # in the bin/ directory.
@@ -22,6 +30,14 @@ path = "src/bin/bin1.rs"
 [[bin]]
 name = "bin2"
 path = "src/bin/bin2.rs"
+
+[[bin]]
+name = "feats"
+path = "src/bin/feats.rs"
+
+[[bin]]
+name = "penv"
+path = "src/bin/penv.rs"
 
 [[example]]
 name = "ex1"
@@ -35,3 +51,10 @@ path = "examples/ex2.rs"
 name = "exlib"
 path = "examples/exlib.rs"
 crate-type = ["dylib"]
+test = false
+
+[[example]]
+name = "excdylib"
+path = "examples/excdylib.rs"
+crate-type = ["cdylib"]
+test = false
