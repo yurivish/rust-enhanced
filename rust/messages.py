@@ -34,22 +34,28 @@ def clear_messages(window):
     for view in window.views():
         view.erase_phantoms('rust-syntax-phantom')
         view.erase_regions('rust-error')
-        view.erase_regions('rust-info')
+        view.erase_regions('rust-warning')
+        view.erase_regions('rust-note')
+        view.erase_regions('rust-help')
 
 
-def add_message(window, path, level, span, is_main, message):
+def add_message(window, path, span, level, is_main, message):
     """Add a message to be displayed.
 
     :param window: The Sublime window.
     :param path: The absolute path of the file to show the message for.
-    :param level: The Rust message level ('error', 'note', etc.).
     :param span: Location of the message (0-based):
         `((line_start, col_start), (line_end, col_end))`
         May be `None` to indicate no particular spot.
+    :param level: The Rust message level ('error', 'note', etc.).
     :param is_main: If True, this is a top-level message.  False is used for
         attached detailed diagnostic information, child notes, etc.
-    :param message: The message to display.
+    :param message: The phantom string to display.
     """
+    if 'macros>' in path:
+        # Macros from external crates will be displayed in the console
+        # via msg_cb.
+        return
     wid = window.id()
     try:
         messages_by_path = WINDOW_MESSAGES[wid]['paths']
@@ -95,43 +101,68 @@ def draw_all_region_highlights(window):
 def _draw_region_highlights(view, messages):
     if util.get_setting('rust_region_style', 'outline') == 'none':
         return
-    error_regions = []
-    info_regions = []
-    error_region_set = set()
+
+    regions = {
+        'error': [],
+        'warning': [],
+        'note': [],
+        'help': [],
+    }
     for message in messages:
         region = _span_to_region(view, message['span'])
-        if message['level'] == 'error':
-            error_regions.append(region)
-            error_region_set.add((region.a, region.b))
+        if message['level'] not in regions:
+            print('RustEnhanced: Unknown message level %r encountered.' % message['level'])
+            message['level'] = 'error'
+        regions[message['level']].append(region)
+
+    # Remove lower-level regions that are identical to higher-level regions.
+    def filter_out(to_filter, to_check):
+        def check_in(region):
+            for r in regions[to_check]:
+                if r == region:
+                    return False
+            return True
+        regions[to_filter] = list(filter(check_in, regions[to_filter]))
+    filter_out('help', 'note')
+    filter_out('help', 'warning')
+    filter_out('help', 'error')
+    filter_out('note', 'warning')
+    filter_out('note', 'error')
+    filter_out('warning', 'error')
+
+    package_name = __package__.split('.')[0]
+    gutter_style = util.get_setting('rust_gutter_style', 'shape')
+
+    # Do this in reverse order so that errors show on-top.
+    for level in ['help', 'note', 'warning', 'error']:
+        # Unfortunately you cannot specify colors, but instead scopes as
+        # defined in the color theme.  If the scope is not defined, then it
+        # will show up as foreground color (white in dark themes).  I just use
+        # "info" as an undefined scope (empty string will remove regions).
+        # "invalid" will typically show up as red.
+        if level == 'error':
+            scope = 'invalid'
         else:
-            info_regions.append(region)
-    # Filter out identical info regions.
-    info_regions = list(filter(lambda x: (x.a, x.b) not in error_region_set,
-                               info_regions))
-
-    # Unfortunately you cannot specify colors, but instead scopes as
-    # defined in the color theme.  If the scope is not defined, then it
-    # will show up as foreground color (white in dark themes).  I just use
-    # "info" as an undefined scope (empty string will remove regions).
-    # "invalid" will typically show up as red.
-
-    # Is DRAW_EMPTY necessary?  Is it possible to have a zero-length span?
-    _sublime_add_regions(
-        view, 'rust-error', error_regions, 'invalid', '',
-        sublime.DRAW_NO_FILL | sublime.DRAW_EMPTY)
-    _sublime_add_regions(
-        view, 'rust-info', info_regions, 'info', '',
-        sublime.DRAW_NO_FILL | sublime.DRAW_EMPTY)
+            scope = 'info'
+        key = 'rust-%s' % level
+        if gutter_style == 'none':
+            icon = ''
+        else:
+            icon = 'Packages/%s/images/gutter/%s-%s.png' % (
+                package_name, gutter_style, level)
+        if regions[level]:
+            _sublime_add_regions(
+                view, key, regions[level], scope, icon,
+                sublime.DRAW_NO_FILL | sublime.DRAW_EMPTY)
 
 
 def _show_phantom(view, level, span, message):
     if util.get_setting('rust_phantom_style', 'normal') == 'none':
         return
     region = _span_to_region(view, span)
-    # For some reason, with LAYOUT_BELOW, if you have a multi-line
-    # region, the phantom is only displayed under the first line.  I
-    # think it makes more sense for the phantom to appear below the
-    # last line.
+    # For some reason if you have a multi-line region, the phantom is only
+    # displayed under the first line.  I think it makes more sense for the
+    # phantom to appear below the last line.
     start = view.rowcol(region.begin())
     end = view.rowcol(region.end())
     if start[0] != end[0]:
@@ -144,6 +175,8 @@ def _show_phantom(view, level, span, message):
     def click_handler(url):
         if url == 'hide':
             clear_messages(view.window())
+        elif url.startswith('file:///'):
+            view.window().open_file(url[8:], sublime.ENCODED_POSITION)
         else:
             webbrowser.open_new(url)
 
@@ -151,7 +184,7 @@ def _show_phantom(view, level, span, message):
         view,
         'rust-syntax-phantom', region,
         message,
-        sublime.LAYOUT_BELOW,
+        sublime.LAYOUT_BLOCK,
         click_handler
     )
 
@@ -379,11 +412,135 @@ def add_rust_messages(window, cwd, info, target_path, msg_cb):
             # cargo may emit various other messages, like
             # 'compiler-artifact' or 'build-script-executed'.
             return
-    _add_rust_messages(window, cwd, info, target_path, msg_cb, {})
+
+    # Each message dictionary contains the following:
+    # - 'text': The text of the message.
+    # - 'level': The level (a string such as 'error').
+    # - 'span_path': Absolute path to the file for this message.
+    # - 'span_region': Sublime region where the message is.  Tuple of
+    #   ((line_start, column_start), (line_end, column_end)), 0-based.  None
+    #   if no region.
+    # - 'is_main': Boolean of whether or not this is the main message.  Only
+    #   the `main_message` should be True.
+    # - 'help_link': Optional string of an HTML link for additional
+    #   information on the message.
+    # - 'links': Optional string of HTML code that contains links to other
+    #   messages (populated by _create_cross_links).  Should only be set in
+    #   `main_message`.
+    # - 'back_link': Optional string of HTML code that is a link back to the
+    #   main message (populated by _create_cross_links).
+    main_message = {}
+    # List of message dictionaries, belonging to the main message.
+    additional_messages = []
+    _collect_rust_messages(window, cwd, info, target_path, msg_cb, {},
+        main_message, additional_messages)
+
+    messages = _create_cross_links(main_message, additional_messages)
+
+    msg_template = """
+        <body id="rust-message">
+            <style>
+                span {{
+                    font-family: monospace;
+                }}
+                .rust-error {{
+                    color: %s;
+                }}
+                .rust-warning {{
+                    color: %s;
+                }}
+                .rust-note {{
+                    color: %s;
+                }}
+                .rust-help {{
+                    color: %s;
+                }}
+                .rust-link {{
+                    background-color: var(--background);
+                    color: var(--bluish);
+                    text-decoration: none;
+                    border-radius: 0.5rem;
+                    padding: 0.1rem 0.3rem;
+                    border: 1px solid var(--bluish);
+                }}
+                .rust-links {{
+                    margin: 0.4rem 0rem;
+                }}
+                a {{
+                    text-decoration: inherit;
+                    padding: 0.35rem 0.5rem 0.45rem 0.5rem;
+                    position: relative;
+                    font-weight: bold;
+                }}
+            </style>
+            {content}
+        </body>""" % (
+        util.get_setting('rust_syntax_error_color', 'var(--redish)'),
+        util.get_setting('rust_syntax_warning_color', 'var(--yellowish)'),
+        util.get_setting('rust_syntax_note_color', 'var(--greenish)'),
+        util.get_setting('rust_syntax_help_color', 'var(--bluish)'),
+    )
+    content_template = '<div class="{cls}">{level}{msg}{help_link}{back_link}<a href="hide">\xD7</a></div>'
+    links_template = '<div class="rust-links">{indent}{links}</div>'
+
+    last_level = None
+    last_path = None
+    for message in messages:
+        level = message['level']
+        cls = {
+            'error': 'rust-error',
+            'warning': 'rust-warning',
+            'note': 'rust-note',
+            'help': 'rust-help',
+        }.get(level, 'rust-error')
+        indent = '&nbsp;' * (len(level) + 2)
+        if level == last_level and message['span_path'] == last_path:
+            level_text = indent
+        else:
+            level_text = '%s: ' % (level,)
+        last_level = level
+        last_path = message['span_path']
+
+        def escape_and_link(i_txt):
+            i, txt = i_txt
+            if i % 2:
+                return '<a href="%s">%s</a>' % (txt, txt)
+            else:
+                return html.escape(txt, quote=False).\
+                    replace('\n', '<br>' + indent)
+        parts = re.split(LINK_PATTERN, message['text'])
+        escaped_text = ''.join(map(escape_and_link, enumerate(parts)))
+
+        content = content_template.format(
+            cls=cls,
+            level=level_text,
+            msg=escaped_text,
+            help_link=message.get('help_link', ''),
+            back_link=message.get('back_link', ''),
+        )
+        phantom_text = msg_template.format(content=content)
+        add_message(window, message['span_path'], message['span_region'],
+                    level, message['is_main'], phantom_text)
+        if msg_cb:
+            msg_cb(message['span_path'],
+                   message['span_region'],
+                   message['is_main'], message['text'], level)
+    if main_message.get('links'):
+        content = links_template.format(
+            indent='&nbsp;' * (len(main_message['level']) + 2),
+            links=main_message['links']
+        )
+        phantom_text = msg_template.format(content=content)
+        add_message(window,
+                    main_message['span_path'],
+                    main_message['span_region'],
+                    main_message['level'],
+                    False, phantom_text)
 
 
-def _add_rust_messages(window, cwd, info, target_path,
-                       msg_cb, parent_info):
+def _collect_rust_messages(window, cwd, info, target_path,
+                           msg_cb, parent_info,
+                           main_message, additional_messages):
     """
     - `info`: The dictionary from Rust has the following structure:
 
@@ -412,7 +569,12 @@ def _add_rust_messages(window, cwd, info, target_path,
             - 'column_end':
             - 'is_primary': If True, this is the primary span where the error
               started.  Note: It is possible (though rare) for multiple spans
-              to be marked as primary.
+              to be marked as primary (for example, 'immutable borrow occurs
+              here' and 'mutable borrow ends here' can be two separate spans
+              both "primary").  Top (parent) messages should always have at
+              least one primary span (unless it has 0 spans).  Child messages
+              may have 0 or more primary spans.  AFAIK, spans from 'expansion'
+              are never primary.
             - 'text': List of dictionaries showing the original source code.
             - 'label': A message to display at this span location.  May be
               None (AFAIK, this only happens when is_primary is True, in which
@@ -431,19 +593,20 @@ def _add_rust_messages(window, cwd, info, target_path,
                   None if not known).
 
         - 'children': List of attached diagnostic messages (following this
-          same format) of associated information.
+          same format) of associated information.  AFAIK, these are never
+          nested.
         - 'rendered': Optional string (may be None).  Currently only used by
           suggested replacements.  If a child has a span with
           'suggested_replacement' set, then this a suggestion of how the line
           should be written.
 
     - `parent_info`: Dictionary used for tracking "children" messages.
-      Includes 'view' and 'region' keys to indicate where a child message
-      should be displayed.
+      Currently only has 'span' key, the span of the parent to display the
+      message (for children without spans).
+    - `main_message`: Dictionary where we store the main message information.
+    - `additional_messages`:  List where we add dictionaries of messages that
+      are associated with the main message.
     """
-    error_colour = util.get_setting('rust_syntax_error_color', 'var(--redish)')
-    warning_colour = util.get_setting('rust_syntax_warning_color', 'var(--yellowish)')
-
     # Include "notes" tied to errors, even if warnings are disabled.
     if (info['level'] != 'error' and
         util.get_setting('rust_syntax_hide_warnings', False) and
@@ -451,90 +614,48 @@ def _add_rust_messages(window, cwd, info, target_path,
        ):
         return
 
-    # TODO: Consider matching the colors used by rustc.
-    # - error: red
-    #     `bug` appears as "error: internal compiler error"
-    # - warning: yellow
-    # - note: bright green
-    # - help: cyan
-    is_error = info['level'] == 'error'
-    if is_error:
-        base_color = error_colour
-    else:
-        base_color = warning_colour
+    def make_span_path(span):
+        return os.path.realpath(os.path.join(cwd, span['file_name']))
 
-    msg_template = """
-        <body id="rust-message">
-            <style>
-                span {{
-                    font-family: monospace;
-                }}
-                .rust-error {{
-                    color: %s;
-                }}
-                .rust-additional {{
-                    color: var(--yellowish);
-                }}
-                a {{
-                    text-decoration: inherit;
-                    padding: 0.35rem 0.5rem 0.45rem 0.5rem;
-                    position: relative;
-                    font-weight: bold;
-                }}
-            </style>
-            <span class="{cls}">{level}: {msg} {extra}<a href="hide">\xD7</a></span>
-        </body>""" % (base_color,)
-
-    def _add_message(path, span_region, is_main, message, extra=''):
-        if info['level'] == 'error':
-            cls = 'rust-error'
+    def make_span_region(span):
+        # Sublime text is 0 based whilst the line/column info from
+        # rust is 1 based.
+        if span.get('line_start'):
+            return ((span['line_start'] - 1, span['column_start'] - 1),
+                    (span['line_end'] - 1, span['column_end'] - 1))
         else:
-            cls = 'rust-additional'
+            return None
 
-        # Rust performs some pretty-printing for things like suggestions,
-        # attempt to retain some of the formatting.  This isn't perfect
-        # (doesn't line up perfectly), not sure why.
-        def escape_and_link(i_txt):
-            i, txt = i_txt
-            if i % 2:
-                return '<a href="%s">%s</a>' % (txt, txt)
-            else:
-                return html.escape(txt, quote=False).\
-                    replace('\n', '<br>').replace(' ', '&nbsp;')
-        parts = re.split(LINK_PATTERN, message)
-        escaped_message = ''.join(map(escape_and_link, enumerate(parts)))
-        content = msg_template.format(
-            cls=cls,
-            level=info['level'],
-            msg=escaped_message,
-            extra=extra
-        )
-        add_message(window, path, info['level'], span_region,
-                    is_main, content)
-        if msg_cb:
-            msg_cb(path, span_region, is_main, message, info['level'])
-
-    def add_primary_message(path, span_region, is_main, message):
-        parent_info['path'] = path
-        parent_info['span'] = span_region
+    def set_primary_message(span, message):
+        parent_info['span'] = span
         # Not all codes have explanations (yet).
         if info['code'] and info['code']['explanation']:
             # TODO
             # This could potentially be a link that opens a Sublime popup, or
             # a new temp buffer with the contents of 'explanation'.
             # (maybe use sublime-markdown-popups)
-            extra = ' <a href="https://doc.rust-lang.org/error-index.html#%s">?</a>' % (info['code']['code'],)
-        else:
-            extra = ''
-        _add_message(path, span_region, is_main, message, extra)
+            main_message['help_link'] = \
+                ' <a href="https://doc.rust-lang.org/error-index.html#%s">?</a>' % (
+                    info['code']['code'],)
+        main_message['span_path'] = make_span_path(span)
+        main_message['span_region'] = make_span_region(span)
+        main_message['text'] = message
+        main_message['level'] = info['level']
+        main_message['is_main'] = True
+
+    def add_additional(span, text, level):
+        additional_messages.append({
+            'span_path': make_span_path(span),
+            'span_region': make_span_region(span),
+            'text': text,
+            'level': level,
+            'is_main': False,
+        })
 
     if len(info['spans']) == 0:
         if parent_info:
             # This is extra info attached to the parent message.
-            add_primary_message(parent_info['path'],
-                                parent_info['span'],
-                                False,
-                                info['message'])
+            add_additional(parent_info['span'], info['message'], info['level'])
         else:
             # Messages without spans are global session messages (like "main
             # function not found").
@@ -546,57 +667,165 @@ def _add_rust_messages(window, cwd, info, target_path,
                 if target_path:
                     # Display at the bottom of the root path (like main.rs)
                     # for lack of a better place to put it.
-                    add_primary_message(target_path, None, True, imsg)
+                    fake_span = {'file_name': target_path}
+                    set_primary_message(fake_span, imsg)
                 else:
                     if msg_cb:
                         msg_cb(None, None, True, imsg, info['level'])
 
-    for span in info['spans']:
-        is_primary = span['is_primary']
+    def find_span_r(span, expansion=None):
+        if span['expansion']:
+            return find_span_r(span['expansion']['span'], span['expansion'])
+        else:
+            return span, expansion
 
+    for span in info['spans']:
         if 'macros>' in span['file_name']:
             # Rust gives the chain of expansions for the macro, which we don't
             # really care about.  We want to find the site where the macro was
             # invoked.  I'm not entirely confident this is the best way to do
             # this, but it seems to work.  This is roughly emulating what is
             # done in librustc_errors/emitter.rs fix_multispan_in_std_macros.
-            def find_span_r(span):
-                if span['expansion']:
-                    return find_span_r(span['expansion']['span'])
-                else:
-                    return span
-            span = find_span_r(span)
-            if span is None:
+            target_span, expansion = find_span_r(span)
+            if not target_span:
                 continue
+            updated = target_span.copy()
+            updated['is_primary'] = span['is_primary']
+            updated['label'] = span['label']
+            updated['suggested_replacement'] = span['suggested_replacement']
+            span = updated
 
-        span_path = os.path.realpath(os.path.join(cwd, span['file_name']))
-        # Sublime text is 0 based whilst the line/column info from
-        # rust is 1 based.
-        span_region = ((span['line_start'] - 1, span['column_start'] - 1),
-                       (span['line_end'] - 1, span['column_end'] - 1))
+            if 'macros>' in span['file_name']:
+                # Macros from extern crates do not have 'expansion', and thus
+                # we do not have a location to highlight.  Place the result at
+                # the bottom of the primary target path.
+                macro_name = span['file_name']
+                if target_path:
+                    span['file_name'] = target_path
+                    span['line_start'] = None
+                # else, messages will be shown in console via msg_cb.
+                add_additional(span,
+                    'Errors occurred in macro %s from external crate' % (macro_name,),
+                    info['level'])
+                text = ''.join([x['text'] for x in span['text']])
+                add_additional(span,
+                    'Macro text: %s' % (text,),
+                    info['level'])
+            else:
+                if not expansion or not expansion['def_site_span'] \
+                        or 'macros>' in expansion['def_site_span']['file_name']:
+                    add_additional(span,
+                        'this error originates in a macro outside of the current crate',
+                        info['level'])
+
+        # Add a message for macro invocation site if available in the local
+        # crate.
+        if span['expansion'] and \
+                'macros>' not in span['file_name'] and \
+                not span['expansion']['macro_decl_name'].startswith('#['):
+            invoke_span, expansion = find_span_r(span)
+            add_additional(invoke_span, 'in this macro invocation', 'help')
+
+        if span['is_primary']:
+            if parent_info:
+                # Primary child message.
+                add_additional(span, info['message'], info['level'])
+            else:
+                # Check if the main message is already set since there might
+                # be multiple spans that are primary (in which case, we
+                # arbitrarily show the main message on the first one).
+                if not main_message:
+                    set_primary_message(span, info['message'])
 
         label = span['label']
+        # Some spans don't have a label.  These seem to just imply
+        # that the main "message" is sufficient, and always seems
+        # to happen when the span is_primary.
+        #
+        # This can also happen for macro expansions.
         if label:
             # Display the label for this Span.
-            _add_message(span_path, span_region, False, label)
-        else:
-            # Some spans don't have a label.  These seem to just imply
-            # that the main "message" is sufficient, and always seems
-            # to happen when the span is_primary.
-            if not is_primary:
-                # When can this happen?
-                pprint(info)
-                raise ValueError('Unexpected span with no label')
-        if is_primary:
-            # Show the overall error message.
-            add_primary_message(span_path, span_region, True, info['message'])
+            add_additional(span, label, info['level'])
         if span['suggested_replacement']:
             # The "suggested_replacement" contains the code that
             # should replace the span.  However, it can be easier to
             # read if you repeat the entire line (from "rendered").
-            _add_message(span_path, span_region, False, info['rendered'])
+            add_additional(span, info['rendered'], 'help')
 
     # Recurse into children (which typically hold notes).
     for child in info['children']:
-        _add_rust_messages(window, cwd, child, target_path,
-                           msg_cb, parent_info.copy())
+        _collect_rust_messages(window, cwd, child, target_path,
+                               msg_cb, parent_info.copy(),
+                               main_message, additional_messages)
+
+
+def _create_cross_links(main_message, additional_messages):
+    """Returns a list of dictionaries of messages to be displayed.
+
+    This is responsible for creating links from the main message to any
+    additional messages.
+    """
+    if not main_message:
+        return []
+
+    def make_file_path(msg):
+        if msg['span_region']:
+            return 'file:///%s:%s:%s' % (
+                msg['span_path'].replace('\\', '/'),
+                msg['span_region'][0][0] + 1,
+                msg['span_region'][0][1] + 1,
+            )
+        else:
+            # Arbitrarily large line number to force it to the bottom of the
+            # file, since we don't know ahead of time how large the file is.
+            return 'file:///%s:999999999' % (msg['span_path'],)
+
+    back_link = '<a href="%s">\u2190</a>' % (make_file_path(main_message),)
+
+    def get_lineno(msg):
+        if msg['span_region']:
+            return msg['span_region'][0][0]
+        else:
+            return 999999999
+
+    link_set = set()
+    links = []
+    link_template = '<a href="{url}" class="rust-link">Note: {filename}{lineno}</a>'
+    for msg in additional_messages:
+        msg_lineno = get_lineno(msg)
+        seen_key = (msg['span_path'], msg_lineno)
+        # Only include a link if it is not close to the main message.
+        if msg['span_path'] != main_message['span_path'] or \
+           abs(msg_lineno - get_lineno(main_message)) > 5:
+            if seen_key in link_set:
+                continue
+            link_set.add(seen_key)
+            if msg['span_region']:
+                lineno = ':%s' % (msg_lineno + 1,)
+            else:
+                # AFAIK, this code path is not possible, but leaving it here
+                # to be safe.
+                lineno = ''
+            if msg['span_path'] == main_message['span_path']:
+                if get_lineno(msg) < get_lineno(main_message):
+                    filename = '\u2191'  # up arrow
+                else:
+                    filename = '\u2193'  # down arrow
+            else:
+                filename = os.path.basename(msg['span_path'])
+            links.append(link_template.format(
+                url=make_file_path(msg),
+                filename=filename,
+                lineno=lineno,
+            ))
+            msg['back_link'] = back_link
+
+    if links:
+        link_text = '\n'.join(links)
+    else:
+        link_text = ''
+    main_message['links'] = link_text
+
+    result = additional_messages[:]
+    result.insert(0, main_message)
+    return result
