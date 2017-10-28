@@ -196,7 +196,8 @@ class CargoExecThread(rust_thread.RustThread):
             return
         messages.clear_messages(self.window)
         p = rust_proc.RustProc()
-        listener = opanel.OutputListener(self.window, self.working_dir)
+        listener = opanel.OutputListener(self.window, self.working_dir,
+                                         self.command_name)
         decode_json = util.get_setting('show_errors_inline', True) and \
             self.command_info.get('allows_json', False)
         try:
@@ -229,16 +230,28 @@ class CargoEventListener(sublime_plugin.EventListener):
                 lambda: messages.show_messages_for_view(view), 1)
 
 
-class RustNextMessageCommand(sublime_plugin.WindowCommand):
+class NextPrevBase(sublime_plugin.WindowCommand):
+
+    def _has_inline(self):
+        return self.window.id() in messages.WINDOW_MESSAGES
+
+
+class RustNextMessageCommand(NextPrevBase):
 
     def run(self, levels='all'):
-        messages.show_next_message(self.window, levels)
+        if self._has_inline():
+            messages.show_next_message(self.window, levels)
+        else:
+            self.window.run_command('next_result')
 
 
-class RustPrevMessageCommand(sublime_plugin.WindowCommand):
+class RustPrevMessageCommand(NextPrevBase):
 
     def run(self, levels='all'):
-        messages.show_prev_message(self.window, levels)
+        if self._has_inline():
+            messages.show_prev_message(self.window, levels)
+        else:
+            self.window.run_command('prev_result')
 
 
 class RustCancelCommand(sublime_plugin.WindowCommand):
