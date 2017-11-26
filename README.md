@@ -103,6 +103,10 @@ This is because the RLS Server is still in Alpha and the Sublime LSP plugin is w
 * Once LSP is installed, enable it for Rust using LSP: Enable Language Server Globally | Project
 * You should see rls initialized in the status bar at the bottom, it should be working at this point.
 
+## Context Menu
+The Sublime context menu includes a Rust entry with a variety of commands.
+See [context menu docs](docs/context.md) for more information.
+
 ## Settings
 To customize the settings, use the command from the Sublime menu:
 
