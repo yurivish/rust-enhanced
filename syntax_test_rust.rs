@@ -1098,3 +1098,38 @@ where
 //^^^^^^^^^^^^^^^ meta.struct
 //           ^^^ meta.struct meta.where storage.type
 //               ^ punctuation.terminator
+
+fn foo<F: FnMut(i32, i32 /*asd*/) -> i32>(f: F) {
+//                       ^^^^^^^ meta.generic comment
+    let lam = |time: i32 /* comment */, other: i32| {
+//                       ^^^^^^^^^^^^^ meta.function.parameters comment
+    };
+}
+
+// mdo example
+fn main() {
+    // exporting the monadic functions for the Iterator monad (similar
+    // to list comprehension)
+    use mdo::iter::{bind, ret, mzero};
+
+    let l = bind(1i32..11, move |z|
+                 bind(1..z, move |x|
+                      bind(x..z, move |y|
+                           bind(if x * x + y * y == z * z { ret(()) }
+                                else { mzero() },
+                                move |_|
+                                ret((x, y, z))
+                                )))).collect::<Vec<_>>();
+    println!("{:?}", l);
+
+    // the same thing, using the mdo! macro
+    let l = mdo! {
+        z =<< 1i32..11;
+        x =<< 1..z;
+//        ^^^ keyword.operator
+        y =<< x..z;
+        when x * x + y * y == z * z;
+        ret ret((x, y, z))
+    }.collect::<Vec<_>>();
+    println!("{:?}", l);
+}
