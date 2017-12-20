@@ -211,12 +211,13 @@ contexts:
       scope: punctuation.separator.rust
       push: after-operator
 
-
     - match: '\b[[:lower:]_][[:lower:][:digit:]_]*(?=\()'
       scope: support.function.rust
 
-
     - match: '{{identifier}}'
+
+    - match: '\b\.'
+      scope: punctuation.accessor.dot.rust
 
   visibility:
     - match: '\b(pub)\s*(\()'
@@ -543,7 +544,7 @@ contexts:
     - match: '{{identifier}}'
     - match: ':|,'
       scope: punctuation.separator.rust
-    - match: '\+|\bas\b|='
+    - match: '\+|='
       scope: keyword.operator.rust
     - match: '(?=\S)'
       scope: invalid.illegal.rust
@@ -573,6 +574,9 @@ contexts:
     - include: raw-pointer
     - match: \b(mut|ref|const|unsafe)\b
       scope: storage.modifier.rust
+    - match: '\bas\b'
+      # This is for qualified type paths <Type as TypePath>
+      scope: keyword.operator.rust
     - match: \b(fn)\b\s*(\()
       captures:
         1: storage.type.function.rust

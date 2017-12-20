@@ -158,3 +158,12 @@ fn f(string: &str) -> StrWrap<'_> { }
 // Never type.
 fn from_str() -> Result<Foo, !> {}
 //                           ^ meta.function meta.function.return-type meta.generic keyword.operator
+
+// Qualified path with type.
+// Note: This isn't actually a generics, but that gets reused for this purpose.
+type Item = <I as Iterator>::Item;
+//          ^^^^^^^^^^^^^^^ meta.generic
+//             ^^ keyword.operator
+//                ^^^^^^^^ support.type
+//                         ^^ punctuation.accessor
+//                           ^^^^ storage.type.source

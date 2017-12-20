@@ -62,6 +62,8 @@ my_var = format!("Hello {name}, how are you?",
 //            ^ punctuation.section.group.begin
 //                ^^^^ string.quoted.double
 //                 ^^ constant.other.placeholder
+//                      ^^^^ variable.language
+//                          ^ punctuation.accessor.dot
 //                            ^ punctuation.section.group.end
         write!(f, "{:10}", self.0)
 //                 ^^^^^ constant.other.placeholder
@@ -212,6 +214,7 @@ macro_rules! forward_ref_binop [
 //                                           ^ meta.macro meta.macro.transcribers meta.impl meta.block punctuation.section.block.begin
             type Output = <$t as $imp<$u>>::Output;
 //                        ^^^^^^^^^^^^^^^^ meta.generic
+//                            ^^ keyword.operator
 //                                        ^^ meta.path
 
             #[inline]
@@ -225,6 +228,7 @@ macro_rules! forward_ref_binop [
 //                                      ^^ variable.other
 //                                          ^^ punctuation.separator
 //                                             ^^^^^^^^^^^^^^^^ meta.generic
+//                                                 ^^ keyword.operator
 //                                                             ^^ meta.path
 //                                                                      ^ meta.macro meta.macro.transcribers meta.impl meta.block meta.block punctuation.section.block.begin
                 $imp::$method(*self, *other)

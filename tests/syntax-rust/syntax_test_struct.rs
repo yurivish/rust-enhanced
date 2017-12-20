@@ -64,6 +64,9 @@ impl Point
     fn double(&mut self) {
     // ^^^^^^ entity.name.function
         self.x *= 2;
+    //  ^^^^ variable.language
+    //      ^ punctuation.accessor.dot
+    //         ^^ keyword.operator
         self.y *= 2;
     }
 }
