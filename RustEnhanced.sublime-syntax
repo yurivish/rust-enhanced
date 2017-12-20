@@ -529,7 +529,7 @@ contexts:
   generic-angles-contents:
     - include: comments
     - include: attribute
-    - include: type-slice
+    - include: type-slice-or-array
     - match: '(?=>)'
       pop: true
     - match: '<'
@@ -548,6 +548,21 @@ contexts:
     - match: '(?=\S)'
       scope: invalid.illegal.rust
       pop: true
+
+  constant-integer-expression:
+    - include: integers
+    - match: \(
+      scope: punctuation.section.group.begin.rust
+      push:
+        - meta_scope: meta.group.rust
+        - match: \)
+          scope: punctuation.section.group.end.rust
+          pop: true
+        - include: constant-integer-expression
+    - match: '{{identifier}}'
+      scope: variable.other.constant.rust
+    - match: '[-+%/*]'
+      scope: keyword.operator.arithmetic.rust
 
   type-any-identifier:
     - include: comments
@@ -602,7 +617,7 @@ contexts:
           pop: true
     - include: hrtb
     - include: type
-    - include: type-slice
+    - include: type-slice-or-array
     - match: '\b_\b'
       scope: keyword.operator.rust
     - match: '!'
@@ -626,13 +641,20 @@ contexts:
         - match: '(?=\S)'
           pop: true
 
-  type-slice:
+  type-slice-or-array:
     - match: '\['
       scope: punctuation.section.group.begin.rust
       push:
         - match: '\]'
           scope: punctuation.section.group.end.rust
           pop: true
+        - match: ';'
+          scope: punctuation.separator.rust
+          set:
+            - match: '\]'
+              scope: punctuation.section.group.end.rust
+              pop: true
+            - include: constant-integer-expression
         - include: type-any-identifier
 
   struct-identifier:
@@ -1351,6 +1373,10 @@ contexts:
       scope: constant.other.placeholder.rust
 
   numbers:
+    - include: floats
+    - include: integers
+
+  floats:
     - match: '\b({{dec_literal}}(?:\.{{dec_literal}})?(?:{{float_exponent}})?)({{float_suffixes}})'
       captures:
         1: constant.numeric.float.rust
@@ -1362,6 +1388,7 @@ contexts:
     - match: '\b{{dec_literal}}\.(?![A-Za-z._''])'
       scope: constant.numeric.float.rust
 
+  integers:
     - match: '\b({{dec_literal}})({{int_suffixes}})?\b'
       captures:
         1: constant.numeric.integer.decimal.rust

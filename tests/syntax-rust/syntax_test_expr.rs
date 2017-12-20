@@ -32,7 +32,7 @@ let tuple = (1.0, 0i32, "Hello");
 
 // Tuple access.
 let x = tuple.1;
-//            ^ constant.numeric.integer.decimal.rust
+//            ^ constant.numeric.integer.decimal
 
 // Array access.
 let x = arr[1];
@@ -50,6 +50,32 @@ let x = [1; 2];
 //            ^ punctuation.terminator
 let x = [1; SOME_CONST];
 //          ^^^^^^^^^^ constant.other
+let _: Box<[[bool; (FOO + 1) / 2]; FOO * 3 % 12 - 1]>;
+//   ^ punctuation.separator
+//        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.generic
+//        ^ punctuation.definition.generic.begin
+//         ^^ punctuation.section.group.begin
+//           ^^^^ storage.type
+//               ^ punctuation.separator
+//                 ^ meta.group punctuation.section.group.begin
+//                  ^^^ variable.other.constant
+//                      ^ keyword.operator.arithmetic
+//                        ^ constant.numeric.integer.decimal
+//                         ^ punctuation.section.group.end
+//                           ^ keyword.operator.arithmetic
+//                             ^ constant.numeric.integer.decimal
+//                              ^ punctuation.section.group.end
+//                               ^ punctuation.separator
+//                                 ^^^ variable.other.constant
+//                                     ^ keyword.operator.arithmetic
+//                                       ^ constant.numeric.integer.decimal
+//                                         ^ keyword.operator.arithmetic
+//                                           ^^ constant.numeric.integer.decimal
+//                                              ^ keyword.operator.arithmetic
+//                                                ^ constant.numeric.integer.decimal
+//                                                 ^ punctuation.section.group.end
+//                                                  ^ punctuation.definition.generic.end
+//                                                   ^ punctuation.terminator
 
 // Borrow expression.
 let xsl = &xs;
