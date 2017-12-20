@@ -216,7 +216,7 @@ contexts:
 
     - match: '{{identifier}}'
 
-    - match: '\b\.'
+    - match: '\.'
       scope: punctuation.accessor.dot.rust
 
   visibility:
