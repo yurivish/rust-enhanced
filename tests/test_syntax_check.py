@@ -104,6 +104,7 @@ class TestSyntaxCheck(TestBase):
             ('error-tests/tests/macro-expansion-inside-2.rs', 'error-tests/tests/macro_expansion_inside_mod2.rs'),
             ('error-tests/tests/error_across_mod.rs', 'error-tests/tests/error_across_mod_f.rs'),
             'error-tests/tests/derive-error.rs',
+            'error-tests/tests/test_new_lifetime_message.rs',
             # Workspace tests.
             'workspace/workspace1/src/lib.rs',
             'workspace/workspace1/src/anothermod/mod.rs',
@@ -223,6 +224,9 @@ class TestSyntaxCheck(TestBase):
                     # This message only shows up in no-trans.
                     if method != 'no-trans':
                         return False
+                elif check == 'nightly':
+                    # This message only shows on nightly.
+                    return 'nightly' in self.rustc_version
                 else:
                     if not semver.match(self.rustc_version, check):
                         return False
@@ -232,6 +236,9 @@ class TestSyntaxCheck(TestBase):
 
         # Check phantoms.
         for emsg_info in expected_messages:
+            if not emsg_info['message']:
+                # This is a region-only highlight.
+                continue
             if restriction_check(emsg_info['restrictions']):
                 for i, (region, content) in enumerate(phantoms):
                     content = unescape(content)
@@ -254,8 +261,8 @@ class TestSyntaxCheck(TestBase):
                         view.file_name(), method, phantoms))
                 del phantoms[i]
         if len(phantoms):
-            raise AssertionError('Got extra phantoms for %r (method=%s): %r' % (
-                view.file_name(), method, phantoms))
+            raise AssertionError('Got extra phantoms for %r (method=%s, version=%s): %r' % (
+                view.file_name(), method, self.rustc_version, phantoms))
 
         # Check regions.
         found_regions = set()
@@ -328,7 +335,7 @@ class TestSyntaxCheck(TestBase):
         # Single-line spans.
         last_line = None
         last_line_offset = 1
-        pattern = r'//( *)(\^+)(WARN|ERR|HELP|NOTE|MSG)(\([^)]+\))? (.+)'
+        pattern = r'//( *)(\^+)(WARN|ERR|HELP|NOTE|MSG)(\([^)]+\))?(?: (.+))?'
         regions = view.find_all(pattern)
         for region in regions:
             text = view.substr(region)

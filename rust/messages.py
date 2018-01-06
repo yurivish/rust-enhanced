@@ -9,7 +9,6 @@ import itertools
 import os
 import re
 import webbrowser
-from pprint import pprint
 
 from . import util
 
@@ -27,7 +26,8 @@ from . import util
 # - `is_main`: If True, this is a top-level message.  False is used for
 #   attached detailed diagnostic information, child notes, etc.
 # - `path`: Absolute path to the file.
-# - `text`: The raw text of the message without any minihtml markup.
+# - `text`: The raw text of the message without any minihtml markup.  May be
+#   None if the content is raw markup.
 # - `minihtml_text`: The string used for showing phantoms that includes the
 #   minihtml markup.
 # - `output_panel_region`: Optional Sublime Region object that indicates the
@@ -107,7 +107,8 @@ def add_message(window, path, span, level, is_main, text, minihtml_text, msg_cb)
     :param level: The Rust message level ('error', 'note', etc.).
     :param is_main: If True, this is a top-level message.  False is used for
         attached detailed diagnostic information, child notes, etc.
-    :param text: The raw text of the message without any minihtml markup.
+    :param text: The raw text of the message without any minihtml markup. May
+        be None if there is no text (such as when adding pure markup).
     :param minihtml_text: The message to display with minihtml markup.
     :param msg_cb: Callback that will be given the message.  May be None.
     """
@@ -147,10 +148,11 @@ def add_message(window, path, span, level, is_main, text, minihtml_text, msg_cb)
 
 
 def _is_duplicate(to_add, messages):
-    # Primarily to avoid comparing the `output_panel_region` key.
+    # Ignore 'minihtml_text' and 'output_panel_region' keys.
+    keys = ('path', 'span', 'is_main', 'level', 'text')
     for message in messages:
-        for key, value in to_add.items():
-            if message[key] != value:
+        for key in keys:
+            if to_add[key] != message[key]:
                 break
         else:
             return True
@@ -681,6 +683,7 @@ def add_rust_messages(window, cwd, info, target_path, msg_cb):
     main_message = {}
     # List of message dictionaries, belonging to the main message.
     additional_messages = []
+
     _collect_rust_messages(window, cwd, info, target_path, msg_cb, {},
         main_message, additional_messages)
 
@@ -712,18 +715,25 @@ def add_rust_messages(window, cwd, info, target_path, msg_cb):
             if i % 2:
                 return '<a href="%s">%s</a>' % (txt, txt)
             else:
-                return html.escape(txt, quote=False).\
+                # Call strip() because sometimes rust includes newlines at the
+                # end of the message, which we don't want.
+                return html.escape(txt.strip(), quote=False).\
                     replace('\n', '<br>' + indent)
-        parts = re.split(LINK_PATTERN, message['text'])
-        escaped_text = ''.join(map(escape_and_link, enumerate(parts)))
 
-        content = content_template.format(
-            cls=cls,
-            level=level_text,
-            msg=escaped_text,
-            help_link=message.get('help_link', ''),
-            back_link=message.get('back_link', ''),
-        )
+        if message['text']:
+            parts = re.split(LINK_PATTERN, message['text'])
+            escaped_text = ''.join(map(escape_and_link, enumerate(parts)))
+
+            content = content_template.format(
+                cls=cls,
+                level=level_text,
+                msg=escaped_text,
+                help_link=message.get('help_link', ''),
+                back_link=message.get('back_link', ''),
+            )
+        else:
+            content = None
+
         add_message(window, message['span_path'], message['span_region'],
                     level, message['is_main'], message['text'], content,
                     msg_cb)
@@ -797,10 +807,14 @@ def _collect_rust_messages(window, cwd, info, target_path,
         - 'children': List of attached diagnostic messages (following this
           same format) of associated information.  AFAIK, these are never
           nested.
-        - 'rendered': Optional string (may be None).  Currently only used by
-          suggested replacements.  If a child has a span with
-          'suggested_replacement' set, then this a suggestion of how the line
-          should be written.
+        - 'rendered': Optional string (may be None).
+
+          Before 1.23: Used by suggested replacements.  If
+          'suggested_replacement' is set, then this is rendering of how the
+          line should be written.
+
+          After 1.23:  This contains the ASCII-art rendering of the message as
+          displayed by rustc's normal console output.
 
     - `parent_info`: Dictionary used for tracking "children" messages.
       Currently only has 'span' key, the span of the parent to display the
@@ -953,14 +967,17 @@ def _collect_rust_messages(window, cwd, info, target_path,
         # to happen when the span is_primary.
         #
         # This can also happen for macro expansions.
-        if label:
+        #
+        # Label with an empty string can happen for messages that have
+        # multiple spans (starting in 1.21).
+        if label != None:
             # Display the label for this Span.
             add_additional(span, label, info['level'])
         if span['suggested_replacement']:
             # The "suggested_replacement" contains the code that
             # should replace the span.  However, it can be easier to
             # read if you repeat the entire line (from "rendered").
-            add_additional(span, info['rendered'], 'help')
+            add_additional(span, span['suggested_replacement'], 'help')
 
     # Recurse into children (which typically hold notes).
     for child in info['children']:
