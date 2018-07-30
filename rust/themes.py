@@ -275,7 +275,7 @@ class SolidTheme(Theme):
                 links.append(
                     self.LINK_TMPL.format(
                         url=url, text='See Also:', path=path))
-            text = batch.primary_message.escaped_text(view, '')
+            text = batch.primary_message.escaped_text(view, '&nbsp;' + icon('none'))
             if not text and not children:
                 return None
             content = self.PRIMARY_MSG_TMPL.format(
