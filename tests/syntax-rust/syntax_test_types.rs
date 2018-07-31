@@ -1,0 +1,130 @@
+// SYNTAX TEST "Packages/Rust Enhanced/RustEnhanced.sublime-syntax"
+// This file is for misc type definitions that don't fit in other more
+// specific categories.
+
+type FnPointer = fn(i32) -> i32;
+// <- storage.type.type
+//   ^^^^^^^^^ entity.name.type
+//               ^^ storage.type.function
+//                 ^^^^^ meta.group
+//                  ^^^ storage.type
+//                       ^^ punctuation.separator
+//                          ^^^ storage.type
+
+type GenFnPointer = Bar<fn(i32) -> i32>;
+// <- storage.type.type
+//   ^^^^^^^^^^^^ entity.name.type
+//                  ^^^^^^^^^^^^^^^^^^^ meta.generic
+//                      ^^ storage.type.function
+//                        ^^^^^ meta.group
+//                         ^^^ storage.type
+//                              ^^ punctuation.separator
+//                                 ^^^ storage.type
+//                                     ^ - meta.generic
+
+type GenFnPointer2 = Bar<extern "C" fn()>;
+// <- storage.type.type
+//   ^^^^^^^^^^^^^ entity.name.type
+//                   ^^^^^^^^^^^^^^^^^^^^ meta.generic
+//                       ^^^^^^ keyword.other
+//                              ^^^ string.quoted.double
+//                                  ^^ storage.type.function
+//                                       ^ - meta.generic
+
+const ZERO: u64 = 0;
+// <- storage.type
+//    ^^^^ constant.other
+//        ^ punctuation.separator
+//          ^^^ storage.type
+//              ^ keyword.operator
+//                ^ constant.numeric.integer.decimal
+static NAME: &'static str = "John";
+// <- storage.type
+//           ^ keyword.operator
+//            ^^^^^^^ storage.modifier.lifetime
+//                    ^^^ storage.type
+//                        ^ keyword.operator
+//                          ^^^^^^ string.quoted.double
+
+
+// Function type in a box return type.
+// fixes https://github.com/rust-lang/sublime-rust/issues/144
+fn factory() -> Box<Fn(i32) -> i32> {
+// <- storage.type.function
+// ^^^^^^^ entity.name.function
+//                  ^^^^^^^^^^^^^^ meta.generic
+//                      ^^ storage.type
+//                              ^^ storage.type
+//                          ^^ source meta.function meta.function.return-type
+}
+
+let x: __m128i = __m128i::from_bits(f32x4::from_bits(m32x4::new(true, true, true, true)));
+//     ^^^^^^^ storage.type
+//               ^^^^^^^ storage.type
+//                                  ^^^^^ meta.group storage.type
+//                                                   ^^^^^ meta.group meta.group storage.type
+//                                                              ^^^^ meta.group meta.group meta.group constant.language
+
+let mut mutable = 12;
+//  ^^^ storage.modifier
+
+// Tuple types.
+type Pair<'a> = (i32, &'a str);
+// <- storage.type.type
+//   ^^^^ entity.name.type
+//       ^ keyword.operator
+//        ^^ storage.modifier.lifetime
+//          ^ keyword.operator
+//            ^ keyword.operator
+//              ^^^^^^^^^^^^^^ meta.group
+//              ^ punctuation.definition.group.begin
+//               ^^^ storage.type
+//                    ^ keyword.operator
+//                     ^^ storage.modifier.lifetime
+//                        ^^^ storage.type
+//                           ^ punctuation.definition.group.end
+//                            ^ punctuation.terminator
+let p: Pair<'static> = (10, "ten");
+// <- storage.type
+//   ^ punctuation.separator
+//     ^^^^^^^^^^^^^ meta.generic
+//         ^ punctuation.definition.generic.begin
+//          ^^^^^^^ storage.modifier.lifetime
+//                 ^ punctuation.definition.generic.end
+//                   ^ keyword.operator
+//                     ^^^^^^^^^^^ meta.group
+//                     ^ punctuation.definition.group.begin
+//                      ^^ constant.numeric.integer.decimal
+//                          ^^^^^ string.quoted.double
+//                               ^ punctuation.definition.group.end
+//                                ^ punctuation.terminator
+
+// Array types.
+let xs: [i32; 5] = [1, 2, 3, 4, 5];
+//    ^ punctuation.separator
+//      ^^^^^^^^ meta.group
+//      ^ punctuation.definition.group.begin
+//       ^^^ storage.type
+//            ^ constant.numeric.integer.decimal
+//             ^ punctuation.definition.group.end
+//                 ^^^^^^^^^^^^^^^ meta.group
+//                 ^ punctuation.definition.group.begin
+//                               ^ punctuation.definition.group.end
+
+// Slice types.
+let slice: &[i32];
+//         ^ keyword.operator
+//          ^^^^^ meta.group
+//          ^ punctuation.definition.group.begin
+//              ^ punctuation.definition.group.end
+//           ^^^ storage.type
+
+
+// Pointer types.
+let p: *const T;
+//     ^ keyword.operator
+//      ^^^^^ storage.type
+let p: *mut u8;
+//     ^ keyword.operator
+//      ^^^ storage.modifier
+//          ^^ storage.type
