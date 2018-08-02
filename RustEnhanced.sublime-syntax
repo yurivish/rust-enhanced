@@ -540,6 +540,7 @@ contexts:
 
   struct-identifier:
     - meta_scope: meta.struct.rust
+    - include: comments
     - match: '{{identifier}}(?=<)'
       scope: entity.name.struct.rust
       set:
@@ -608,6 +609,7 @@ contexts:
 
   union-identifier:
     - meta_scope: meta.union.rust
+    - include: comments
     - match: '{{identifier}}(?=<)'
       scope: entity.name.union.rust
       set:

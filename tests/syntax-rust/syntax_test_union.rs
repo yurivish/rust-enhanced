@@ -35,3 +35,6 @@ pub union Foo<'a, Y: Baz>
 // that we don't accidentally interpret it as a keyword.
 fn union() {}
 // ^^^^^ meta.function entity.name.function
+
+union /*comment*/ U {}
+//    ^^^^^^^^^^^ meta.union comment.block
