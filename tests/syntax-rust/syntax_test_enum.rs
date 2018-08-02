@@ -5,19 +5,20 @@ enum OperatingSystem
 // ^^^^^^^^^^^^^^^^^ meta.enum
 //   ^^^^^^^^^^^^^^^ entity.name.enum
 {
-// <- meta.enum meta.block punctuation.definition.block.begin
+// <- meta.enum punctuation.definition.block.begin
     Osx,
+//  ^^^ meta.enum storage.type.source
     Windows,
     Linux,
     Bsd(String),
     //  ^^^^^^ support.type
     Info { field: i32, value: str }
-    //   ^ meta.block meta.block punctuation.definition.block.begin
+    //   ^ punctuation.definition.block.begin
     //            ^^^ storage.type
     //                        ^^^ storage.type
-    //                            ^ meta.block meta.block punctuation.definition.block.end
+    //                            ^ meta.block punctuation.definition.block.end
 }
-// <- meta.enum meta.block punctuation.definition.block.end
+// <- meta.enum punctuation.definition.block.end
 
 let q = Message::Quit;
 //      ^^^^^^^ storage.type.source
@@ -33,3 +34,35 @@ let m = Message::Move { x: 50, y: 200 };
 //                    ^^^^^^^^^^^^^^^^^ meta.block
 //                         ^^ constant.numeric.integer.decimal
 //                                ^^^ constant.numeric.integer.decimal
+
+enum Discriminant {
+    A = 1,
+//  ^ meta.enum constant.other
+//      ^ meta.enum constant.numeric.integer.decimal
+    V1 = 0xABC,
+//  ^^ meta.enum constant.other
+//       ^^^^^ meta.enum constant.numeric.integer.hexadecimal
+    V2,
+//  ^^ meta.enum constant.other
+    SomeValue = 123,
+//  ^^^^^^^^^ meta.enum storage.type.source
+//              ^^^ meta.enum constant.numeric.integer.decimal
+    V3 = (1<<4),
+//  ^^ meta.enum constant.other
+//       ^^^^^^ meta.enum meta.group
+//        ^ constant.numeric.integer.decimal
+//         ^^ keyword.operator
+//           ^ constant.numeric.integer.decimal
+    lowercase,
+//  ^^^^^^^^^^^ meta.enum
+}
+
+// Enum type parameters.
+enum E<'asdf> {}
+//    ^^^^^^^ meta.enum meta.generic
+//     ^^^^^storage.modifier.lifetime
+enum C<T> where T: Copy {}
+//    ^^^ meta.enum meta.generic
+//        ^^^^^^^^^^^^^ meta.enum meta.where
+//        ^^^^^ keyword.other
+//                 ^^^^ support.type

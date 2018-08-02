@@ -47,5 +47,13 @@ pub struct Claim {
     pub date: String,
 }
 
+enum E {
+    #[allow(dead_code)]
+//  ^^^^^^^^^^^^^^^^^^^ meta.enum meta.annotation
+//    ^^^^^ support.function
+    A(i32),
+//    ^^^ meta.enum meta.struct meta.group storage.type
+}
+
 // TODO: FIXME - Generic parameters.
 // unsafe impl<#[may_dangle] T: ?Sized> Drop for Box<T> { }

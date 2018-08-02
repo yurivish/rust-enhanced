@@ -7,6 +7,7 @@ file_extensions:
 scope: source.rust
 variables:
   identifier: '(?:[[:alpha:]][_[:alnum:]]*|_[_[:alnum:]]+)'
+  camel_ident: '\b_*[A-Z][a-zA-Z0-9_]*[a-z][a-zA-Z0-9_]*\b'
   escaped_byte: '\\([nrt0\"''\\]|x\h{2})'
   escaped_char: '\\([nrt0\"''\\]|x[0-7]\h|u\{(?:\h_*){1,6}\})'
   int_suffixes: '[iu](?:8|16|32|64|128|size)'
@@ -90,13 +91,9 @@ contexts:
       scope: storage.type.impl.rust
       push: impl-definition
 
-    - match: '\b(enum)\s+({{identifier}})\b'
-      captures:
-        1: storage.type.enum.rust
-        2: entity.name.enum.rust
-      push:
-        - meta_scope: meta.enum.rust
-        - include: statements-block
+    - match: '\benum\b'
+      scope: storage.type.enum.rust
+      push: enum-identifier
 
     - match: \b(let|const|static)\b
       scope: storage.type.rust
@@ -106,15 +103,6 @@ contexts:
 
     - match: \bmod\b
       scope: storage.type.module.rust
-
-    - match: \bstruct\b
-      scope: storage.type.struct.rust
-
-    - match: \bimpl\b
-      scope: storage.type.impl.rust
-
-    - match: \benum\b
-      scope: storage.type.enum.rust
 
     - match: \btype\b
       scope: storage.type.type.rust
@@ -633,6 +621,67 @@ contexts:
       pop: true
     - match: '(?=;)'
       pop: true
+
+  enum-identifier:
+    - meta_scope: meta.enum.rust
+    - include: comments
+    - match: '{{identifier}}(?=<)'
+      scope: entity.name.enum.rust
+      set:
+        - meta_scope: meta.enum.rust meta.generic.rust
+        - match: '(?=<)'
+          push: generic-angles
+        - match: ''
+          set: enum-maybe-where
+    - match: '{{identifier}}'
+      scope: entity.name.enum.rust
+      set: enum-maybe-where
+
+  enum-maybe-where:
+    - meta_scope: meta.enum.rust
+    - include: comments
+    - match: '(?=\bwhere\b)'
+      push: impl-where
+    - match: '\{'
+      scope: punctuation.definition.block.begin.rust
+      set: enum-body
+
+  enum-body:
+    - meta_scope: meta.enum.rust
+    - include: comments
+    - include: attribute
+    - match: '\}'
+      scope: punctuation.definition.block.end.rust
+      pop: true
+    - match: '\b[[:upper:]_][[:upper:][:digit:]_]*\b'
+      scope: constant.other.rust
+      push: enum-variant-type
+    - match: '{{camel_ident}}'
+      scope: storage.type.source.rust
+      push: enum-variant-type
+    - match: '{{identifier}}'
+      push: enum-variant-type
+
+  enum-variant-type:
+    - include: comments
+    - match: '(?=\})'
+      pop: true
+    - match: ','
+      pop: true
+    - match: '='
+      set: enum-discriminant
+    - match: '(?=\()'
+      push: struct-tuple
+    - match: '(?=\{)'
+      push: struct-classic
+
+  enum-discriminant:
+    - match: ','
+      pop: true
+    - match: '(?=\})'
+      pop: true
+    # This is just constant-expression, but we don't have that defined.
+    - include: statements
 
   macro-block:
     - meta_scope: meta.macro.rust
