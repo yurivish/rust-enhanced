@@ -62,3 +62,51 @@ impl fmt::Display for PrintableStruct {
 impl !Send for Point {}
 //^^^^^^^^^^^^^^^^^^^^^ meta.impl
 //   ^ meta.impl keyword.operator meta.impl.opt-out
+
+// Trait bounds and type parameters.
+trait Foo: 'static {}
+//^^^^^^^^^^^^^^^^^^^ meta.trait
+//       ^ meta.where punctuation.separator
+//         ^^^^^^^ meta.where storage.modifier.lifetime
+//                 ^^ meta.block
+trait Foo<'a>: Sized {}
+//^^^^^^^^^^^^^^^^^^^^^ meta.trait
+//        ^^ meta.generic storage.modifier.lifetime
+//             ^^^^^ meta.where support.type
+trait Executor: Send + Sync + 'static {}
+//              ^^^^ meta.trait meta.where support.type
+//                     ^^^^ meta.trait meta.where support.type
+//                            ^^^^^^^ meta.trait meta.where storage.modifier.lifetime
+trait RcBoxPtr<T: ?Sized> {}
+//            ^^^^^^^^^^^ meta.trait meta.generic
+//                ^ keyword.operator
+//                 ^^^^^ support.type
+trait Circle where Self: Shape {}
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.trait
+//           ^^^^^^^^^^^^^^^^^^ meta.trait meta.where
+//           ^^^^^ keyword.other
+//                 ^^^^ storage.type
+trait BorrowMut<Borrowed: ?Sized> : Borrow<Borrowed> {}
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.trait
+//             ^^^^^^^^^^^^^^^^^^ meta.generic
+//                                ^ meta.trait meta.where punctuation.separator
+trait Add<RHS=Self> {}
+//       ^^^^^^^^^^ meta.trait meta.generic
+//           ^ keyword.operator
+//            ^^^^ storage.type
+trait Wedding<'t>: 't {}
+//            ^^ meta.trait meta.generic storage.modifier.lifetime
+//                 ^^ meta.trait meta.where storage.modifier.lifetime
+trait IntoCow<'a, B: ?Sized> where B: ToOwned {}
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.trait
+//            ^^ meta.generic storage.modifier.lifetime
+//                   ^ meta.generic keyword.operator
+//                    ^^^^^ meta.generic support.type
+//                           ^^^^^ meta.where keyword.other
+//                                    ^^^^^^^ meta.where support.type
+trait Bar: for<'a> Foo<&'a ()> {}
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.trait
+//         ^^^ meta.where keyword.other
+//             ^^ meta.where meta.generic storage.modifier.lifetime
+//                     ^ meta.where meta.generic keyword.operator
+//                      ^^ meta.where meta.generic storage.modifier.lifetime

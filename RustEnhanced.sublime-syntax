@@ -84,6 +84,12 @@ contexts:
         2: entity.name.trait.rust
       push:
         - meta_scope: meta.trait.rust
+        - match: '(?=:)'
+          push: impl-where
+        - match: '(?=\bwhere\b)'
+          push: impl-where
+        - match: '(?=<)'
+          push: generic-angles
         - include: statements-block
 
     - match: '\bimpl\b'
