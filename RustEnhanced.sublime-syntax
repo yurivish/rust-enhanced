@@ -8,6 +8,7 @@ scope: source.rust
 variables:
   identifier: '(?:[[:alpha:]][_[:alnum:]]*|_[_[:alnum:]]+)'
   camel_ident: '\b_*[A-Z][a-zA-Z0-9_]*[a-z][a-zA-Z0-9_]*\b'
+  lifetime: '''(?:_|{{identifier}})(?!\'')\b'
   escaped_byte: '\\([nrt0\"''\\]|x\h{2})'
   escaped_char: '\\([nrt0\"''\\]|x[0-7]\h|u\{(?:\h_*){1,6}\})'
   int_suffixes: '[iu](?:8|16|32|64|128|size)'
@@ -36,7 +37,7 @@ contexts:
         1: entity.name.label.rust
         2: punctuation.separator.rust
 
-    - match: '''{{identifier}}(?!\'')\b'
+    - match: '{{lifetime}}'
       scope: storage.modifier.lifetime.rust
 
     - match: '\b(mod)\s+({{identifier}})\b'
@@ -386,7 +387,7 @@ contexts:
       scope: keyword.operator.rust
     - match: \b(mut|ref)\b
       scope: storage.modifier.rust
-    - match: '''{{identifier}}(?!\'')\b'
+    - match: '{{lifetime}}'
       scope: storage.modifier.lifetime.rust
 
   closure-return:
@@ -426,7 +427,7 @@ contexts:
           __m(?:64|128|256)[di]? # __m512 should come later
         )\b
       scope: storage.type.rust
-    - match: '\bdyn\b(?!\s*::)(?=\s*(?:\(|''?{{identifier}}))'
+    - match: '\bdyn\b(?!\s*::)(?=\s*(?:\(|{{lifetime}}|{{identifier}}))'
       scope: storage.type.trait.rust
 
   generic-angles:
@@ -487,7 +488,7 @@ contexts:
             - match: '(?=\S)'
               pop: true
         - include: type-any-identifier
-    - match: '''{{identifier}}(?!\'')\b'
+    - match: '{{lifetime}}'
       scope: storage.modifier.lifetime.rust
     - match: '\b([[:upper:]]|_*[[:upper:]][[:alnum:]_]*[[:lower:]][[:alnum:]_]*)\b::'
       scope: meta.path.rust storage.type.rust
@@ -824,7 +825,7 @@ contexts:
       scope: entity.name.impl.rust
     - match: '&'
       scope: keyword.operator.rust
-    - match: '''{{identifier}}(?!\'')\b'
+    - match: '{{lifetime}}'
       scope: storage.modifier.lifetime.rust
 
   impl-where:
@@ -842,7 +843,7 @@ contexts:
         - include: type-any-identifier
         - match: '&'
           scope: keyword.operator.rust
-        - match: '''{{identifier}}(?!\'')\b'
+        - match: '{{lifetime}}'
           scope: storage.modifier.lifetime.rust
         - match: '(?=\S)'
           pop: true
@@ -920,7 +921,7 @@ contexts:
         - include: type-any-identifier
         - match: '&'
           scope: keyword.operator.rust
-        - match: '''{{identifier}}(?!\'')\b'
+        - match: '{{lifetime}}'
           scope: storage.modifier.lifetime.rust
         - match: '(?=\S)'
           pop: true
