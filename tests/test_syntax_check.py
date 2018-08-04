@@ -156,6 +156,8 @@ class TestSyntaxCheck(TestBase):
 
     def _test_messages(self, view, setups=None, extra_paths=()):
         self._override_setting('rust_message_theme', 'test')
+        # Don't insert <br> tags during tests.
+        view.settings().set('word_wrap', True)
         with UiIntercept() as ui:
             # Trigger the generation of messages.
             for setup in itertools.product(*setups):
