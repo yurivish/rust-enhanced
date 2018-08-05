@@ -1,3 +1,12 @@
+branches:
+  only:
+    # This is where pull requests from "bors r+" are built.
+    - staging
+    # This is where pull requests from "bors try" are built.
+    - trying
+    # This is for when a pull request is opened.
+    - master
+
 env:
   global:
     - PACKAGE="Rust Enhanced"
@@ -39,15 +48,13 @@ install:
   # Pin a known good version of nightly and clippy.
   - >
     if [ "$TRAVIS_RUST_VERSION" != "nightly" ]; then
-      rustup install nightly-2018-05-26;
+      rustup install nightly-2018-08-04;
       host=$(rustc -Vv | grep ^host: | sed -e "s/host: //g");
       toolchains=$(dirname $(dirname $(dirname $(rustup which rustc))));
       mv $toolchains/nightly-* $toolchains/nightly-$host;
-      cargo +nightly install --version 0.0.205 clippy || export RE_SKIP_CLIPPY=1;
-    else
-      cargo +nightly install clippy || export RE_SKIP_CLIPPY=1;
     fi
   # Install Rust packages needed by integration tests.
+  - rustup component add clippy-preview --toolchain=nightly
   - cargo install cargo-script
 
 
