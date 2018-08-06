@@ -9,6 +9,9 @@ unsafe impl<T> Send for Interned<T> {}
 //^^^^ storage.modifier
 pub unsafe trait Alloc { }
 //  ^^^^^^ storage.modifier
+fn f(a: unsafe fn() -> String) {}
+//      ^^^^^^ meta.function meta.function.parameters storage.modifier
+//             ^^ meta.function meta.function.parameters storage.type.function
 
 // Previously reserved keywords now unreserved.
 let pure = 1;
