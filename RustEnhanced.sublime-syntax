@@ -458,12 +458,6 @@ contexts:
 
   generic-angles-contents:
     - include: comments
-    - match: \bextern\b
-      scope: keyword.other.rust
-      push:
-        - include: strings
-        - match: '(?=\S)'
-          pop: true
     - include: type-slice
     - match: '(?=>)'
       pop: true
@@ -524,6 +518,12 @@ contexts:
           scope: punctuation.definition.type.end.rust
           pop: true
         - include: type-any-identifier
+    - match: \bextern\b
+      scope: keyword.other.rust
+      push:
+        - include: strings
+        - match: '(?=\S)'
+          pop: true
     - include: type
     - include: type-slice
     - match: '\b_\b'
