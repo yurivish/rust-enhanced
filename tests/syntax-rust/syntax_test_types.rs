@@ -136,3 +136,8 @@ impl Foo<'_, '_> { }
 //           ^^ meta.impl meta.generic storage.modifier.lifetime
 fn f(string: &str) -> StrWrap<'_> { }
 //                            ^^ meta.function meta.function.return-type meta.generic storage.modifier.lifetime
+
+
+// Never type.
+fn from_str() -> Result<Foo, !> {}
+//                           ^ meta.function meta.function.return-type meta.generic keyword.operator
