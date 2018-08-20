@@ -480,7 +480,7 @@ contexts:
     - include: return-type
     - match: '&'
       scope: keyword.operator.rust
-    - match: \b(mut|ref|const)\b
+    - match: \b(mut|ref|const|unsafe)\b
       scope: storage.modifier.rust
     - match: \b(fn)\b(\()
       captures:
