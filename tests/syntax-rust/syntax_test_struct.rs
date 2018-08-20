@@ -31,6 +31,9 @@ struct Pair(i32, i32);
 //               ^^^ storage.type
 //                   ^ - meta.struct
 
+struct /*comment*/ Comments {}
+//     ^^^^^^^^^^^ meta.struct comment.block
+
 struct Point
 // ^^^^^^^^^ meta.struct
 {
