@@ -300,3 +300,20 @@ pub fn from_buf_reader<T>(s: io::BufReader<T>) -> Result<isize, &'static str>
     where T: io::Read
 //  ^^^^^ keyword.other
 {}
+
+// HRTB in various positions.
+fn f<F: for<'c> Fn(&'c mut Self)>() {}
+//      ^^^ meta.generic keyword.other
+//         ^ meta.generic meta.generic punctuation.definition.generic.begin
+//          ^^ meta.generic meta.generic storage.modifier.lifetime
+//            ^ meta.generic meta.generic punctuation.definition.generic.end
+//              ^^ meta.generic support.type
+fn f(a: for<'a, 'b> fn() -> String) {}
+//   ^ variable.parameter
+//   ^^^^^^^^^^^^^^ meta.function meta.function.parameters
+//      ^^^ keyword.other
+//         ^ meta.generic punctuation.definition.generic.begin
+//          ^^ meta.generic storage.modifier.lifetime
+//            ^ meta.generic punctuation.separator
+//              ^^ meta.generic storage.modifier.lifetime
+//                ^ meta.function meta.function.parameters meta.generic punctuation.definition.generic.end

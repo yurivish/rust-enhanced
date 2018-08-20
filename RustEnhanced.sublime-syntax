@@ -451,12 +451,26 @@ contexts:
         - include: strings
         - match: '(?=\S)'
           pop: true
+    - include: hrtb
     - include: type
     - include: type-slice
     - match: '\b_\b'
       scope: keyword.operator.rust
     - match: '!'
       scope: keyword.operator.rust
+
+  hrtb:
+    - match: \bfor\b
+      scope: keyword.other.rust
+      push:
+        - match: '(?=<)'
+          push: generic-angles
+        - include: type-any-identifier
+        - match: '&'
+          scope: keyword.operator.rust
+        - include: lifetime
+        - match: '(?=\S)'
+          pop: true
 
   type-slice:
     - match: '\['
@@ -868,17 +882,6 @@ contexts:
       pop: true
     - match: \bwhere\b
       scope: keyword.other.rust
-    - match: \bfor\b
-      scope: keyword.other.rust
-      push:
-        - match: '(?=<)'
-          push: generic-angles
-        - include: type-any-identifier
-        - match: '&'
-          scope: keyword.operator.rust
-        - include: lifetime
-        - match: '(?=\S)'
-          pop: true
     - include: type-any-identifier
     - match: ':'
       scope: punctuation.separator.rust
@@ -945,17 +948,6 @@ contexts:
       set: fn-body
     - match: \bwhere\b
       scope: keyword.other.rust
-    - match: \bfor\b
-      scope: keyword.other.rust
-      push:
-        - match: '(?=<)'
-          push: generic-angles
-        - include: type-any-identifier
-        - match: '&'
-          scope: keyword.operator.rust
-        - include: lifetime
-        - match: '(?=\S)'
-          pop: true
     - include: type-any-identifier
     - match: ':'
       scope: punctuation.separator.rust
