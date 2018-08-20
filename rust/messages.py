@@ -114,6 +114,11 @@ class Message:
             # Rough assumption of using monospaced font, but should be
             # reasonable in most cases for proportional fonts.
             width = view.viewport_extent()[0] / view.em_width() - 5
+            # Sometimes Sublime responds with a negative number, guard
+            # against that.
+            if width < 0:
+                return self.text
+
             text = textwrap.fill(self.text, width=width,
                 break_long_words=False, break_on_hyphens=False)
 
