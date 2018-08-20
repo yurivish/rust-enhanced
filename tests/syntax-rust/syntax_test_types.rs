@@ -128,3 +128,11 @@ let p: *mut u8;
 //     ^ keyword.operator
 //      ^^^ storage.modifier
 //          ^^ storage.type
+
+
+// Anonymous lifetimes.
+impl Foo<'_, '_> { }
+//       ^^ meta.impl meta.generic storage.modifier.lifetime
+//           ^^ meta.impl meta.generic storage.modifier.lifetime
+fn f(string: &str) -> StrWrap<'_> { }
+//                            ^^ meta.function meta.function.return-type meta.generic storage.modifier.lifetime
