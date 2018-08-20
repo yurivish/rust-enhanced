@@ -37,8 +37,7 @@ contexts:
         1: entity.name.label.rust
         2: punctuation.separator.rust
 
-    - match: '{{lifetime}}'
-      scope: storage.modifier.lifetime.rust
+    - include: lifetime
 
     - match: '\b(mod)\s+({{identifier}})\b'
       captures:
@@ -102,46 +101,10 @@ contexts:
       scope: storage.type.enum.rust
       push: enum-identifier
 
-    - match: \b(let|const|static)\b
-      scope: storage.type.rust
-
-    - match: \bfn\b
-      scope: storage.type.function.rust
-
-    - match: \bmod\b
-      scope: storage.type.module.rust
-
-    - match: \btype\b
-      scope: storage.type.type.rust
-
-    - match: \btrait\b
-      scope: storage.type.trait.rust
-
-    - match: \b(mut|pub|unsafe|move|ref)\b
-      scope: storage.modifier.rust
-
-    - match: \b(crate|extern|use|where)\b
-      scope: keyword.other.rust
-
-    - match: \b(else|for|if|loop|match|while|yield)\b
-      scope: keyword.control.rust
-
     - match: '\b(break|continue)(?:\s+(''{{identifier}}))?'
       captures:
         1: keyword.control.rust
         2: entity.name.label.rust
-
-    - match: \breturn\b
-      scope: keyword.control.rust
-
-    - match: \b(as|in|box)\b
-      scope: keyword.operator.rust
-
-    - match: \b(virtual|become|priv|typeof|unsized|do|abstract|final|override|macro)\b
-      scope: invalid.illegal.rust
-
-    - match: \b(true|false)\b
-      scope: constant.language.rust
 
     - include: type
 
@@ -155,9 +118,6 @@ contexts:
     - include: attribute
     - include: strings
     - include: chars
-
-    - match: '\b[[:lower:]_][[:lower:][:digit:]_]*(?=\()'
-      scope: support.function.rust
 
     # macros which take format specs as the only parameter
     - match: '\b((?:format(?:_args)?|e?print(?:ln)?|panic|unreachable|unimplemented)!)\s*(\()'
@@ -218,37 +178,10 @@ contexts:
         - include: statements
 
     - include: return-type
-
-    # Making this an operator helps visually break up large
-    # match blocks containing just enums
-    - match: '=>'
-      scope: keyword.operator.rust
-
-    - match: '=(?!=)'
-      scope: keyword.operator.rust
-
-    - match: '[;,]'
-
-    - match: ':'
-      scope: punctuation.separator.rust
-
-    - match: '\.\.\.'
-      scope: keyword.operator.rust
-
-    - match: '\.\.'
-      scope: keyword.operator.rust
-
-    - match: '<<=|>>=|<<|>>'
-      scope: keyword.operator.rust
-
-    - match: '>=|<=|==|!=|&&|\|\|'
-      scope: keyword.operator.rust
-
-    - match: '\*=|/=|\+=|-=|%=|\^='
-      scope: keyword.operator.rust
-
-    - match: '[-=<>&|!~@?+*/%^''#$]'
-      scope: keyword.operator.rust
+    - include: symbols
+    - include: keywords
+    - match: '\b[[:lower:]_][[:lower:][:digit:]_]*(?=\()'
+      scope: support.function.rust
 
   visibility:
     - match: '\b(pub)\s*(\()'
@@ -393,8 +326,7 @@ contexts:
       scope: keyword.operator.rust
     - match: \b(mut|ref)\b
       scope: storage.modifier.rust
-    - match: '{{lifetime}}'
-      scope: storage.modifier.lifetime.rust
+    - include: lifetime
 
   closure-return:
     - meta_content_scope: meta.function.closure.rust
@@ -495,8 +427,7 @@ contexts:
             - match: '(?=\S)'
               pop: true
         - include: type-any-identifier
-    - match: '{{lifetime}}'
-      scope: storage.modifier.lifetime.rust
+    - include: lifetime
     - match: '\b([[:upper:]]|_*[[:upper:]][[:alnum:]_]*[[:lower:]][[:alnum:]_]*)\b::'
       scope: meta.path.rust storage.type.rust
       captures:
@@ -548,6 +479,9 @@ contexts:
     - match: '{{identifier}}'
       scope: entity.name.struct.rust
       set: struct-body
+    - match: '(?=\S)'
+      # Abort on invalid character.
+      pop: true
 
   struct-body:
     - meta_scope: meta.struct.rust
@@ -558,7 +492,8 @@ contexts:
       push: struct-tuple
     - match: '(?=\{)'
       set: struct-classic
-    - match: '(?=;)'
+    - match: '(?=\S)'
+      # Semicolon is valid here, others should just abort.
       pop: true
 
   struct-tuple:
@@ -695,96 +630,183 @@ contexts:
 
   macro-block:
     - meta_scope: meta.macro.rust
-    - match: '\}'
-      scope: meta.block.rust punctuation.definition.block.end.rust
-      pop: true
-    - match: '[\])]'
-      scope: punctuation.definition.ground.end.rust
-      pop: true
+    - include: comments
     - match: '\{'
-      scope: punctuation.definition.block.begin.rust
-      push:
-        - meta_scope: meta.block.rust
-        - match: '(?=\})'
+      scope: punctuation.section.block.begin.rust
+      set:
+        - meta_scope: meta.macro.rust
+        - match: '\}'
+          scope: punctuation.section.block.end.rust
           pop: true
         - include: macro-block-contents
-    - match: '\['
-      scope: punctuation.definition.group.begin.rust
-      push:
-        - meta_scope: meta.group.rust
-        - match: '(?=\])'
-          pop: true
-        - include: macro-block-contents
+
+    # Note: ) and ] require a trailing semicolon, but this
+    # does not check for that.
     - match: '\('
-      scope: punctuation.definition.group.begin.rust
-      push:
-        - meta_scope: meta.group.rust
-        - match: '(?=\))'
+      scope: punctuation.section.block.begin.rust
+      set:
+        - meta_scope: meta.macro.rust
+        - match: '\)'
+          scope: punctuation.section.block.end.rust
+          pop: true
+        - include: macro-block-contents
+
+    - match: '\['
+      scope: punctuation.section.block.begin.rust
+      set:
+        - meta_scope: meta.macro.rust
+        - match: '\]'
+          scope: punctuation.section.block.end.rust
           pop: true
         - include: macro-block-contents
 
   macro-block-contents:
+    # Macro block consists of a series of rules separated by semicolon
+    # (trailing semicolon is optional).
+    #
+    # A rule is: BRACKET matchers BRACKET => BRACKET transcribers BRACKET
+    # where BRACKET needs to be matched () or [] or {}
     - include: comments
-    - match: '\('
-      scope: punctuation.definition.group.begin.rust
-      push: macro-matcher
-    - match: ';'
-      pop: true
-
-  macro-matcher:
-    - include: comments
-    - meta_include_prototype: false
-    - meta_scope: meta.group.rust
-    - match: '\)'
-      scope: punctuation.definition.group.end.rust
-      set: macro-match-operator
-    - match: '(\$)(\()'
-      captures:
-        1: keyword.operator.rust
-        2: punctuation.definition.group.begin.rust
-      push:
-        - match: '(\))[^*+]?([*+])'
-          captures:
-            1: punctuation.definition.group.end.rust
-            2: keyword.operator.rust
-          pop: true
-        - include: macro-metavariable
-    - include: macro-metavariable
-
-  macro-match-operator:
-    - match: '=>'
-      scope: keyword.operator.rust
     - match: '\{'
-      scope: punctuation.definition.block.begin.rust
-      set:
-        - meta_scope: meta.block.rust
+      scope: punctuation.section.block.begin.rust
+      push:
+        - meta_include_prototype: false
+        - meta_scope: meta.macro.matchers.rust
         - match: '\}'
-          scope: punctuation.definition.block.end.rust
-          pop: true
-        - include: statements
-    - match: '\('
-      scope: punctuation.definition.group.begin.rust
-      set:
-        - meta_scope: meta.group.rust
-        - match: '\)'
-          scope: punctuation.definition.group.end.rust
-          pop: true
-        - include: statements
-    - match: '\['
-      scope: punctuation.definition.group.begin.rust
-      set:
-        - meta_scope: meta.group.rust
-        - match: '\]'
-          scope: punctuation.definition.group.end.rust
-          pop: true
-        - include: statements
+          scope: punctuation.section.block.end.rust
+          set: macro-rule-sep
+        - include: macro-matchers
 
-  macro-metavariable:
-    - match: '(\${{identifier}})(:)(ident|path|expr|ty|pat|stmt|block|item|meta|tt)'
+    - match: '\('
+      scope: punctuation.section.block.begin.rust
+      push:
+        - meta_include_prototype: false
+        - meta_scope: meta.macro.matchers.rust
+        - match: '\)'
+          scope: punctuation.section.block.end.rust
+          set: macro-rule-sep
+        - include: macro-matchers
+
+    - match: '\['
+      scope: punctuation.section.block.begin.rust
+      push:
+        - meta_include_prototype: false
+        - meta_scope: meta.macro.matchers.rust
+        - match: '\]'
+          scope: punctuation.section.block.end.rust
+          set: macro-rule-sep
+        - include: macro-matchers
+
+  macro-matchers:
+    - include: comments
+    - match: '\('
+      scope: punctuation.section.block.begin.rust
+      push:
+        - meta_include_prototype: false
+        - match: '\)'
+          scope: punctuation.section.block.end.rust
+          pop: true
+        - include: macro-matchers
+
+    - match: '\['
+      scope: punctuation.section.block.begin.rust
+      push:
+        - meta_include_prototype: false
+        - match: '\]'
+          scope: punctuation.section.block.end.rust
+          pop: true
+        - include: macro-matchers
+
+    - match: '\{'
+      scope: punctuation.section.block.begin.rust
+      push:
+        - meta_include_prototype: false
+        - match: '\}'
+          scope: punctuation.section.block.end.rust
+          pop: true
+        - include: macro-matchers
+
+    - match: '(\$\s*{{identifier}})\s*(:)\s*(ident|path|expr|ty|pat|stmt|block|item|meta|tt|lifetime)'
       captures:
         1: variable.parameter.rust
         2: punctuation.separator.rust
         3: storage.type.rust
+
+    - match: '(\$)\s*(\()'
+      # Kleene operator.
+      captures:
+        1: keyword.operator.rust
+        2: punctuation.section.group.begin.rust
+      push:
+        - meta_include_prototype: false
+        - match: '(\))\s*[^?*+]*\s*([?*+])'
+          captures:
+            1: punctuation.definition.group.end.rust
+            2: keyword.operator.rust
+          pop: true
+        - include: macro-matchers
+
+    # All other tokens except $ and delimiters are allowed here.
+    - include: numbers
+    - include: strings
+    - include: keywords
+    - include: lifetime
+    - include: chars
+    - include: symbols
+
+  macro-rule-sep:
+    - include: comments
+    - match: '=>'
+      scope: keyword.operator.rust
+      set: macro-transcriber-block
+    - match: '(?=\S)'
+      # Abort on unexpected character.
+      pop: true
+
+  macro-transcriber-block:
+    - include: comments
+
+    - match: '\{'
+      scope: punctuation.section.block.begin.rust
+      set:
+        - meta_scope: meta.macro.transcribers.rust
+        - match: '\}'
+          scope: punctuation.section.block.end.rust
+          set: macro-semi-sep
+        - include: statements
+
+    - match: '\('
+      scope: punctuation.section.block.begin.rust
+      set:
+        - meta_scope: meta.macro.transcribers.rust
+        - match: '\)'
+          scope: punctuation.section.block.end.rust
+          set: macro-semi-sep
+        - include: statements
+
+    - match: '\['
+      scope: punctuation.section.block.begin.rust
+      set:
+        - meta_scope: meta.macro.transcribers.rust
+        - match: '\]'
+          scope: punctuation.section.block.end.rust
+          set: macro-semi-sep
+        - include: statements
+
+    - match: '(?=\S)'
+      # Abort on unexpected character.
+      pop: true
+
+  macro-semi-sep:
+    - include: comments
+    - match: ';'
+      scope: punctuation.terminator.rust
+      pop: true
+    - match: '(?=[})\]])'
+      pop: true
+    - match: '\S'
+      # This is intended to help make it evident when you forget a semicolon.
+      scope: invalid.illegal.rust
 
   impl-definition:
     - meta_scope: meta.impl.rust
@@ -832,8 +854,10 @@ contexts:
       scope: entity.name.impl.rust
     - match: '&'
       scope: keyword.operator.rust
-    - match: '{{lifetime}}'
-      scope: storage.modifier.lifetime.rust
+    - include: lifetime
+    - match: '(?=\S)'
+      # Abort on unexpected character.
+      pop: true
 
   impl-where:
     - meta_scope: meta.where.rust
@@ -850,8 +874,7 @@ contexts:
         - include: type-any-identifier
         - match: '&'
           scope: keyword.operator.rust
-        - match: '{{lifetime}}'
-          scope: storage.modifier.lifetime.rust
+        - include: lifetime
         - match: '(?=\S)'
           pop: true
     - include: type-any-identifier
@@ -928,8 +951,7 @@ contexts:
         - include: type-any-identifier
         - match: '&'
           scope: keyword.operator.rust
-        - match: '{{lifetime}}'
-          scope: storage.modifier.lifetime.rust
+        - include: lifetime
         - match: '(?=\S)'
           pop: true
     - include: type-any-identifier
@@ -1190,6 +1212,10 @@ contexts:
         1: constant.numeric.integer.binary.rust
         2: storage.type.numeric.rust
 
+  lifetime:
+    - match: '{{lifetime}}'
+      scope: storage.modifier.lifetime.rust
+
   basic-identifiers:
     - match: '\b([[:upper:]_][[:upper:][:digit:]_]+)\b'
       scope: constant.other.rust
@@ -1227,3 +1253,92 @@ contexts:
         push: generic-angles
       - match: ''
         pop: true
+
+  symbols:
+    - match: '=>'
+      # Making this an operator helps visually break up large
+      # match blocks containing just enums
+      scope: keyword.operator.rust
+
+    - match: '=(?!=)'
+      scope: keyword.operator.rust
+
+    - match: '[;,]'
+
+    - match: ':'
+      scope: punctuation.separator.rust
+
+    - match: '\.\.\.'
+      scope: keyword.operator.rust
+
+    - match: '\.\.'
+      scope: keyword.operator.rust
+
+    - match: '<<=|>>=|<<|>>'
+      scope: keyword.operator.rust
+
+    - match: '>=|<=|==|!=|&&|\|\|'
+      scope: keyword.operator.rust
+
+    - match: '\*=|/=|\+=|-=|%=|\^='
+      scope: keyword.operator.rust
+
+    - match: '[-=<>&|!~@?+*/%^''#$]'
+      scope: keyword.operator.rust
+
+    - match: '<-|->'
+      scope: keyword.operator.rust
+
+  keywords:
+    # All keywords.  Note in `statements` some of these are superseded by more
+    # specific rules.
+    - match: \b(true|false)\b
+      scope: constant.language.rust
+
+    - match: \b(let|const|static)\b
+      scope: storage.type.rust
+
+    - match: \bfn\b
+      scope: storage.type.function.rust
+
+    - match: \bmod\b
+      scope: storage.type.module.rust
+
+    - match: \bstruct\b
+      scope: storage.type.struct.rust
+
+    - match: \bimpl\b
+      scope: storage.type.impl.rust
+
+    - match: \benum\b
+      scope: storage.type.enum.rust
+
+    - match: \btype\b
+      scope: storage.type.type.rust
+
+    - match: \btrait\b
+      scope: storage.type.trait.rust
+
+    - match: \b(mut|pub|unsafe|move|ref)\b
+      scope: storage.modifier.rust
+
+    - match: \b(crate|extern|use|where)\b
+      scope: keyword.other.rust
+
+    - match: \b(else|for|if|loop|match|while|yield)\b
+      scope: keyword.control.rust
+
+    - match: \b(break|continue)\b
+      scope: keyword.control.rust
+
+    - match: \breturn\b
+      scope: keyword.control.rust
+
+    - match: \b(as|in|box)\b
+      scope: keyword.operator.rust
+
+    - match: \b(virtual|become|priv|typeof|unsized|do|abstract|final|override|macro)\b
+      scope: invalid.illegal.rust
+
+    - match: \b(super|self|Self)\b
+      scope: keyword.other.rust
