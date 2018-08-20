@@ -78,18 +78,23 @@ struct Val (f64,);
 //              ^ punctuation.definition.group.end
 //               ^ punctuation.terminator
 
-// TODO: Fix extern.
 struct F {
     f: extern "C" fn(x: u8, ... /* comment */),
+//     ^^^^^^ meta.struct meta.block keyword.other
+//            ^^^ meta.struct meta.block string.quoted.double
+//                ^^ meta.struct meta.block storage.type.function
+//                              ^^^^^^^^^^^^^ meta.struct meta.block meta.group comment.block
     g: extern "C" fn(x: u8, /* comment */ ...),
+//                          ^^^^^^^^^^^^^ meta.struct meta.block meta.group comment.block
     h: extern "C" fn(x: u8, ...),
     i: extern "C" fn(
         x: u8,
+//         ^^ meta.struct meta.block meta.group storage.type
         // comment 4
+//      ^^^^^^^^^^^^^ meta.struct meta.block meta.group comment.line.double-slash
         y: String, // comment 3
+//                 ^^^^^^^^^^^^^ meta.struct meta.block meta.group comment.line.double-slash
         z: Foo,
-        // comment
-        ... // comment 2
     ),
 }
 
