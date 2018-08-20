@@ -455,6 +455,8 @@ contexts:
     - include: type-slice
     - match: '\b_\b'
       scope: keyword.operator.rust
+    - match: '!'
+      scope: keyword.operator.rust
 
   type-slice:
     - match: '\['
