@@ -478,7 +478,7 @@ contexts:
     - include: return-type
     - match: '&'
       scope: keyword.operator.rust
-    - match: \b(mut|ref)\b
+    - match: \b(mut|ref|const)\b
       scope: storage.modifier.rust
     - match: \b(fn)\b(\()
       captures:

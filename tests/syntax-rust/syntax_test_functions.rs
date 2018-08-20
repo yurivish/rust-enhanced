@@ -66,3 +66,10 @@ let f: extern "C" fn () = mem::transmute(0xffff0fa0u32);
 //                      ^ keyword.operator
 //                                       ^^^^^^^^^^ meta.group constant.numeric.integer.hexadecimal
 //                                                 ^^^ meta.group storage.type.numeric
+
+// Raw pointer in a parameter.
+fn f(a: *const u8, b: *mut i8) {}
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function.parameters
+//       ^^^^^ storage.modifier
+//                     ^^^ storage.modifier
