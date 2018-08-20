@@ -55,5 +55,7 @@ enum E {
 //    ^^^ meta.enum meta.struct meta.group storage.type
 }
 
-// TODO: FIXME - Generic parameters.
-// unsafe impl<#[may_dangle] T: ?Sized> Drop for Box<T> { }
+// Generic parameters.
+unsafe impl<#[may_dangle] T: ?Sized> Drop for Box<T> { }
+//          ^^^^^^^^^^^^^ meta.annotation
+//         ^^^^^^^^^^^^^^^^^^^^^^^^^ meta.impl meta.generic

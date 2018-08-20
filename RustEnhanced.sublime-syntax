@@ -453,6 +453,7 @@ contexts:
 
   generic-angles-contents:
     - include: comments
+    - include: attribute
     - include: type-slice
     - match: '(?=>)'
       pop: true
