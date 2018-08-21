@@ -323,6 +323,31 @@ class TestCargoBuild(TestBase):
         self._run_build_wait('doc')
         self.assertTrue(os.path.exists(target))
 
+    def test_document_messages(self):
+        """Test "Document" variant with json messages."""
+        rustc_version = util.get_rustc_version(sublime.active_window(),
+                                               plugin_path)
+        if semver.match(rustc_version, '<1.30.0-beta'):
+            print('Skipping "Document JSON" test, need rustc >= 1.30')
+            return
+        self._with_open_file('tests/doc/src/lib.rs',
+            self._test_document_messages_intralink)
+        self._with_open_file('tests/doc/src/main.rs',
+            self._test_document_messages_invalid)
+
+    def _test_document_messages_intralink(self, view):
+        self._cargo_clean(view)
+        self._run_build_wait('doc')
+        self._check_added_message(view.window(), view.file_name(),
+            r'cannot be resolved')
+
+    def _test_document_messages_invalid(self, view):
+        self._cargo_clean(view)
+        self._run_build_wait('doc',
+            settings={'target': '--bin doc'})
+        self._check_added_message(view.window(), view.file_name(),
+            r'Forced error')
+
     @debug_wrapper
     def test_clippy(self):
         """Test "Clippy" variant."""

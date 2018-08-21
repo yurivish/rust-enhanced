@@ -88,7 +88,7 @@ CARGO_COMMANDS = {
         'allows_target_triple': True,
         'allows_release': True,
         'allows_features': True,
-        'allows_json': False,
+        'allows_json': True,
     },
     'clippy': {
         'name': 'Clippy',
