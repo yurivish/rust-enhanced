@@ -1074,7 +1074,7 @@ contexts:
   escaped-char:
     - match: '{{escaped_char}}'
       scope: constant.character.escape.rust
-    - match: '\\u{[^}]*}'
+    - match: '\\u\{[^}]*\}'
       scope: invalid.illegal.character.escape.rust
     - match: '\\.'
       scope: invalid.illegal.character.escape.rust
