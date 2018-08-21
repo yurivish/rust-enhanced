@@ -33,19 +33,23 @@ type GenFnPointer2 = Bar<extern "C" fn()>;
 
 const ZERO: u64 = 0;
 // <- storage.type
-//    ^^^^ constant.other
+//    ^^^^ entity.name.constant
 //        ^ punctuation.separator
 //          ^^^ storage.type
 //              ^ keyword.operator
 //                ^ constant.numeric.integer.decimal
 static NAME: &'static str = "John";
 // <- storage.type
+//     ^^^^ entity.name.constant
 //           ^ keyword.operator
 //            ^^^^^^^ storage.modifier.lifetime
 //                    ^^^ storage.type
 //                        ^ keyword.operator
 //                          ^^^^^^ string.quoted.double
-
+static mut BRAVO: u32 = 0;
+// <- storage.type
+//     ^^^ storage.modifier
+//         ^^^^^ entity.name.constant
 
 // Function type in a box return type.
 // fixes https://github.com/rust-lang/sublime-rust/issues/144

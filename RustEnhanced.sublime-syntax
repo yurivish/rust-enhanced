@@ -101,6 +101,17 @@ contexts:
       scope: storage.type.enum.rust
       push: enum-identifier
 
+    - match: '\b(const)\s+({{identifier}})'
+      captures:
+        1: storage.type.rust
+        2: entity.name.constant.rust
+
+    - match: '\b(static)\s+(?:(mut)\s+)?({{identifier}})'
+      captures:
+        1: storage.type.rust
+        2: storage.modifier.rust
+        3: entity.name.constant.rust
+
     - match: '\b(break|continue)(?:\s+(''{{identifier}}))?'
       captures:
         1: keyword.control.rust
