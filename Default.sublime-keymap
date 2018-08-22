@@ -37,14 +37,14 @@
             { "key": "eol_selector", "operator": "not_equal", "operand": "string.quoted.double - punctuation.definition.string.end", "match_all": true }
         ]
     },
-    // r# will expand to r#""#
+    // r#" will expand to r#""#
     // Additional # characters will be duplicated on both sides.
-    { "keys": ["#"], "command": "insert_snippet", "args": {"contents": "#$1\"$0\"${1/[^#]/$1/}#"}, "context":
+    { "keys": ["\""], "command": "insert_snippet", "args": {"contents": "\"$0\"${TM_CURRENT_WORD/[^#]/$1/}"}, "context":
         [
             { "key": "setting.auto_match_enabled", "operator": "equal", "operand": true },
             { "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true },
             { "key": "following_text", "operator": "regex_contains", "operand": "^(?:\t| |\\)|]|\\}|>|$)", "match_all": true },
-            { "key": "preceding_text", "operator": "regex_contains", "operand": "r$", "match_all": true },
+            { "key": "preceding_text", "operator": "regex_contains", "operand": "r#+$", "match_all": true },
             { "key": "selector", "operator": "equal", "operand": "source.rust" },
             { "key": "eol_selector", "operator": "not_equal", "operand": "string.quoted.double - punctuation.definition.string.end", "match_all": true }
         ]
