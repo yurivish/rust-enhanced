@@ -78,16 +78,31 @@ class RustSyntaxCheckThread(rust_thread.RustThread, rust_proc.ProcListener):
 
         self.update_status()
         self.this_view_found = False
+        CHECK_FAIL_MSG = 'Rust check failed, see console or debug log.'
         try:
             messages.clear_messages(self.window)
             try:
-                self.get_rustc_messages()
+                rc = self.get_rustc_messages()
             except rust_proc.ProcessTerminatedError:
+                self.window.status_message('')
                 return
-            messages.messages_finished(self.window)
+            except Exception as e:
+                self.window.status_message(CHECK_FAIL_MSG)
+                raise
         finally:
             self.done = True
-            self.window.status_message('')
+        messages.messages_finished(self.window)
+        counts = messages.message_counts(self.window)
+        if counts:
+            msg = []
+            for key, value in sorted(counts.items(), key=lambda x: x[0]):
+                level = key.plural if value > 1 else key.name
+                msg.append('%i %s' % (value, level))
+            self.window.status_message('Rust check: %s' % (', '.join(msg,)))
+        elif rc:
+            self.window.status_message(CHECK_FAIL_MSG)
+        else:
+            self.window.status_message('Rust check: success')
 
     def update_status(self, count=0):
         if self.done:
@@ -105,6 +120,9 @@ class RustSyntaxCheckThread(rust_thread.RustThread, rust_proc.ProcListener):
         filename.
 
         :raises rust_proc.ProcessTerminatedError: Check was canceled.
+        :raises OSError: Failed to launch the child process.
+
+        :returns: Returns the process return code.
         """
         method = util.get_setting('rust_syntax_checking_method', 'check')
         settings = cargo_settings.CargoSettings(self.window)
@@ -119,8 +137,7 @@ class RustSyntaxCheckThread(rust_thread.RustThread, rust_proc.ProcListener):
             self.msg_rel_path = cmd['msg_rel_path']
             p = rust_proc.RustProc()
             p.run(self.window, cmd['command'], self.cwd, self, env=cmd['env'])
-            p.wait()
-            return
+            return p.wait()
 
         if method == 'no-trans':
             print('rust_syntax_checking_method == "no-trans" is no longer supported.')
@@ -129,10 +146,13 @@ class RustSyntaxCheckThread(rust_thread.RustThread, rust_proc.ProcListener):
 
         if method != 'check':
             print('Unknown setting for `rust_syntax_checking_method`: %r' % (method,))
-            return
+            return -1
 
         td = target_detect.TargetDetector(self.window)
         targets = td.determine_targets(self.triggered_file_name)
+        if not targets:
+            return -1
+        rc = 0
         for (target_src, target_args) in targets:
             cmd = settings.get_command(method, command_info, self.cwd, self.cwd,
                 initial_settings={'target': ' '.join(target_args)},
@@ -149,9 +169,10 @@ class RustSyntaxCheckThread(rust_thread.RustThread, rust_proc.ProcListener):
             p = rust_proc.RustProc()
             self.current_target_src = target_src
             p.run(self.window, cmd['command'], self.cwd, self, env=cmd['env'])
-            p.wait()
+            rc = p.wait()
             if self.this_view_found:
-                break
+                return rc
+        return rc
 
     #########################################################################
     # ProcListner methods

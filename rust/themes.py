@@ -104,7 +104,7 @@ class ClearTheme(Theme):
                 level_text = ''
             else:
                 if msg.level == last_level:
-                    level_text = '&nbsp;' * (len(msg.level) + 2)
+                    level_text = '&nbsp;' * (len(str(msg.level)) + 2)
                 else:
                     level_text = '%s: ' % (msg.level,)
             last_level = msg.level

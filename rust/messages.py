@@ -15,6 +15,7 @@ import webbrowser
 
 from . import util, themes, log
 from .batch import *
+from .levels import *
 
 # Key is window id.
 # Value is a dictionary: {
@@ -42,7 +43,7 @@ class Message:
         be None if the content is raw markup (such as a minihtml link) or if
         it is an outline-only region (which happens with things such as
         dual-region messages added in 1.21).
-    :ivar level: Message level as a string such as "error", or "info".
+    :ivar level: Message level as a `Level` object.
     :ivar span: Location of the message (0-based):
         `((line_start, col_start), (line_end, col_end))`
         May be `None` to indicate no particular spot.
@@ -258,27 +259,17 @@ def messages_finished(window):
 def _draw_region_highlights(view, batch):
     if util.get_setting('rust_region_style') == 'none':
         return
-
-    # Collect message regions by level.
-    regions = {
-        'error': [],
-        'warning': [],
-        'note': [],
-        'help': [],
-    }
     if batch.hidden:
         return
+
+    # Collect message regions by level.
+    regions = {level: [] for level in LEVELS.values()}
     for msg in batch:
         region = msg.sublime_region(view)
-        if msg.level not in regions:
-            log.critical(view.window(),
-                'RustEnhanced: Unknown message level %r encountered.',
-                msg.level)
-            msg.level = 'error'
         regions[msg.level].append((msg.region_key, region))
 
     # Do this in reverse order so that errors show on-top.
-    for level in ['help', 'note', 'warning', 'error']:
+    for level in reversed(sorted(list(LEVELS.values()))):
         # Use scope names from color themes to drive the color of the outline.
         # 'invalid' typically is red.  We use 'info' for all other levels, which
         # is usually not defined in any color theme, and will end up showing as
@@ -293,7 +284,7 @@ def _draw_region_highlights(view, batch):
             scope = 'invalid'
         else:
             scope = 'info'
-        icon = util.icon_path(level)
+        icon = util.icon_path(level.name)
         for key, region in regions[level]:
             _sublime_add_regions(
                 view, key, [region], scope, icon,
@@ -468,13 +459,8 @@ def _sort_messages(window):
     items = []
     for path, batches in batches_by_path.items():
         for batch in batches:
-            level = {
-                'error': 0,
-                'warning': 1,
-                'note': 2,
-                'help': 3,
-            }.get(batch.first().level, 0)
-            items.append((level, path, batch.first().lineno(), batch))
+            first = batch.first()
+            items.append((first.level, path, first.lineno(), batch))
     items.sort(key=lambda x: x[:3])
     batches_by_path = collections.OrderedDict()
     for _, path, _, batch in items:
@@ -737,6 +723,19 @@ def list_messages(window):
     window.show_quick_panel(panel_items, on_done, 0, 0, on_highlighted)
 
 
+def message_counts(window):
+    result = collections.Counter()
+    try:
+        win_info = WINDOW_MESSAGES[window.id()]
+    except KeyError:
+        return result
+    for batches in win_info['paths'].values():
+        for batch in batches:
+            if isinstance(batch, PrimaryBatch):
+                result[batch.first().level] += 1
+    return result
+
+
 def add_rust_messages(window, base_path, info, target_path, msg_cb):
     """Add messages from Rust JSON to Sublime views.
 
@@ -876,13 +875,13 @@ def _collect_rust_messages(window, base_path, info, target_path,
         message.path = make_span_path(span)
         message.span = make_span_region(span)
         message.text = text
-        message.level = info['level']
+        message.level = level_from_str(info['level'])
 
     def add_additional(span, text, level, suggested_replacement=None):
         child = Message()
         child.text = text
         child.suggested_replacement = suggested_replacement
-        child.level = level
+        child.level = level_from_str(level)
         child.primary = False
         if 'macros>' in span['file_name']:
             # Nowhere to display this, just send it to the console via msg_cb.
@@ -925,7 +924,7 @@ def _collect_rust_messages(window, base_path, info, target_path,
                     # put it.
                     if msg_cb:
                         tmp_msg = Message()
-                        tmp_msg.level = info['level']
+                        tmp_msg.level = level_from_str(info['level'])
                         tmp_msg.text = imsg
                         msg_cb(tmp_msg)
 

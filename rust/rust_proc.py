@@ -91,6 +91,8 @@ def slurp_json(window, cmd, cwd):
     :returns: List of parsed JSON objects.
 
     :raises ProcessTermiantedError: Process was terminated by another thread.
+    :raises OSError: Failed to launch the child process. `FileNotFoundError`
+        is a typical example if the executable is not found.
     """
     rc, listener = _slurp(window, cmd, cwd)
     if not listener.json and rc:
@@ -109,6 +111,8 @@ def check_output(window, cmd, cwd):
     :returns: A string of the command's output.
 
     :raises ProcessTermiantedError: Process was terminated by another thread.
+    :raises OSError: Failed to launch the child process. `FileNotFoundError`
+        is a typical example if the executable is not found.
     :raises subprocess.CalledProcessError: The command returned a nonzero exit
         status.
     """
@@ -160,6 +164,9 @@ class RustProc(object):
 
         :raises ProcessTermiantedError: Process was terminated by another
             thread.
+        :raises OSError: Failed to launch the child process.
+            `FileNotFoundError` is a typical example if the executable is not
+            found.
         """
         self.cmd = cmd
         self.cwd = cwd
