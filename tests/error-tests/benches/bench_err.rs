@@ -2,6 +2,7 @@
 // to nightly.
 
    #[asdf]
-// ^^^^^^^ERR The attribute `asdf` is currently unknown
-// ^^^^^^^HELP(nightly) add #![feature(custom_attribute)]
+// ^^^^^^^ERR(<1.30.0-beta) The attribute `asdf` is currently unknown
+//   ^^^^ERR(>=1.30.0-beta) The attribute `asdf` is currently unknown
+//   ^^^^HELP(nightly) add #![feature(custom_attribute)]
 fn f() {}
