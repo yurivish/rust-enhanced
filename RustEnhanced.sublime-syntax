@@ -13,6 +13,8 @@ variables:
   escaped_char: '\\([nrt0\"''\\]|x[0-7]\h|u\{(?:\h_*){1,6}\})'
   int_suffixes: '[iu](?:8|16|32|64|128|size)'
   float_suffixes: 'f(32|64)'
+  dec_literal: '[0-9](?:[0-9_])*'
+  float_exponent: '[eE][+-]?[0-9_]*[0-9][0-9_]*'
 contexts:
   main:
     - include: statements
@@ -1174,22 +1176,18 @@ contexts:
       scope: constant.other.placeholder.rust
 
   numbers:
-    - match: '\b((?:\d[\d_]*)?\.)(\d[\d_]*(?:[eE][+-]?[\d_]+)?)({{float_suffixes}})?'
+    - match: '\b({{dec_literal}}(?:\.{{dec_literal}})?(?:{{float_exponent}})?)({{float_suffixes}})'
       captures:
         1: constant.numeric.float.rust
-        2: constant.numeric.float.rust
-        3: storage.type.numeric.rust
-    - match: '\b(\d[\d_]*\.)(?!\.)'
+        2: storage.type.numeric.rust
+    - match: '\b{{dec_literal}}\.{{dec_literal}}(?:{{float_exponent}})?'
       scope: constant.numeric.float.rust
-    - match: '\b(\d[\d_]*)({{float_suffixes}})\b'
-      captures:
-        1: constant.numeric.float.rust
-        2: storage.type.numeric.rust
-    - match: '\b(\d[\d_]*(?:\.[\d_]+)?[eE][-+]?[\d_]+)({{float_suffixes}})?\b'
-      captures:
-        1: constant.numeric.float.rust
-        2: storage.type.numeric.rust
-    - match: '\b(\d[\d_]*)({{int_suffixes}})?\b'
+    - match: '\b{{dec_literal}}{{float_exponent}}'
+      scope: constant.numeric.float.rust
+    - match: '\b{{dec_literal}}\.(?![A-Za-z._''])'
+      scope: constant.numeric.float.rust
+
+    - match: '\b({{dec_literal}})({{int_suffixes}})?\b'
       captures:
         1: constant.numeric.integer.decimal.rust
         2: storage.type.numeric.rust
