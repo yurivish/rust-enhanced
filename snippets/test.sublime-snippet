@@ -2,7 +2,7 @@
     <content><![CDATA[
 #[test]
 fn ${1:name}() {
-    ${2:unimplemented!();}
+	${2:unimplemented!();}
 }]]></content>
     <tabTrigger>test</tabTrigger>
     <scope>source.rust</scope>
