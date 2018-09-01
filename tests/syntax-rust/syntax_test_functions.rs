@@ -73,3 +73,36 @@ fn f(a: *const u8, b: *mut i8) {}
 //  ^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function.parameters
 //       ^^^^^ storage.modifier
 //                     ^^^ storage.modifier
+
+// Test irrefutable patterns in params.  Most of these tests are in `syntax_test_closure.rs`.
+fn f(self,
+//  ^^^^^^^ meta.function meta.function.parameters
+//   ^^^^ variable.parameter
+     (a, b): Tuple,
+//   ^^^^^^ meta.group
+//   ^ punctuation.section.group.begin
+//    ^ variable.parameter
+//       ^ variable.parameter
+//        ^ punctuation.section.group.end
+//         ^ punctuation.separator
+     Struct{field: c}: Struct,
+//         ^^^^^^^^^^ meta.block
+//         ^ punctuation.section.block.begin
+//                 ^ variable.parameter
+//                  ^ punctuation.section.block.end
+//                   ^ punctuation.separator
+     TupleStruct{0: d}: TupleStruct,
+//              ^^^^^^ meta.block
+//              ^ punctuation.section.block.begin
+//               ^ constant.numeric.integer.decimal
+//                  ^ variable.parameter
+//                   ^ punctuation.section.block.end
+//                    ^ punctuation.separator
+     [e, f]: Slice)
+//   ^^^^^^ meta.brackets
+//   ^ punctuation.section.brackets.begin
+//    ^ variable.parameter
+//       ^ variable.parameter
+//        ^ punctuation.section.brackets.end
+//         ^ punctuation.separator
+{}

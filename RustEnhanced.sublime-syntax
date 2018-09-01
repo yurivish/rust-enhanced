@@ -292,6 +292,74 @@ contexts:
         - match: '(?=\S)'
           pop: true
 
+  pattern-param:
+    - include: comments
+    - match: '&'
+      scope: keyword.operator.rust
+    - match: \b(mut|ref)\b
+      scope: storage.modifier.rust
+    - match: '@'
+      scope: keyword.operator.rust
+    - match: '\b{{identifier}}\b(?!\s*(?:::|\{|\[|\())'
+      scope: variable.parameter.rust
+
+    - match: '\{'
+      # Struct pattern.
+      scope: punctuation.section.block.begin.rust
+      push:
+        - meta_scope: meta.block.rust
+        - match: '\}'
+          scope: punctuation.section.block.end.rust
+          pop: true
+        - match: '(\d+)\s*(:)'
+          # Tuple struct field specifier.
+          captures:
+            1: constant.numeric.integer.decimal.rust
+            2: punctuation.separator.rust
+        - match: '{{identifier}}\s*(:)'
+          # Struct field specifier.
+          captures:
+            1: punctuation.separator.rust
+        - match: '\.\.'
+          scope: keyword.operator.rust
+        - include: pattern-param
+
+    - match: '\('
+      # Tuple or tuple struct pattern.
+      scope: punctuation.section.group.begin.rust
+      push:
+        - meta_scope: meta.group.rust
+        - match: '\)'
+          scope: punctuation.section.group.end.rust
+          pop: true
+        - match: '\.\.'
+          scope: keyword.operator.rust
+        - include: pattern-param
+
+    - match: '\['
+      # Slice pattern.
+      scope: punctuation.section.brackets.begin.rust
+      push:
+        - meta_scope: meta.brackets.rust
+        - match: '\]'
+          scope: punctuation.section.brackets.end.rust
+          pop: true
+        - include: pattern-param
+
+    # Path for struct patterns.
+    - match: '\bself\b|\bsuper\b'
+      scope: keyword.other.rust
+    - match: '\b{{identifier}}\b'
+    - match: '::'
+
+    - match: ':(?!:)'
+      # Type
+      scope: punctuation.separator.rust
+      push:
+        - match: '(?=,|\)|\]|\}|\|)'
+          pop: true
+        - include: type-any-identifier
+
   closure:
     - meta_content_scope: meta.function.closure.rust
     - match: '\|'
@@ -300,33 +368,16 @@ contexts:
 
   closure-parameters:
     - meta_scope: meta.function.parameters.rust
+    - match: '\|'
+      scope: punctuation.definition.parameters.end.rust
+      pop: true
+    - include: pattern-param
     # If the user has just typed a |, exit the params
     # scope as soon as we hit something that it not a
     # valid part so the whole rest of the document isn't
     # highlighted using the params scope
-    - include: comments
-    - match: '(?=\()'
-      push: group
-    - match: '(?=[};)\]])'
+    - match: '(?=[=};)\]])'
       pop: true
-    - match: '\|'
-      scope: punctuation.definition.parameters.end.rust
-      pop: true
-    - match: \bself\b
-      scope: variable.parameter.rust
-    - match: '({{identifier}})\s*(?:(:(?!:))|(?=\||,))'
-      captures:
-        1: variable.parameter.rust
-        2: punctuation.separator.rust
-      push:
-        - match: (?=,|\|)
-          pop: true
-        - include: type-any-identifier
-    - match: '&'
-      scope: keyword.operator.rust
-    - match: \b(mut|ref)\b
-      scope: storage.modifier.rust
-    - include: lifetime
 
   closure-return:
     - meta_content_scope: meta.function.closure.rust
@@ -414,7 +465,7 @@ contexts:
       scope: keyword.operator.rust
     - match: \b(mut|ref|const|unsafe)\b
       scope: storage.modifier.rust
-    - match: \b(fn)\b(\()
+    - match: \b(fn)\b\s*(\()
       captures:
         1: storage.type.function.rust
         2: meta.group.rust punctuation.definition.group.begin.rust
@@ -921,13 +972,7 @@ contexts:
         - include: comments
         - match: '(?=\))'
           pop: true
-        - match: \bself\b
-          scope: variable.parameter.rust
-        - match: '({{identifier}})\s*(:(?!:))'
-          captures:
-            1: variable.parameter.rust
-            2: punctuation.separator.rust
-        - include: type-any-identifier
+        - include: pattern-param
 
   fn-return:
     - meta_scope: meta.function.rust
