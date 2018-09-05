@@ -40,6 +40,18 @@ hovers over an error (either the gutter icon or the error outline).  The
 
 <img src="img/messages_popup.gif">
 
+### Popup Command
+You can bind the `rust_message_popup` command to a keyboard shortcut to force
+a popup to open if there is a message under the cursor.  Example:
+
+```json
+{"keys": ["f8"], "command": "rust_message_popup", "context":
+    [
+        {"key": "selector", "operator":"equal", "operand": "source.rust"}
+    ]
+}
+```
+
 ## Phantom Themes
 
 The style of the phantom messages is controlled with the `rust_message_theme`
@@ -81,6 +93,9 @@ outline.
 | Value | Example | Description |
 | :---- | :------ | :---------- |
 | `outline` | <img src="img/region_style_outline.png"> | Regions are highlighted with an outline. |
+| `solid_underline` | <img src="img/region_style_solid_underline.png"> | Solid underline. |
+| `stippled_underline` | <img src="img/region_style_stippled_underline.png"> | Stippled underline. |
+| `squiggly_underline` | <img src="img/region_style_squiggly_underline.png"> | Squiggly underline. |
 | `none` | <img src="img/region_style_none.png"> | Regions are not highlighted. |
 
 ## Gutter Images
@@ -105,3 +120,4 @@ A few other settings are available for controlling messages:
 | :------ | :------ | :---------- |
 | `show_panel_on_build` | `true` | If true, an output panel is displayed at the bottom of the window showing the compiler output. |
 | `rust_syntax_hide_warnings` | `false` | If true, will not display warning messages. |
+| `rust_message_status_bar` | `false` | If true, will display the message under the cursor in the window status bar. |

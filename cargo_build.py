@@ -222,32 +222,22 @@ class CargoExecThread(rust_thread.RustThread):
 ON_LOAD_MESSAGES_ENABLED = True
 
 
-class CargoEventListener(sublime_plugin.EventListener):
+class MessagesViewEventListener(sublime_plugin.ViewEventListener):
 
     """Every time a new file is loaded, check if is a Rust file with messages,
     and if so, display the messages.
     """
 
-    def on_load(self, view):
-        if ON_LOAD_MESSAGES_ENABLED and util.active_view_is_rust(view=view):
-            # For some reason, view.window() returns None here.
-            # Use set_timeout to give it time to attach to a window.
-            sublime.set_timeout(
-                lambda: messages.show_messages_for_view(view), 1)
+    @classmethod
+    def is_applicable(cls, settings):
+        return ON_LOAD_MESSAGES_ENABLED and util.is_rust_view(settings)
 
-    def on_query_context(self, view, key, operator, operand, match_all):
-        # Used by the Escape-key keybinding to dismiss inline phantoms.
-        if key == 'rust_has_messages':
-            try:
-                winfo = messages.WINDOW_MESSAGES[view.window().id()]
-                has_messages = not winfo['hidden']
-            except KeyError:
-                has_messages = False
-            if operator == sublime.OP_EQUAL:
-                return operand == has_messages
-            elif operator == sublime.OP_NOT_EQUAL:
-                return operand != has_messages
-        return None
+    @classmethod
+    def applies_to_primary_view_only(cls):
+        return False
+
+    def on_load_async(self):
+        messages.show_messages_for_view(self.view)
 
 
 class NextPrevBase(sublime_plugin.WindowCommand):
@@ -486,13 +476,77 @@ class CargoMessageHover(sublime_plugin.ViewEventListener):
 
     @classmethod
     def is_applicable(cls, settings):
-        s = settings.get('syntax')
-        package_name = __package__.split('.')[0]
-        return s == 'Packages/%s/RustEnhanced.sublime-syntax' % (package_name,)
+        return util.is_rust_view(settings)
+
+    @classmethod
+    def applies_to_primary_view_only(cls):
+        return False
 
     def on_hover(self, point, hover_zone):
         if util.get_setting('rust_phantom_style', 'normal') == 'popup':
             messages.message_popup(self.view, point, hover_zone)
+
+
+class RustMessagePopupCommand(sublime_plugin.TextCommand):
+
+    """Manually display a popup for any message under the cursor."""
+
+    def run(self, edit):
+        for r in self.view.sel():
+            messages.message_popup(self.view, r.begin(), sublime.HOVER_TEXT)
+
+
+class RustMessageStatus(sublime_plugin.ViewEventListener):
+
+    """Display message under cursor in status bar."""
+
+    @classmethod
+    def is_applicable(cls, settings):
+        return (util.is_rust_view(settings)
+            and util.get_setting('rust_message_status_bar', False))
+
+    @classmethod
+    def applies_to_primary_view_only(cls):
+        return False
+
+    def on_selection_modified_async(self):
+        # https://github.com/SublimeTextIssues/Core/issues/289
+        # Only works with the primary view, get the correct view.
+        # (Also called for each view, unfortunately.)
+        active_view = self.view.window().active_view()
+        if active_view and active_view.buffer_id() == self.view.buffer_id():
+            view = active_view
+        else:
+            view = self.view
+        messages.update_status(view)
+
+
+class RustEventListener(sublime_plugin.EventListener):
+
+    def on_activated_async(self, view):
+        # This is a workaround for this bug:
+        # https://github.com/SublimeTextIssues/Core/issues/2411
+        # It would be preferable to use ViewEventListener, but it doesn't work
+        # on duplicate views created with Goto Anything.
+        if not util.active_view_is_rust(view=view):
+            return
+        if util.get_setting('rust_message_status_bar', False):
+            messages.update_status(view)
+        messages.draw_regions_if_missing(view)
+
+    def on_query_context(self, view, key, operator, operand, match_all):
+        # Used by the Escape-key keybinding to dismiss inline phantoms.
+        if key == 'rust_has_messages':
+            try:
+                winfo = messages.WINDOW_MESSAGES[view.window().id()]
+                has_messages = not winfo['hidden']
+            except KeyError:
+                has_messages = False
+            if operator == sublime.OP_EQUAL:
+                return operand == has_messages
+            elif operator == sublime.OP_NOT_EQUAL:
+                return operand != has_messages
+        return None
 
 
 class RustAcceptSuggestedReplacement(sublime_plugin.TextCommand):

@@ -1,5 +1,7 @@
 """Classes used for aggregating messages that are on the same line."""
 
+from . import util
+
 
 class MessageBatch:
 
@@ -48,8 +50,8 @@ class MessageBatch:
         # (user has to close and reopen the file).  I don't know of any good
         # workarounds.
         for msg in self:
-            view = window.find_open_file(msg.path)
-            if view:
+            views = util.open_views_for_file(window, msg.path)
+            for view in views:
                 view.erase_regions(msg.region_key)
                 view.erase_phantoms(msg.region_key)
 

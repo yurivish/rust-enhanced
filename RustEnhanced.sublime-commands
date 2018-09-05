@@ -56,4 +56,8 @@
         "caption": "Rust: Open Debug Log",
         "command": "rust_open_log"
     },
+    {
+        "caption": "Rust: Popup Message At Cursor",
+        "command": "rust_message_popup"
+    }
 ]
