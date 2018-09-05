@@ -2,12 +2,12 @@
     <content><![CDATA[
 #[cfg(test)]
 mod tests {
-    use super::*;
+	use super::*;
 
-    #[test]
-    fn ${1:name}() {
-        ${2:unimplemented!();}
-    }
+	#[test]
+	fn ${1:name}() {
+		${2:unimplemented!();}
+	}
 }]]></content>
     <tabTrigger>tests-mod</tabTrigger>
     <scope>source.rust</scope>
