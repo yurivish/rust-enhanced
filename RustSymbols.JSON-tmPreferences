@@ -1,6 +1,6 @@
 {
     "name": "Rust Symbols",
-    "scope": "entity.name.function.rust, entity.name.macro.rust, entity.name.struct.rust, entity.name.enum.rust, entity.name.module.rust, entity.name.type.rust, entity.name.trait.rust",
+    "scope": "entity.name.function.rust, entity.name.macro.rust, entity.name.struct.rust, entity.name.enum.rust, entity.name.module.rust, entity.name.type.rust, entity.name.trait.rust, entity.name.constant.rust",
     "settings": {
         "showInSymbolList": 1,
         "showInIndexedSymbolList": 1

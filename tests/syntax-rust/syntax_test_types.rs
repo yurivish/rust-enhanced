@@ -33,19 +33,23 @@ type GenFnPointer2 = Bar<extern "C" fn()>;
 
 const ZERO: u64 = 0;
 // <- storage.type
-//    ^^^^ constant.other
+//    ^^^^ entity.name.constant
 //        ^ punctuation.separator
 //          ^^^ storage.type
 //              ^ keyword.operator
 //                ^ constant.numeric.integer.decimal
 static NAME: &'static str = "John";
 // <- storage.type
+//     ^^^^ entity.name.constant
 //           ^ keyword.operator
 //            ^^^^^^^ storage.modifier.lifetime
 //                    ^^^ storage.type
 //                        ^ keyword.operator
 //                          ^^^^^^ string.quoted.double
-
+static mut BRAVO: u32 = 0;
+// <- storage.type
+//     ^^^ storage.modifier
+//         ^^^^^ entity.name.constant
 
 // Function type in a box return type.
 // fixes https://github.com/rust-lang/sublime-rust/issues/144
@@ -121,13 +125,25 @@ let slice: &[i32];
 
 
 // Pointer types.
-let p: *const T;
-//     ^ keyword.operator
-//      ^^^^^ storage.type
+let p: *const Foo;
+//     ^^^^^^ storage.modifier
+//            ^^^ storage.type.source
 let p: *mut u8;
-//     ^ keyword.operator
-//      ^^^ storage.modifier
+//     ^^^^ storage.modifier
 //          ^^ storage.type
+let raw = &x as *const i32;
+//              ^^^^^^ storage.modifier
+//                     ^^^ storage.type
+let raw_mut = &mut y as *mut i32;
+//                      ^^^^ storage.modifier
+//                           ^^^ storage.type
+let p_imm: *const u32 = &i as *const u32;
+//         ^^^^^^ storage.modifier
+//                            ^^^^^^ storage.modifier
+//                                   ^^^ storage.type
+type ExampleRawPointer = HashMap<*const i32, Option<i32>, BuildHasherDefault<FnvHasher>>;
+//                               ^^^^^^ meta.generic storage.modifier
+//                                      ^^^ meta.generic storage.type
 
 
 // Anonymous lifetimes.

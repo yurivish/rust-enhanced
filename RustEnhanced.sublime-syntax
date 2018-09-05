@@ -101,6 +101,19 @@ contexts:
       scope: storage.type.enum.rust
       push: enum-identifier
 
+    - include: raw-pointer
+
+    - match: '\b(const)\s+({{identifier}})'
+      captures:
+        1: storage.type.rust
+        2: entity.name.constant.rust
+
+    - match: '\b(static)\s+(?:(mut)\s+)?({{identifier}})'
+      captures:
+        1: storage.type.rust
+        2: storage.modifier.rust
+        3: entity.name.constant.rust
+
     - match: '\b(break|continue)(?:\s+(''{{identifier}}))?'
       captures:
         1: keyword.control.rust
@@ -412,6 +425,7 @@ contexts:
     - include: return-type
     - match: '&'
       scope: keyword.operator.rust
+    - include: raw-pointer
     - match: \b(mut|ref|const|unsafe)\b
       scope: storage.modifier.rust
     - match: \b(fn)\b(\()
@@ -458,6 +472,10 @@ contexts:
       scope: keyword.operator.rust
     - match: '!'
       scope: keyword.operator.rust
+
+  raw-pointer:
+    - match: '\*\s*(?:const|mut)\b'
+      scope: storage.modifier.rust
 
   hrtb:
     - match: \bfor\b
