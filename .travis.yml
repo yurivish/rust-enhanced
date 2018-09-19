@@ -1,11 +1,6 @@
-branches:
-  only:
-    # This is where pull requests from "bors r+" are built.
-    - staging
-    # This is where pull requests from "bors try" are built.
-    - trying
-    # This is for when a pull request is opened.
-    - master
+# Avoid building twice with bors (no need to test on master after it has
+# already run on the staging branch).
+if: branch = staging OR type = pull_request
 
 env:
   global:
