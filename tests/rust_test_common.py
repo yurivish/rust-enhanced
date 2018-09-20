@@ -71,6 +71,12 @@ class TestBase(unittest.TestCase):
         # Override settings.
         self._original_settings = {}
         self.settings = sublime.load_settings('RustEnhanced.sublime-settings')
+        # Ensure all settings are at defaults.
+        defaults = sublime.load_resource('Packages/%s/RustEnhanced.sublime-settings' % (
+            util.PACKAGE_NAME,))
+        defaults = sublime.decode_value(defaults)
+        for key, value in defaults.items():
+            self._override_setting(key, value)
         self._override_setting('show_panel_on_build', False)
         self._override_setting('cargo_build', {})
         # Disable incremental compilation (first enabled in 1.24).  It slows

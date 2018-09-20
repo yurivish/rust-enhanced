@@ -1,9 +1,9 @@
 import sublime
 import sublime_plugin
 import os
+import time
 from .rust import (messages, rust_proc, rust_thread, util, target_detect,
                    cargo_settings, semver, log)
-from pprint import pprint
 
 
 """On-save syntax checking.
@@ -13,26 +13,31 @@ whenever you save a Rust file.
 """
 
 
+# TODO: Use ViewEventListener if
+# https://github.com/SublimeTextIssues/Core/issues/2411 is fixed.
 class RustSyntaxCheckEvent(sublime_plugin.EventListener):
 
-    # Beware: This gets called multiple times if the same buffer is opened in
-    # multiple views (with the same view passed in each time).  See:
-    # https://github.com/SublimeTextIssues/Core/issues/289
+    last_save = 0
+
     def on_post_save(self, view):
-        # Are we in rust scope and is it switched on?
-        # We use phantoms which were added in 3118
-        if int(sublime.version()) < 3118:
+        enabled = util.get_setting('rust_syntax_checking', True)
+        if not enabled or not util.active_view_is_rust(view=view):
+            return
+        prev_save = self.last_save
+        self.last_save = time.time()
+        if self.last_save - prev_save < 0.25:
+            # This is a guard for a few issues.
+            # * `on_post_save` gets called multiple times if the same buffer
+            #   is opened in multiple views (with the same view passed in each
+            #   time). See:
+            #   https://github.com/SublimeTextIssues/Core/issues/289
+            # * When using "Save All" we want to avoid launching a bunch of
+            #   threads and then immediately killing them.
             return
         log.clear_log(view.window())
-
-        enabled = util.get_setting('rust_syntax_checking', True)
-        if enabled and util.active_view_is_rust(view=view):
-            t = RustSyntaxCheckThread(view)
-            t.start()
-        elif not enabled:
-            # If the user has switched OFF the plugin, remove any phantom
-            # lines.
-            messages.clear_messages(view.window())
+        messages.erase_status(view)
+        t = RustSyntaxCheckThread(view)
+        t.start()
 
 
 class RustSyntaxCheckThread(rust_thread.RustThread, rust_proc.ProcListener):

@@ -222,8 +222,8 @@ def clear_messages(window, soft=False):
         winfo = WINDOW_MESSAGES.pop(window.id(), {})
 
     for path, batches in winfo.get('paths', {}).items():
-        view = window.find_open_file(path)
-        if view:
+        views = util.open_views_for_file(window, path)
+        for view in views:
             for batch in batches:
                 for msg in batch:
                     view.erase_regions(msg.region_key)
@@ -257,7 +257,18 @@ def messages_finished(window):
 
 
 def _draw_region_highlights(view, batch):
-    if util.get_setting('rust_region_style') == 'none':
+    region_style = util.get_setting('rust_region_style')
+    flags = sublime.DRAW_NO_FILL | sublime.DRAW_EMPTY
+    if region_style == 'none':
+        return
+    elif region_style == 'solid_underline':
+        flags |= sublime.DRAW_NO_OUTLINE | sublime.DRAW_SOLID_UNDERLINE
+    elif region_style == 'stippled_underline':
+        flags |= sublime.DRAW_NO_OUTLINE | sublime.DRAW_STIPPLED_UNDERLINE
+    elif region_style == 'squiggly_underline':
+        flags |= sublime.DRAW_NO_OUTLINE | sublime.DRAW_SQUIGGLY_UNDERLINE
+
+    if batch.hidden:
         return
     if batch.hidden:
         return
@@ -286,13 +297,11 @@ def _draw_region_highlights(view, batch):
             scope = 'info'
         icon = util.icon_path(level.name)
         for key, region in regions[level]:
-            _sublime_add_regions(
-                view, key, [region], scope, icon,
-                sublime.DRAW_NO_FILL | sublime.DRAW_EMPTY)
+            _sublime_add_regions(view, key, [region], scope, icon, flags)
 
 
-def message_popup(view, point, hover_zone):
-    """Displays a popup if there is a message at the given point."""
+def batches_at_point(view, point, hover_zone):
+    """Return a list of message batches at the given point."""
     try:
         winfo = WINDOW_MESSAGES[view.window().id()]
     except KeyError:
@@ -325,7 +334,12 @@ def message_popup(view, point, hover_zone):
             return False
 
         batches = filter(filter_point, batches)
+    return list(batches)
 
+
+def message_popup(view, point, hover_zone):
+    """Displays a popup if there is a message at the given point."""
+    batches = batches_at_point(view, point, hover_zone)
     if batches:
         theme = themes.THEMES[util.get_setting('rust_message_theme')]
         minihtml = '\n'.join(theme.render(view, batch, for_popup=True) for batch in batches)
@@ -335,6 +349,25 @@ def message_popup(view, point, hover_zone):
         max_width = view.em_width() * 79
         _sublime_show_popup(view, minihtml, sublime.COOPERATE_WITH_AUTO_COMPLETE,
             point, max_width=max_width, on_navigate=on_nav)
+
+
+STATUS_KEY = 'rust-msg-status'
+
+
+def update_status(view):
+    """Display diagnostic messages in status bar under the cursor."""
+    for r in view.sel():
+        batches = batches_at_point(view, r.begin(), sublime.HOVER_TEXT)
+        if batches:
+            msg = batches[0].first()
+            view.set_status(STATUS_KEY, msg.text)
+            return
+    view.erase_status(STATUS_KEY)
+
+
+def erase_status(view):
+    """Clear the status in the message bar."""
+    view.erase_status(STATUS_KEY)
 
 
 def _click_handler(view, url, hide_popup=False):
@@ -564,9 +597,13 @@ def redraw_all_open_views(window):
         return
     winfo['hidden'] = False
     for path, batches in winfo['paths'].items():
-        view = window.find_open_file(path)
-        if view:
-            show_messages_for_view(view)
+        views = util.open_views_for_file(window, path)
+        if views:
+            for batch in batches:
+                # Phantoms seem to be attached to the buffer.
+                _show_phantom(views[0], batch)
+                for view in views:
+                    _draw_region_highlights(view, batch)
 
 
 def show_messages_for_view(view):
@@ -581,6 +618,20 @@ def show_messages_for_view(view):
     for batch in batches:
         _show_phantom(view, batch)
         _draw_region_highlights(view, batch)
+
+
+def draw_regions_if_missing(view):
+    try:
+        winfo = WINDOW_MESSAGES[view.window().id()]
+    except KeyError:
+        return
+    if winfo['hidden']:
+        return
+    batches = winfo['paths'].get(view.file_name(), [])
+    msgs = itertools.chain.from_iterable(batches)
+    if not any((view.get_regions(msg.region_key) for msg in msgs)):
+        for batch in batches:
+            _draw_region_highlights(view, batch)
 
 
 def _ith_iter_item(d, i):
@@ -606,7 +657,7 @@ def _advance_next_message(window, levels, wrap_around=False):
         batches = _ith_iter_item(paths.values(), path_idx)
         while batch_idx < len(batches):
             batch = batches[batch_idx]
-            if _is_matching_level(levels, batch.first()):
+            if not batch.hidden and _is_matching_level(levels, batch.first()):
                 current_idx = (path_idx, batch_idx)
                 win_info['batch_index'] = current_idx
                 return current_idx
@@ -646,7 +697,7 @@ def _advance_prev_message(window, levels, wrap_around=False):
         batches = _ith_iter_item(paths.values(), path_idx)
         while batch_idx >= 0:
             batch = batches[batch_idx]
-            if _is_matching_level(levels, batch.first()):
+            if not batch.hidden and _is_matching_level(levels, batch.first()):
                 current_idx = (path_idx, batch_idx)
                 win_info['batch_index'] = current_idx
                 return current_idx
@@ -1101,10 +1152,13 @@ def _save_batches(window, batches, msg_cb):
         path_batches.append(batch)
         for i, msg in enumerate(batch):
             msg.region_key = 'rust-%i' % (num + i,)
-        view = window.find_open_file(batch.path())
-        if view:
-            _show_phantom(view, batch)
-            _draw_region_highlights(view, batch)
-        if msg_cb:
-            for msg in batch:
-                msg_cb(msg)
+        if not WINDOW_MESSAGES[wid]['hidden']:
+            views = util.open_views_for_file(window, batch.path())
+            if views:
+                # Phantoms seem to be attached to the buffer.
+                _show_phantom(views[0], batch)
+                for view in views:
+                    _draw_region_highlights(view, batch)
+            if msg_cb:
+                for msg in batch:
+                    msg_cb(msg)

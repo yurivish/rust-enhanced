@@ -37,6 +37,9 @@
 
     // For errors/warnings, how to highlight the region of the error.
     // "outline" - Outlines the region.
+    // "solid_underline" - A solid underline.
+    // "stippled_underline" - A stippled underline.
+    // "squiggly_underline" - A squiggly underline.
     // "none" - No outlining.
     "rust_region_style": "outline",
 
@@ -50,6 +53,9 @@
     // "clear" - Clear background with colors matching your color scheme.
     // "solid" - Solid background color.
     "rust_message_theme": "clear",
+
+    // If `true`, displays diagnostic messages under the cursor in the status bar.
+    "rust_message_status_bar": false,
 
     // If your cargo project has several build targets, it's possible to specify mapping of
     // source code filenames to the target names to enable syntax checking.

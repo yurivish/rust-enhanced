@@ -2,9 +2,10 @@
 
 import sublime
 import textwrap
-import threading
-import time
 import os
+
+
+PACKAGE_NAME = __package__.split('.')[0]
 
 
 def index_with(l, cb):
@@ -98,6 +99,12 @@ def active_view_is_rust(window=None, view=None):
     return 'source.rust' in view.scope_name(0)
 
 
+def is_rust_view(settings):
+    """Helper for use with ViewEventListener."""
+    s = settings.get('syntax')
+    return (s == 'Packages/%s/RustEnhanced.sublime-syntax' % (PACKAGE_NAME,))
+
+
 def get_cargo_metadata(window, cwd, toolchain=None):
     """Load Cargo metadata.
 
@@ -139,7 +146,6 @@ def icon_path(level, res=None):
     if level not in ('error', 'warning', 'note', 'help', 'none'):
         return ''
     gutter_style = get_setting('rust_gutter_style', 'shape')
-    package_name = __package__.split('.')[0]
     if gutter_style == 'none':
         return ''
     else:
@@ -148,4 +154,13 @@ def icon_path(level, res=None):
         else:
             res_suffix = ''
         return 'Packages/%s/images/gutter/%s-%s%s.png' % (
-            package_name, gutter_style, level, res_suffix)
+            PACKAGE_NAME, gutter_style, level, res_suffix)
+
+
+def open_views_for_file(window, file_name):
+    """Return all views for the given file name."""
+    view = window.find_open_file(file_name)
+    if view is None:
+        return []
+
+    return [v for v in window.views() if v.buffer_id() == view.buffer_id()]
