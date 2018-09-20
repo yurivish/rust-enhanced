@@ -14,6 +14,8 @@ variables:
   escaped_char: '\\([nrt0\"''\\]|x[0-7]\h|u\{(?:\h_*){1,6}\})'
   int_suffixes: '[iu](?:8|16|32|64|128|size)'
   float_suffixes: 'f(32|64)'
+  dec_literal: '[0-9](?:[0-9_])*'
+  float_exponent: '[eE][+-]?[0-9_]*[0-9][0-9_]*'
 contexts:
   main:
     - include: statements
@@ -309,6 +311,74 @@ contexts:
         - match: '(?=\S)'
           pop: true
 
+  pattern-param:
+    - include: comments
+    - match: '&'
+      scope: keyword.operator.rust
+    - match: \b(mut|ref)\b
+      scope: storage.modifier.rust
+    - match: '@'
+      scope: keyword.operator.rust
+    - match: '\b{{identifier}}\b(?!\s*(?:::|\{|\[|\())'
+      scope: variable.parameter.rust
+
+    - match: '\{'
+      # Struct pattern.
+      scope: punctuation.section.block.begin.rust
+      push:
+        - meta_scope: meta.block.rust
+        - match: '\}'
+          scope: punctuation.section.block.end.rust
+          pop: true
+        - match: '(\d+)\s*(:)'
+          # Tuple struct field specifier.
+          captures:
+            1: constant.numeric.integer.decimal.rust
+            2: punctuation.separator.rust
+        - match: '{{identifier}}\s*(:)'
+          # Struct field specifier.
+          captures:
+            1: punctuation.separator.rust
+        - match: '\.\.'
+          scope: keyword.operator.rust
+        - include: pattern-param
+
+    - match: '\('
+      # Tuple or tuple struct pattern.
+      scope: punctuation.section.group.begin.rust
+      push:
+        - meta_scope: meta.group.rust
+        - match: '\)'
+          scope: punctuation.section.group.end.rust
+          pop: true
+        - match: '\.\.'
+          scope: keyword.operator.rust
+        - include: pattern-param
+
+    - match: '\['
+      # Slice pattern.
+      scope: punctuation.section.brackets.begin.rust
+      push:
+        - meta_scope: meta.brackets.rust
+        - match: '\]'
+          scope: punctuation.section.brackets.end.rust
+          pop: true
+        - include: pattern-param
+
+    # Path for struct patterns.
+    - match: '\bself\b|\bsuper\b'
+      scope: keyword.other.rust
+    - match: '\b{{identifier}}\b'
+    - match: '::'
+
+    - match: ':(?!:)'
+      # Type
+      scope: punctuation.separator.rust
+      push:
+        - match: '(?=,|\)|\]|\}|\|)'
+          pop: true
+        - include: type-any-identifier
+
   closure:
     - meta_content_scope: meta.function.closure.rust
     - match: '\|'
@@ -317,33 +387,16 @@ contexts:
 
   closure-parameters:
     - meta_scope: meta.function.parameters.rust
+    - match: '\|'
+      scope: punctuation.definition.parameters.end.rust
+      pop: true
+    - include: pattern-param
     # If the user has just typed a |, exit the params
     # scope as soon as we hit something that it not a
     # valid part so the whole rest of the document isn't
     # highlighted using the params scope
-    - include: comments
-    - match: '(?=\()'
-      push: group
-    - match: '(?=[};)\]])'
+    - match: '(?=[=};)\]])'
       pop: true
-    - match: '\|'
-      scope: punctuation.definition.parameters.end.rust
-      pop: true
-    - match: \bself\b
-      scope: variable.parameter.rust
-    - match: '({{identifier}})\s*(?:(:(?!:))|(?=\||,))'
-      captures:
-        1: variable.parameter.rust
-        2: punctuation.separator.rust
-      push:
-        - match: (?=,|\|)
-          pop: true
-        - include: type-any-identifier
-    - match: '&'
-      scope: keyword.operator.rust
-    - match: \b(mut|ref)\b
-      scope: storage.modifier.rust
-    - include: lifetime
 
   closure-return:
     - meta_content_scope: meta.function.closure.rust
@@ -432,7 +485,7 @@ contexts:
     - include: raw-pointer
     - match: \b(mut|ref|const|unsafe)\b
       scope: storage.modifier.rust
-    - match: \b(fn)\b(\()
+    - match: \b(fn)\b\s*(\()
       captures:
         1: storage.type.function.rust
         2: meta.group.rust punctuation.definition.group.begin.rust
@@ -765,7 +818,7 @@ contexts:
           pop: true
         - include: macro-matchers
 
-    - match: '(\$\s*{{identifier}})\s*(:)\s*(ident|path|expr|ty|pat|stmt|block|item|meta|tt|lifetime)'
+    - match: '(\$\s*{{identifier}})\s*(:)\s*(ident|path|expr|ty|pat|stmt|block|item|meta|tt|lifetime|vis)'
       captures:
         1: variable.parameter.rust
         2: punctuation.separator.rust
@@ -944,13 +997,7 @@ contexts:
         - include: comments
         - match: '(?=\))'
           pop: true
-        - match: \bself\b
-          scope: variable.parameter.rust
-        - match: '({{identifier}})\s*(:(?!:))'
-          captures:
-            1: variable.parameter.rust
-            2: punctuation.separator.rust
-        - include: type-any-identifier
+        - include: pattern-param
 
   fn-return:
     - meta_scope: meta.function.rust
@@ -1197,22 +1244,18 @@ contexts:
       scope: constant.other.placeholder.rust
 
   numbers:
-    - match: '\b((?:\d[\d_]*)?\.)(\d[\d_]*(?:[eE][+-]?[\d_]+)?)({{float_suffixes}})?'
+    - match: '\b({{dec_literal}}(?:\.{{dec_literal}})?(?:{{float_exponent}})?)({{float_suffixes}})'
       captures:
         1: constant.numeric.float.rust
-        2: constant.numeric.float.rust
-        3: storage.type.numeric.rust
-    - match: '\b(\d[\d_]*\.)(?!\.)'
+        2: storage.type.numeric.rust
+    - match: '\b{{dec_literal}}\.{{dec_literal}}(?:{{float_exponent}})?'
       scope: constant.numeric.float.rust
-    - match: '\b(\d[\d_]*)({{float_suffixes}})\b'
-      captures:
-        1: constant.numeric.float.rust
-        2: storage.type.numeric.rust
-    - match: '\b(\d[\d_]*(?:\.[\d_]+)?[eE][-+]?[\d_]+)({{float_suffixes}})?\b'
-      captures:
-        1: constant.numeric.float.rust
-        2: storage.type.numeric.rust
-    - match: '\b(\d[\d_]*)({{int_suffixes}})?\b'
+    - match: '\b{{dec_literal}}{{float_exponent}}'
+      scope: constant.numeric.float.rust
+    - match: '\b{{dec_literal}}\.(?![A-Za-z._''])'
+      scope: constant.numeric.float.rust
+
+    - match: '\b({{dec_literal}})({{int_suffixes}})?\b'
       captures:
         1: constant.numeric.integer.decimal.rust
         2: storage.type.numeric.rust

@@ -348,9 +348,13 @@ macro_rules! designators {
      $m:meta,
 //   ^^ variable.parameter
 //      ^^^^ storage.type
-     $l:lifetime) => ();
+     $l:lifetime,
 //   ^^ variable.parameter
 //      ^^^^^^^^ storage.type
+     $v:vis,
+//   ^^ variable.parameter
+//      ^^^ storage.type
+    ) => ();
     // And various tokens
     ("Any token" /*comment*/ true => 3.14 'life 'c' @ struct self) => ();
 //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.macro meta.macro.matchers

@@ -31,9 +31,8 @@ let tuple = (1.0, 0i32, "Hello");
 //                             ^ punctuation.definition.group.end
 
 // Tuple access.
-// TODO: Fix this so that tuple access is not `float`.
 let x = tuple.1;
-//           ^^ constant.numeric.float
+//            ^ constant.numeric.integer.decimal.rust
 
 // Array access.
 let x = arr[1];

@@ -135,6 +135,7 @@ def get_cargo_metadata(window, cwd, toolchain=None):
 
 def icon_path(level, res=None):
     """Return a path to a message-level icon."""
+    level = str(level)
     if level not in ('error', 'warning', 'note', 'help', 'none'):
         return ''
     gutter_style = get_setting('rust_gutter_style', 'shape')

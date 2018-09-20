@@ -4,7 +4,7 @@ import sublime
 
 import os
 import re
-from . import rust_proc, messages, util, semver, log
+from . import rust_proc, messages, util, semver, levels, log
 
 # Use the same panel name that Sublime's build system uses so that "Show Build
 # Results" will open the same panel.  I don't see any particular reason why
@@ -98,7 +98,7 @@ class OutputListener(rust_proc.ProcListener):
                                               region_start + m.end())
                 message.output_panel_region = build_region
                 message.path = path
-                message.level = 'error'
+                message.level = levels.level_from_str('error')
                 messages.add_message(self.window, message)
 
     def on_error(self, proc, message):
@@ -118,7 +118,7 @@ class OutputListener(rust_proc.ProcListener):
         if not message.text:
             # Region-only messages can be ignored.
             return
-        region_start = self.output_view.size() + len(message.level) + 2
+        region_start = self.output_view.size() + len(message.level.name) + 2
         path = message.path
         if path:
             if self.base_path and path.startswith(self.base_path):
