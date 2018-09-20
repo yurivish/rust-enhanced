@@ -330,8 +330,10 @@ class TestCargoBuild(TestBase):
         if semver.match(rustc_version, '<1.30.0-beta'):
             print('Skipping "Document JSON" test, need rustc >= 1.30')
             return
-        self._with_open_file('tests/doc/src/lib.rs',
-            self._test_document_messages_intralink)
+        if 'nightly' in rustc_version:
+            # intra-rustdoc links are current unstable
+            self._with_open_file('tests/doc/src/lib.rs',
+                self._test_document_messages_intralink)
         self._with_open_file('tests/doc/src/main.rs',
             self._test_document_messages_invalid)
 
