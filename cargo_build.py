@@ -528,11 +528,16 @@ class RustEventListener(sublime_plugin.EventListener):
         # https://github.com/SublimeTextIssues/Core/issues/2411
         # It would be preferable to use ViewEventListener, but it doesn't work
         # on duplicate views created with Goto Anything.
-        if not util.active_view_is_rust(view=view):
-            return
-        if util.get_setting('rust_message_status_bar', False):
-            messages.update_status(view)
-        messages.draw_regions_if_missing(view)
+        def activate():
+            if not util.active_view_is_rust(view=view):
+                return
+            if util.get_setting('rust_message_status_bar', False):
+                messages.update_status(view)
+            messages.draw_regions_if_missing(view)
+
+        # For some reason, view.window() sometimes returns None here.
+        # Use set_timeout to give it time to attach to a window.
+        sublime.set_timeout(activate, 1)
 
     def on_query_context(self, view, key, operator, operand, match_all):
         # Used by the Escape-key keybinding to dismiss inline phantoms.
