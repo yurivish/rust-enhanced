@@ -57,6 +57,15 @@
     // If `true`, displays diagnostic messages under the cursor in the status bar.
     "rust_message_status_bar": false,
 
+    // The message to display when the syntax check is running.
+    "rust_message_status_bar_msg": "Rust check running",
+
+    // A list of chars that cycle through in the status bar to indicate progress.
+    "rust_message_status_bar_chars": [".", "..", "...", ".."],
+
+    // How often (ms) should the status bar text be updated when syntax checking.
+    "rust_message_status_bar_update_delay": 200,
+
     // If your cargo project has several build targets, it's possible to specify mapping of
     // source code filenames to the target names to enable syntax checking.
     // "projects": {

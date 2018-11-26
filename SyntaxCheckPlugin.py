@@ -112,13 +112,23 @@ class RustSyntaxCheckThread(rust_thread.RustThread, rust_proc.ProcListener):
     def update_status(self, count=0):
         if self.done:
             return
-        num = count % 4
-        if num == 3:
-            num = 1
-        num += 1
-        msg = 'Rust check running' + '.' * num
-        self.window.status_message(msg)
-        sublime.set_timeout(lambda: self.update_status(count + 1), 200)
+
+        status_msg = util.get_setting('rust_message_status_bar_msg')
+        status_chars = util.get_setting('rust_message_status_bar_chars')
+        status_update_delay = util.get_setting('rust_message_status_bar_update_delay')
+
+        try:
+            status_chars_len = len(status_chars)
+            num = count % status_chars_len
+            if num == status_chars_len - 1:
+                num = -1
+            num += 1
+
+            self.window.status_message(status_msg + status_chars[num])
+            sublime.set_timeout(lambda: self.update_status(count + 1), status_update_delay)
+        except Exception as e:
+            self.window.status_message('Error setting status text!')
+            log.critical(self.window, "An error occurred setting status text: " + str(e))
 
     def get_rustc_messages(self):
         """Top-level entry point for generating messages for the given
