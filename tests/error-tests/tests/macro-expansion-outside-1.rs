@@ -14,6 +14,7 @@ extern crate dcrate;
 // ~ERR(>=1.20.0) /expected one of .*, found `:`/
 // ~ERR(>=1.20.0) this error originates in a macro outside of the current crate
 // ~ERR(>=1.20.0) expected one of
+// ~ERR(>=1.32.0-beta) in this macro
 // ~ERR(>=1.20.0,<1.24.0-beta) unexpected token
 // end-msg: ERR(>=1.19.0,<1.20.0-beta) /expected one of .*, found `:`/
 // end-msg: ERR(>=1.19.0,<1.20.0-beta) Errors occurred in macro <example_bad_syntax macros> from external crate
