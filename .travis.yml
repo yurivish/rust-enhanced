@@ -43,13 +43,13 @@ install:
   # Pin a known good version of nightly and clippy.
   - >
     if [ "$TRAVIS_RUST_VERSION" != "nightly" ]; then
-      rustup install nightly-2018-08-04;
+      rustup install nightly-2018-12-05;
       host=$(rustc -Vv | grep ^host: | sed -e "s/host: //g");
       toolchains=$(dirname $(dirname $(dirname $(rustup which rustc))));
       mv $toolchains/nightly-* $toolchains/nightly-$host;
     fi
   # Install Rust packages needed by integration tests.
-  - rustup component add clippy-preview --toolchain=nightly
+  - rustup component add clippy --toolchain=nightly
   - cargo install cargo-script
 
 
