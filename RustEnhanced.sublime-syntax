@@ -130,6 +130,7 @@ contexts:
         1: keyword.control.rust
         2: entity.name.label.rust
 
+    - include: support-type
     - include: type
 
     - match: '\b(macro_rules!)\s+({{identifier}})\b'

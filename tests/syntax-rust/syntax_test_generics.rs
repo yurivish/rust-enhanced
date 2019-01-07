@@ -226,6 +226,7 @@ fn numbers() -> impl Iterator<Item = u64> {
 fn collect_vec() {
     let _: Vec<(usize, usize)> = (0..10).enumerate().collect::<Vec<_>>();
 //         ^^^^^^^^^^^^^^^^^^^ meta.generic
+//         ^^^ support.type
 //             ^ punctuation.section.group.begin
 //              ^^^^^ storage.type
 //                     ^^^^^ storage.type
@@ -241,6 +242,7 @@ fn collect_vec() {
 //                                                ^^ punctuation.section.group
 //                                                  ^ punctuation.accessor.dot
 //                                                          ^^ punctuation.accessor
+//                                                             ^^^ support.type
 //                                                            ^^^^^^^^ meta.generic
 //                                                             ^^^^^^ meta.generic meta.generic
 //                                                                 ^ keyword.operator
@@ -250,6 +252,8 @@ fn collect_vec() {
 //                               ^^^^ support.macro
     let _: Vec<(usize, usize)> = vec![];
 //                               ^^^^ support.macro
+    let _: Vec<String> = vec![];
+//             ^^^^^^ meta.generic support.type
 }
 
 

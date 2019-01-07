@@ -16,6 +16,7 @@ struct PrintableStruct(Box<i32>);
 //     ^^^^^^^^^^^^^^^ entity.name.struct
 //                    ^ punctuation.section.group.begin
 //                     ^^^^^^^^ meta.generic
+//                     ^^^ support.type
 //                        ^ punctuation.definition.generic.begin
 //                         ^^^ storage.type
 //                            ^ punctuation.definition.generic.end
