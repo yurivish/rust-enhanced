@@ -324,6 +324,7 @@ contexts:
       scope: storage.modifier.rust
     - match: '@'
       scope: keyword.operator.rust
+    - include: lifetime
     - match: '\b{{identifier}}\b(?!\s*(?:::|\{|\[|\())'
       scope: variable.parameter.rust
 
