@@ -163,15 +163,21 @@ class RustSyntaxCheckThread(rust_thread.RustThread, rust_proc.ProcListener):
             print('Unknown setting for `rust_syntax_checking_method`: %r' % (method,))
             return -1
 
+        # Try to grab metadata only once. `target` is None since that's what
+        # we're trying to figure out.
+        toolchain = settings.get_computed(self.cwd, method, None, 'toolchain')
+        metadata = util.get_cargo_metadata(self.window, self.cwd, toolchain=toolchain)
+        if not metadata:
+            return -1
         td = target_detect.TargetDetector(self.window)
-        targets = td.determine_targets(self.triggered_file_name)
+        targets = td.determine_targets(self.triggered_file_name, metadata=metadata)
         if not targets:
             return -1
         rc = 0
         for (target_src, target_args) in targets:
             cmd = settings.get_command(method, command_info, self.cwd, self.cwd,
                 initial_settings={'target': ' '.join(target_args)},
-                force_json=True)
+                force_json=True, metadata=metadata)
             self.msg_rel_path = cmd['msg_rel_path']
             if (util.get_setting('rust_syntax_checking_include_tests', True) and
                 semver.match(cmd['rustc_version'], '>=1.23.0')):

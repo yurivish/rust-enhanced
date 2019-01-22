@@ -15,10 +15,13 @@ class TargetDetector(object):
     def __init__(self, window):
         self.window = window
 
-    def determine_targets(self, file_name):
+    def determine_targets(self, file_name, metadata=None):
         """Detect the target/filters needed to pass to Cargo to compile
         file_name.
         Returns list of (target_src_path, target_command_line_args) tuples.
+
+        :keyword metadata: Output from `get_cargo_metadata`. If None, will run
+            it manually.
 
         :raises ProcessTerminatedError: Thread should shut down.
         """
@@ -28,13 +31,12 @@ class TargetDetector(object):
             return result
 
         # Try a heuristic to detect the filename.
-        result = rust_proc.slurp_json(self.window,
-                                      'cargo metadata --no-deps'.split(),
-                                      cwd=os.path.dirname(file_name))
-        if not result:
-            return []
+        if metadata is None:
+            metadata = util.get_cargo_metadata(self.window, os.path.dirname(file_name))
+            if not metadata:
+                return []
         # Each "workspace" shows up as a separate package.
-        for package in result[0]['packages']:
+        for package in metadata['packages']:
             root_path = os.path.dirname(package['manifest_path'])
             targets = package['targets']
             # targets is list of dictionaries:
