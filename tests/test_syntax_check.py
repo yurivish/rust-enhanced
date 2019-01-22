@@ -56,6 +56,9 @@ class TestSyntaxCheck(TestBase):
 
             // end-msg: WARN crate `SNAKE` should have a snake case
 
+        Similarly, a comment "start-msg" will check messages at the beginning
+        of the file.
+
         If a message starts and ends with a slash, it will match as a regex.
 
             // ^^^ERR /this is.*a regex/
@@ -405,19 +408,20 @@ class TestSyntaxCheck(TestBase):
                 'message': m.group(5)
             })
 
-        # Messages that appear at the end of the file.
-        pattern = r'// *end-msg: *(WARN|ERR|HELP|NOTE|MSG)(\([^)]+\))? (.+)'
-        regions = view.find_all(pattern)
-        for region in regions:
-            text = view.substr(region)
-            m = re.match(pattern, text)
-            result.append({
-                'begin': view.size(),
-                'end': view.size(),
-                'level': msg_level_text[m.group(1)],
-                'restrictions': m.group(2),
-                'message': m.group(3),
-            })
+        # Messages that appear at the beginning or end of the file.
+        for what, pos in [('start', 0), ('end', view.size())]:
+            pattern = r'// *%s-msg: *(WARN|ERR|HELP|NOTE|MSG)(\([^)]+\))? (.+)' % (what,)
+            regions = view.find_all(pattern)
+            for region in regions:
+                text = view.substr(region)
+                m = re.match(pattern, text)
+                result.append({
+                    'begin': pos,
+                    'end': pos,
+                    'level': msg_level_text[m.group(1)],
+                    'restrictions': m.group(2),
+                    'message': m.group(3),
+                })
 
         return result
 
