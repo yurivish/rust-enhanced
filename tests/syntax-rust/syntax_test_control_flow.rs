@@ -9,7 +9,7 @@ for i in 1..10 {
 // <- keyword.control
 //    ^^ keyword.operator
 //       ^ constant.numeric.integer.decimal
-//        ^^ keyword.operator
+//        ^^ keyword.operator.range
 //          ^^ constant.numeric.integer.decimal
     println!("I: {}", i);
 // ^^^^^^^^^^^^^^^^^^^^^^ meta.block
@@ -23,7 +23,7 @@ for i in 1..10 {
 //                ^ meta.block punctuation.section.block.begin
     n += 1;
     if n / 2 == 5 {
-//       ^ keyword.operator
+//       ^ keyword.operator.arithmetic
         continue;
 //      ^^^^^^^^ keyword.control
     }
@@ -72,7 +72,7 @@ if n < 0 {
 
 if let BasicStruct(i) = j {
 // ^^^ storage.type
-//                    ^ keyword.operator
+//                    ^ keyword.operator.assignment
 //                        ^ meta.block punctuation.section.block.begin
     println!("Basic value: {}", i);
 }
@@ -81,7 +81,7 @@ if let BasicStruct(i) = j {
 while let BasicStruct(k) = j {
 //^^^ keyword.control
 //    ^^^ storage.type
-//                       ^ keyword.operator
+//                       ^ keyword.operator.assignment
 //                           ^ meta.block punctuation.section.block.begin
     println!("Constructed example: {}", j)
     j = BasicStruct(j + 1);

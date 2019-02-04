@@ -2,11 +2,11 @@
 
 let c = 'c';
 // <- storage.type
-//    ^ keyword.operator
+//    ^ keyword.operator.assignment
 //      ^^^ string.quoted.single
 let b = b'c';
 // <- storage.type
-//    ^ keyword.operator
+//    ^ keyword.operator.assignment
 //      ^ storage.type
 //       ^^^ string.quoted.single
 let ch = '∞';
@@ -14,7 +14,7 @@ let ch = '∞';
 
 let s = "This is a string \x01_\u{007F}_\"_\'_\\_\r_\n_\t_\0";
 // <- storage.type
-//    ^ keyword.operator
+//    ^ keyword.operator.assignment
 //      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ string.quoted.double
 //                        ^^^^ constant.character.escape
 //                             ^^^^^^^^ constant.character.escape
@@ -27,7 +27,7 @@ let s = "This is a string \x01_\u{007F}_\"_\'_\\_\r_\n_\t_\0";
 //                                                        ^^ constant.character.escape
 let r = r#"This is a raw string, no escapes! \x00 \0 \n"#;
 // <- storage.type
-//    ^ keyword.operator
+//    ^ keyword.operator.assignment
 //      ^ storage.type
 //       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ string.quoted.double - constant.character.escape
 
@@ -45,7 +45,7 @@ println!("Continuation in format \
 
 let bytes = b"This won't escape unicode \u{0123}, but will do \x01_\"_\'_\\_\r_\n_\t_\0";
 // <- storage.type
-//        ^ keyword.operator
+//        ^ keyword.operator.assignment
 //          ^ storage.type
 //           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ string.quoted.double
 //                                                            ^^^^ constant.character.escape
@@ -59,7 +59,7 @@ let bytes = b"This won't escape unicode \u{0123}, but will do \x01_\"_\'_\\_\r_\
 
 let raw_bytes = br#"This won't escape anything either \x01 \""#;
 // <- storage.type
-//            ^ keyword.operator
+//            ^ keyword.operator.assignment
 //              ^^ storage.type
 //                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ string.quoted.double - constant.character.escape
 
@@ -249,5 +249,5 @@ let s_uni_esc_extra = "\u{1234567}";
 let logical: bool = true;
 //         ^ punctuation.separator
 //           ^^^^ storage.type
-//                ^ keyword.operator
+//                ^ keyword.operator.assignment
 //                  ^^^^ constant.language

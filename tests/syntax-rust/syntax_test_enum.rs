@@ -51,7 +51,7 @@ enum Discriminant {
 //  ^^ meta.enum constant.other
 //       ^^^^^^ meta.enum meta.group
 //        ^ constant.numeric.integer.decimal
-//         ^^ keyword.operator
+//         ^^ keyword.operator.bitwise
 //           ^ constant.numeric.integer.decimal
     lowercase,
 //  ^^^^^^^^^^^ meta.enum

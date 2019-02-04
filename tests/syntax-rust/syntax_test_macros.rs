@@ -2,7 +2,7 @@
 
 String my_var = format!("Hello {0}", "World");
 // ^^^ support.type
-//            ^ keyword.operator
+//            ^ keyword.operator.assignment
 //              ^^^^^^^ support.macro
 //                     ^ punctuation.section.group.begin
 //                     ^^^^^^^^^^^^^^^^^^^^^^ meta.group
@@ -44,7 +44,7 @@ pub fn macro_tests() {
 }
 
 my_var = format!("Hello {name}, how are you?",
-//     ^ keyword.operator
+//     ^ keyword.operator.assignment
 //       ^^^^^^^ support.macro
 //              ^ punctuation.section.group.begin
 //              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.group
@@ -52,7 +52,7 @@ my_var = format!("Hello {name}, how are you?",
 //                      ^^^^^^ constant.other.placeholder
     name="John");
 // ^^^^^^^^^^^^^ meta.group
-//      ^ keyword.operator
+//      ^ keyword.operator.assignment
 //       ^^^^^^ string.quoted.double
 //             ^ punctuation.section.group.end
 

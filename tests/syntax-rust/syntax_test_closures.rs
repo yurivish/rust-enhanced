@@ -26,7 +26,7 @@ let closure = || -> i32 { | | 1 + 2 };
 
 // Make sure "or" is not confused with closure.
 let c = a | b;
-//        ^ keyword.operator
+//        ^ keyword.operator.bitwise
 
 call_func(|c| 1 + 2 + c);
 //        ^^^^^^^^^^^^^ meta.function.closure

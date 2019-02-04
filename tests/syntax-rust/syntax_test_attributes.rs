@@ -28,7 +28,7 @@
 //            ^ punctuation.separator
 //              ^^^ meta.function-call meta.function-call variable.function
 //                 ^ punctuation.section.group.begin
-//                            ^ keyword.operator
+//                            ^ keyword.operator.assignment
 //                              ^^^^^^^ string.quoted.double
 //                                     ^ punctuation.section.group.end
 //                                      ^ punctuation.section.group.end
@@ -77,7 +77,7 @@ unsafe impl<#[may_dangle] T: ?Sized> Drop for Box<T> { }
 //^ punctuation.definition.annotation
 // ^ punctuation.section.group.begin
 //  ^^^^ variable.annotation
-//       ^ keyword.operator
+//       ^ keyword.operator.assignment
 //         ^^^^^^^^^^^ string.quoted.double
 //                    ^ punctuation.section.group.end
 
@@ -118,7 +118,7 @@ unsafe impl<#[may_dangle] T: ?Sized> Drop for Box<T> { }
 //      ^^^^^^ storage.type.struct
         1 + 1,
 //      ^ constant.numeric.integer.decimal
-//        ^ keyword.operator
+//        ^ keyword.operator.arithmetic
 //          ^ constant.numeric.integer.decimal
     )
 //  ^ punctuation.section.group.end
@@ -128,13 +128,13 @@ unsafe impl<#[may_dangle] T: ?Sized> Drop for Box<T> { }
 // quote! uses #var syntax
 #[doc=#foo]
 //^^^^^^^^^ meta.annotation
-//   ^ keyword.operator
+//   ^ keyword.operator.assignment
 
 // Macros often use replacement.
 #[doc = $doc]
 //^^^^^^^^^^^ meta.annotation
 //          ^ punctuation.section.group.end
-//    ^ keyword.operator
+//    ^ keyword.operator.assignment
 
 #[rustfmt::skip]
 //^^^^^^^^^^^^^^ meta.annotation

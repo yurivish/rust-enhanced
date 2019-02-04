@@ -140,3 +140,43 @@ match a {
 }
 use a::{a,b};
 //       ^ punctuation.separator
+
+
+/************* ligatures *************/
+// This is mostly for visual inspection.
+foo!{<- -> =>}  // emplacement token (unused in language)
+//   ^^ keyword.operator
+//      ^^ punctuation.separator
+//         ^^ keyword.operator
+fn f() -> i32 {1}
+//     ^^ punctuation.separator
+ a && b || c;
+// ^^ keyword.operator.logical
+//      ^^ keyword.operator.logical
+ 1 << 2 >> 3;
+// ^^ keyword.operator.bitwise
+//      ^^ keyword.operator.bitwise
+ a += 1; b -= 1; c *= 1; d /= 1; e %= 1; f ^= 1; g &= 1; h |= 1;
+// ^^ keyword.operator.assignment
+//         ^^ keyword.operator.assignment
+//                 ^^ keyword.operator.assignment
+//                         ^^ keyword.operator.assignment
+//                                 ^^ keyword.operator.assignment
+//                                         ^^ keyword.operator.assignment
+//                                                 ^^ keyword.operator.assignment
+//                                                         ^^ keyword.operator.assignment
+ a <<= 1; b >>= 2;
+// ^^^ keyword.operator.assignment
+//          ^^^ keyword.operator.assignment
+ x == y; x != y;
+// ^^ keyword.operator.comparison
+//         ^^ keyword.operator.comparison
+ a >= b; a <= b;
+// ^^ keyword.operator.comparison
+//         ^^ keyword.operator.comparison
+ 1..2; 1...2; 1..=2;
+//^^ keyword.operator.range
+//      ^^^ keyword.operator.range
+//             ^^^ keyword.operator.range
+match x { a => {}}
+//          ^^ meta.block keyword.operator

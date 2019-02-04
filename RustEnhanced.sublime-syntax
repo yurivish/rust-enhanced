@@ -58,7 +58,7 @@ contexts:
     - match: '\b({{identifier}})\s*(=)\s*(?=\|)'
       captures:
         1: entity.name.function.rust
-        2: keyword.operator.rust
+        2: keyword.operator.assignment.rust
       push: closure
 
     - match: '\b(fn)\s+(?={{identifier}})'
@@ -80,7 +80,7 @@ contexts:
         2: entity.name.type.rust
       push:
       - match: '=(?!=)'
-        scope: keyword.operator.rust
+        scope: keyword.operator.assignment.rust
         push: after-operator
       - match: '(?=\S)'
         pop: true
@@ -261,7 +261,7 @@ contexts:
               pop: true
             - include: attribute-call
         - match: '='
-          scope: keyword.operator.rust
+          scope: keyword.operator.assignment.rust
           set:
             - meta_content_scope: meta.annotation.rust
             - include: strings
@@ -292,7 +292,7 @@ contexts:
     - match: ','
       scope: punctuation.separator.rust
     - match: '='
-      scope: keyword.operator.rust
+      scope: keyword.operator.assignment.rust
     - include: strings
     - include: chars
     - include: numbers
@@ -1461,32 +1461,35 @@ contexts:
       # match blocks containing just enums
       scope: keyword.operator.rust
 
-    - match: '=(?!=)'
+    - match: '<-|->'
+      scope: keyword.operator.rust
+
+    - match: '\.\.\.|\.\.=|\.\.'
+      scope: keyword.operator.range.rust
+
+    - match: '[!<>=]='
+      scope: keyword.operator.comparison.rust
+
+    - match: '(?:[-+%/*^&|]|<<|>>)?='
+      scope: keyword.operator.assignment.rust
+
+    - match: '&&|\|\||!'
+      scope: keyword.operator.logical.rust
+
+    - match: '[&|^]|<<|>>'
+      scope: keyword.operator.bitwise.rust
+
+    - match: '[<>]'
+      scope: keyword.operator.comparison.rust
+
+    - match: '[-+%/*]'
+      scope: keyword.operator.arithmetic.rust
+
+    - match: '[@~?$#'']'
       scope: keyword.operator.rust
 
     - match: '[:;,]'
       scope: punctuation.separator.rust
-
-    - match: '\.\.\.'
-      scope: keyword.operator.rust
-
-    - match: '\.\.'
-      scope: keyword.operator.rust
-
-    - match: '<<=|>>=|<<|>>'
-      scope: keyword.operator.rust
-
-    - match: '>=|<=|==|!=|&&|\|\|'
-      scope: keyword.operator.rust
-
-    - match: '\*=|/=|\+=|-=|%=|\^=|&=|\|='
-      scope: keyword.operator.rust
-
-    - match: '[-=<>&|!~@?+*/%^''#$]'
-      scope: keyword.operator.rust
-
-    - match: '<-|->'
-      scope: keyword.operator.rust
 
   keywords:
     # All keywords.  Note in `statements` some of these are superseded by more

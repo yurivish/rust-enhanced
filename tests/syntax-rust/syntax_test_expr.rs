@@ -3,21 +3,21 @@
 // specific categories.
 
 let big_n =
-//        ^ keyword.operator
+//        ^ keyword.operator.assignment
     if n < 10 && n > -10 {
-//       ^ keyword.operator
-//            ^^ keyword.operator
-//                 ^ keyword.operator
-//                   ^ keyword.operator
+//       ^ keyword.operator.comparison
+//            ^^ keyword.operator.logical
+//                 ^ keyword.operator.comparison
+//                   ^ keyword.operator.arithmetic
 //                    ^^ constant.numeric.integer.decimal
 //                       ^ meta.block punctuation.section.block.begin
         10 * n
-//         ^ meta.block keyword.operator
+//         ^ meta.block keyword.operator.arithmetic
     } else {
 //  ^ meta.block punctuation.section.block.end
 //         ^ meta.block punctuation.section.block.begin
         n / 2
-//        ^ meta.block keyword.operator
+//        ^ meta.block keyword.operator.arithmetic
     };
 //  ^ meta.block punctuation.section.block.end
 
@@ -98,72 +98,72 @@ let _: Box<[[u8; aa::COUNT - 1]; 5]>;
 let xsl = &xs;
 //        ^ keyword.operator
 let a = &&  10;
-//      ^^ keyword.operator
+//      ^^ keyword.operator.logical
 let a = & & 10;
-//      ^ keyword.operator
-//        ^ keyword.operator
+//      ^ keyword.operator.bitwise
+//        ^ keyword.operator.bitwise
 let y = &mut 9;
 //      ^ keyword.operator
 //       ^^^ storage.modifier
 
 // Dereference.
 assert_eq!(*x, 7);
-//         ^ meta.group keyword.operator
+//         ^ meta.group keyword.operator.arithmetic
    *y = 11;
-// ^ keyword.operator
+// ^ keyword.operator.arithmetic
 
 // Block expression.
 let z = {
 //      ^ meta.block punctuation.section.block.begin
     2 * 5
 //  ^ constant.numeric.integer.decimal
-//    ^ keyword.operator
+//    ^ keyword.operator.arithmetic
 //      ^ constant.numeric.integer.decimal
 };
 // <- meta.block punctuation.section.block.end
 
 // Various operators.
 let x = !6;
-//      ^ keyword.operator
+//      ^ keyword.operator.logical
 //       ^ constant.numeric.integer.decimal
 let a = 1 + 2 - 3 * 4 / 6 % 7 & 8 | 9 ^ a << b >> c;
-//        ^ keyword.operator
-//            ^ keyword.operator
-//                ^ keyword.operator
-//                    ^ keyword.operator
-//                        ^ keyword.operator
-//                            ^ keyword.operator
-//                                ^ keyword.operator
-//                                    ^ keyword.operator
-//                                        ^^ keyword.operator
-//                                             ^^ keyword.operator
+//        ^ keyword.operator.arithmetic
+//            ^ keyword.operator.arithmetic
+//                ^ keyword.operator.arithmetic
+//                    ^ keyword.operator.arithmetic
+//                        ^ keyword.operator.arithmetic
+//                            ^ keyword.operator.bitwise
+//                                ^ keyword.operator.bitwise
+//                                    ^ keyword.operator.bitwise
+//                                        ^^ keyword.operator.bitwise
+//                                             ^^ keyword.operator.bitwise
  a == b != c > d < e >= f <= g
-// ^^ keyword.operator
-//      ^^ keyword.operator
-//           ^ keyword.operator
-//               ^ keyword.operator
-//                   ^^ keyword.operator
-//                        ^^ keyword.operator
+// ^^ keyword.operator.comparison
+//      ^^ keyword.operator.comparison
+//           ^ keyword.operator.comparison
+//               ^ keyword.operator.comparison
+//                   ^^ keyword.operator.comparison
+//                        ^^ keyword.operator.comparison
  a || b && c
-// ^^ keyword.operator
-//      ^^ keyword.operator
+// ^^ keyword.operator.logical
+//      ^^ keyword.operator.logical
 a += b;
-//^^ keyword.operator
+//^^ keyword.operator.assignment
 a -= b;
-//^^ keyword.operator
+//^^ keyword.operator.assignment
 a *= b;
-//^^ keyword.operator
+//^^ keyword.operator.assignment
 a /= b;
-//^^ keyword.operator
+//^^ keyword.operator.assignment
 a %= b;
-//^^ keyword.operator
+//^^ keyword.operator.assignment
 a &= b;
-//^^ keyword.operator
+//^^ keyword.operator.assignment
 a |= b;
-//^^ keyword.operator
+//^^ keyword.operator.assignment
 a ^= b;
-//^^ keyword.operator
+//^^ keyword.operator.assignment
 a <<= b;
-//^^^ keyword.operator
+//^^^ keyword.operator.assignment
 a >>= b;
-//^^^ keyword.operator
+//^^^ keyword.operator.assignment

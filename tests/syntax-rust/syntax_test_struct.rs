@@ -67,7 +67,7 @@ impl Point
         self.x *= 2;
     //  ^^^^ variable.language
     //      ^ punctuation.accessor.dot
-    //         ^^ keyword.operator
+    //         ^^ keyword.operator.assignment
         self.y *= 2;
     }
 }

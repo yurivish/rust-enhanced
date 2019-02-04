@@ -63,7 +63,7 @@ let f: extern "C" fn () = mem::transmute(0xffff0fa0u32);
 //            ^^^ string.quoted.double
 //                ^^ storage.type.function
 //                   ^^ meta.group
-//                      ^ keyword.operator
+//                      ^ keyword.operator.assignment
 //                                       ^^^^^^^^^^ meta.group constant.numeric.integer.hexadecimal
 //                                                 ^^^ meta.group storage.type.numeric
 

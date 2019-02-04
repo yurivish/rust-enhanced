@@ -36,7 +36,7 @@ const ZERO: u64 = 0;
 //    ^^^^ entity.name.constant
 //        ^ punctuation.separator
 //          ^^^ storage.type
-//              ^ keyword.operator
+//              ^ keyword.operator.assignment
 //                ^ constant.numeric.integer.decimal
 static NAME: &'static str = "John";
 // <- storage.type
@@ -44,7 +44,7 @@ static NAME: &'static str = "John";
 //           ^ keyword.operator
 //            ^^^^^^^ storage.modifier.lifetime
 //                    ^^^ storage.type
-//                        ^ keyword.operator
+//                        ^ keyword.operator.assignment
 //                          ^^^^^^ string.quoted.double
 static mut BRAVO: u32 = 0;
 // <- storage.type
@@ -79,7 +79,7 @@ type Pair<'a> = (i32, &'a str);
 //       ^ keyword.operator
 //        ^^ storage.modifier.lifetime
 //          ^ keyword.operator
-//            ^ keyword.operator
+//            ^ keyword.operator.assignment
 //              ^^^^^^^^^^^^^^ meta.group
 //              ^ punctuation.section.group.begin
 //               ^^^ storage.type
@@ -95,7 +95,7 @@ let p: Pair<'static> = (10, "ten");
 //         ^ punctuation.definition.generic.begin
 //          ^^^^^^^ storage.modifier.lifetime
 //                 ^ punctuation.definition.generic.end
-//                   ^ keyword.operator
+//                   ^ keyword.operator.assignment
 //                     ^^^^^^^^^^^ meta.group
 //                     ^ punctuation.section.group.begin
 //                      ^^ constant.numeric.integer.decimal
