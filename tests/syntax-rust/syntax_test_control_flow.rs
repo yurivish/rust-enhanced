@@ -90,3 +90,8 @@ while let BasicStruct(k) = j {
     }
 }
 // <- meta.block punctuation.definition.block.end
+
+continue_running();
+//^^^^^^^^^^^^^^ support.function
+break_things();
+//^^^^^^^^^^ support.function
