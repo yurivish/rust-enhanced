@@ -1,0 +1,6 @@
+<snippet>
+    <content><![CDATA[dbg!($1);$0]]></content>
+    <scope>source.rust</scope>
+    <tabTrigger>dbg</tabTrigger>
+    <description>dbg!(…)</description>
+</snippet>

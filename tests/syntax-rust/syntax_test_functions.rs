@@ -106,3 +106,21 @@ fn f(self,
 //        ^ punctuation.section.brackets.end
 //         ^ punctuation.separator
 {}
+
+const fn f() {}
+// <- storage.modifier
+//    ^^ meta.function storage.type.function
+//       ^ meta.function entity.name.function
+
+const unsafe fn f() {}
+// <- storage.modifier
+//    ^^^^^^ storage.modifier
+//           ^^ meta.function storage.type.function
+//              ^ meta.function entity.name.function
+
+const extern "C" fn f() {}
+// <- storage.modifier
+//    ^^^^^^ keyword.other
+//           ^^^ string.quoted.double
+//               ^^ meta.function storage.type.function
+//                  ^ meta.function entity.name.function
