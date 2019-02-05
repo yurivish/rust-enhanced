@@ -353,7 +353,8 @@ class CargoSettings(object):
 
     def get_command(self, cmd_name, cmd_info,
                     settings_path, working_dir,
-                    initial_settings={}, force_json=False):
+                    initial_settings={}, force_json=False,
+                    metadata=None):
         """Generates the command arguments for running Cargo.
 
         :param cmd_name: The name of the command, the key used to select a
@@ -367,6 +368,8 @@ class CargoSettings(object):
         :keyword initial_settings: Initial settings to inject which override
             all other settings.
         :keyword force_json: If True, will force JSON output.
+        :keyword metadata: Output from `get_cargo_metadata`. If None, will run
+            it manually.
 
         :Returns: A dictionary with the keys:
             - `command`: The command to run as a list of strings.
@@ -466,7 +469,8 @@ class CargoSettings(object):
         #
         # Starting in Rust 1.24, all messages and symbols are relative to the
         # workspace root instead of the package root.
-        metadata = util.get_cargo_metadata(self.window, working_dir, toolchain)
+        if metadata is None:
+            metadata = util.get_cargo_metadata(self.window, working_dir, toolchain)
         if metadata and 'workspace_root' in metadata:
             # 'workspace_root' key added in 1.24.
             msg_rel_path = metadata['workspace_root']
