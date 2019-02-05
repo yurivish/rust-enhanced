@@ -354,6 +354,9 @@ macro_rules! designators {
      $v:vis,
 //   ^^ variable.parameter
 //      ^^^ storage.type
+     $l:literal,
+//   ^^ variable.parameter
+//      ^^^^^^^ storage.type
     ) => ();
     // And various tokens
     ("Any token" /*comment*/ true => 3.14 'life 'c' @ struct self) => ();

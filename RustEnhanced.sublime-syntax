@@ -611,6 +611,9 @@ contexts:
     - match: '\{'
       scope: punctuation.definition.block.begin.rust
       push: struct-classic-body
+    - match: '(?=\S)'
+      # Abort for an invalid match.
+      pop: true
 
   struct-classic-body:
     - meta_scope: meta.block.rust
@@ -628,7 +631,9 @@ contexts:
         - match: ':'
           scope: punctuation.separator.rust
         - include: type-any-identifier
-
+    - match: '(?=\S)'
+      # Abort for an invalid match.
+      pop: true
 
   union-identifier:
     - meta_scope: meta.union.rust
@@ -818,7 +823,7 @@ contexts:
           pop: true
         - include: macro-matchers
 
-    - match: '(\$\s*{{identifier}})\s*(:)\s*(ident|path|expr|ty|pat|stmt|block|item|meta|tt|lifetime|vis)'
+    - match: '(\$\s*{{identifier}})\s*(:)\s*(ident|path|expr|ty|pat|stmt|block|item|meta|tt|lifetime|vis|literal)'
       captures:
         1: variable.parameter.rust
         2: punctuation.separator.rust
