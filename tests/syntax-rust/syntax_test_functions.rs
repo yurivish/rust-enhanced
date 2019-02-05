@@ -124,3 +124,9 @@ const extern "C" fn f() {}
 //           ^^^ string.quoted.double
 //               ^^ meta.function storage.type.function
 //                  ^ meta.function entity.name.function
+
+fn foo(&'a self) {}
+//     ^^^^^^^^ meta.function meta.function.parameters
+//     ^ keyword.operator
+//      ^^ storage.modifier.lifetime
+//         ^^^^ variable.parameter
