@@ -8,9 +8,9 @@ macro_rules! example_bad_syntax {
 //                ^ERR /expected one of .*, found `:`/
 //                ^ERR(>=1.18.0) /expected one of .* here/
 //                ^MSG(>=1.20.0) See Also: macro-expansion-inside-1.rs:6
-//                ^ERR /expected one of .*, found `:`/
-//                ^ERR(>=1.18.0) expected one of
-//                ^MSG(>=1.20.0) See Also: macro-expansion-inside-1.rs:6
+//                ^ERR(<1.34.0-beta) /expected one of .*, found `:`/
+//                ^ERR(>=1.18.0,<1.34.0-beta) expected one of
+//                ^MSG(>=1.20.0,<1.34.0-beta) See Also: macro-expansion-inside-1.rs:6
         }
     }
 }
