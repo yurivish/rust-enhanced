@@ -13,5 +13,9 @@
 fn main() { let x = true * false; }
 //                  ^^^^ERR(<1.19.0) binary operation
 //                  ^^^^NOTE(<1.19.0) an implementation of
-//                  ^^^^^^^^^^^^ERR(>=1.19.0) binary operation
-//                  ^^^^^^^^^^^^NOTE(>=1.19.0) an implementation of
+//                  ^^^^^^^^^^^^ERR(>=1.19.0,<1.35.0-beta) binary operation
+//                  ^^^^^^^^^^^^NOTE(>=1.19.0,<1.35.0-beta) an implementation of
+//                       ^ERR(>=1.35.0-beta) binary operation
+//                       ^NOTE(>=1.35.0-beta) an implementation of
+//                  ^^^^ERR(>=1.35.0-beta) bool
+//                         ^^^^^ERR(>=1.35.0-beta) bool
