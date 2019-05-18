@@ -1,6 +1,6 @@
 <snippet>
     <content><![CDATA[extern "C" {
-	${2:// add code here}
+	${0:// add code here}
 }]]></content>
     <tabTrigger>extern-mod</tabTrigger>
     <scope>source.rust</scope>

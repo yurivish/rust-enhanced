@@ -1,5 +1,5 @@
 <snippet>
-    <content><![CDATA[Some(${1})]]></content>
+    <content><![CDATA[Some(${0})]]></content>
     <tabTrigger>Some</tabTrigger>
     <scope>source.rust</scope>
     <description>Some(…)</description>

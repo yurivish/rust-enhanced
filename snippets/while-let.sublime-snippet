@@ -1,6 +1,6 @@
 <snippet>
     <content><![CDATA[while let ${1:Some(pat)} = ${2:expr} {
-	${3:unimplemented!();}
+	${0:unimplemented!();}
 }]]></content>
     <tabTrigger>while-let</tabTrigger>
     <scope>source.rust</scope>

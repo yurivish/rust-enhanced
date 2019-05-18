@@ -2,7 +2,7 @@
     <content><![CDATA[
 #[bench]
 fn ${1:name}(b: &mut test::Bencher) {
-	${2:b.iter(|| ${3:/* benchmark code */})}
+	${2:b.iter(|| ${0:/* benchmark code */})}
 }]]></content>
     <tabTrigger>bench</tabTrigger>
     <scope>source.rust</scope>
