@@ -837,9 +837,8 @@ def _collect_rust_messages(window, base_path, info, target_path,
     - `info`: The dictionary from Rust has the following structure:
 
         - 'message': The message to display.
-        - 'level': The error level ('error', 'warning', 'note', 'help')
-                   (XXX I think an ICE shows up as 'error: internal compiler
-                   error')
+        - 'level': The error level ('error', 'warning', 'note', 'help', ''
+          (for FailureNote), 'error: internal compiler error')
         - 'code': If not None, contains a dictionary of extra information
           about the error.
             - 'code': String like 'E0001'
@@ -964,6 +963,7 @@ def _collect_rust_messages(window, base_path, info, target_path,
             if not (imsg.startswith('aborting due to') or
                     imsg.startswith('cannot continue') or
                     imsg.startswith('Some errors occurred') or
+                    imsg.startswith('Some errors have detailed') or
                     imsg.startswith('For more information about')):
                 if target_path:
                     # Display at the bottom of the root path (like main.rs)
