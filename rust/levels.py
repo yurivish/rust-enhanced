@@ -41,6 +41,10 @@ LEVELS = {
     'warning': Level(1, 'warning', 'warnings'),
     'note': Level(2, 'note', 'notes'),
     'help': Level(3, 'help', 'help'),
+    # This is "FailureNote", see https://github.com/rust-lang/rust/issues/60425.
+    # Currently we filter all these out ("For more information..."), but
+    # handle it just in case new ones are added.
+    '': Level(4, 'note', 'note'),
 }
 
 
