@@ -6,7 +6,7 @@ mod tests {
 
 	#[test]
 	fn ${1:name}() {
-		${2:unimplemented!();}
+		${0:unimplemented!();}
 	}
 }]]></content>
     <tabTrigger>tests-mod</tabTrigger>
