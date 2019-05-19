@@ -46,3 +46,13 @@ let override = 1;
 //  ^^^^^^^^ invalid.illegal.rust
 let macro = 1;
 //  ^^^^^ invalid.illegal.rust
+
+// async/await
+let x = async {}
+//      ^^^^^ keyword.control.rust
+let y = future.await;
+//             ^^^^^ keyword.control.rust
+
+// try keyword in 2018 edition
+let x = try {}
+//      ^^^ keyword.control.rust

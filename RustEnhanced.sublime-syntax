@@ -1393,7 +1393,7 @@ contexts:
     - match: \b(crate|extern|use|where)\b
       scope: keyword.other.rust
 
-    - match: \b(else|for|if|loop|match|while|yield)\b
+    - match: \b(async|await|else|for|if|loop|match|try|while|yield)\b
       scope: keyword.control.rust
 
     - match: \b(break|continue)\b
