@@ -1,0 +1,22 @@
+# Used to remove files from deployment using `git archive`
+# and from GitHub release compressed files.
+
+# git files
+.gitattributes export-ignore
+.gitignore export-ignore
+
+# Ignored folders
+.github export-ignore
+docs export-ignore
+tests export-ignore
+
+# CI files
+.travis.yml export-ignore
+appveyor.yml export-ignore
+bors.toml export-ignore
+
+# general text files
+.editorConfig export-ignore
+README.md export-ignore
+syntax_test_cargo.txt export-ignore
+unittesting.json export-ignore
