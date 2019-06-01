@@ -8,11 +8,11 @@ from rust_test_common import *
 REPLACEMENT_TESTS = [
     ('tests/error-tests/tests/cast-to-unsized-trait-object-suggestion.rs', None,
         # Before
-        ((11, '    &1 as Send;'),
-         (15, '    Box::new(1) as Send;')),
+        ((11, '    &1 as dyn Send;'),
+         (15, '    Box::new(1) as dyn Send;')),
         # After
-        ((11, '    &1 as &Send;'),
-         (15, '    Box::new(1) as Box<Send>;')),
+        ((11, '    &1 as &dyn Send;'),
+         (15, '    Box::new(1) as Box<dyn Send>;')),
     ),
     ('tests/error-tests/tests/impl-generic-mismatch.rs', '>=1.28.0-beta',
         # Before

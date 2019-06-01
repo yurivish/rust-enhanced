@@ -9,12 +9,12 @@
 // except according to those terms.
 
 fn main() {
-    &1 as Send;
-//  ^^^^^^^^^^ERR cast to unsized type
-//        ^^^^HELP try casting to
-//        ^^^^HELP /Accept Replacement:.*&Send/
-    Box::new(1) as Send;
-//  ^^^^^^^^^^^^^^^^^^^ERR cast to unsized type
-//                 ^^^^HELP try casting to a `Box` instead
-//                 ^^^^HELP /Accept Replacement:.*Box<Send>/
+    &1 as dyn Send;
+//  ^^^^^^^^^^^^^^ERR cast to unsized type
+//        ^^^^^^^^HELP try casting to
+//        ^^^^^^^^HELP /Accept Replacement:.*&dyn Send/
+    Box::new(1) as dyn Send;
+//  ^^^^^^^^^^^^^^^^^^^^^^^ERR cast to unsized type
+//                 ^^^^^^^^HELP try casting to a `Box` instead
+//                 ^^^^^^^^HELP /Accept Replacement:.*Box<dyn Send>/
 }
