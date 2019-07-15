@@ -114,11 +114,6 @@ CARGO_COMMANDS = {
 
 
 CARGO_BUILD_DEFAULTS = {
-    'variants': {
-        'clippy': {
-            'toolchain': 'nightly',
-        }
-    }
 }
 
 
