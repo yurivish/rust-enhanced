@@ -39,7 +39,7 @@
     },
     // r#" will expand to r#""#
     // Additional # characters will be duplicated on both sides.
-    { "keys": ["\""], "command": "insert_snippet", "args": {"contents": "\"$0\"${TM_CURRENT_WORD/[^#]/$1/}"}, "context":
+    { "keys": ["\""], "command": "insert_snippet", "args": {"contents": "\"$0\"${TM_CURRENT_WORD/[^#]+/$1/}"}, "context":
         [
             { "key": "setting.auto_match_enabled", "operator": "equal", "operand": true },
             { "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true },
