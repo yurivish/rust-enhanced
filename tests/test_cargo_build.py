@@ -362,8 +362,7 @@ class TestCargoBuild(TestBase):
         self._cargo_clean(view)
         window = view.window()
         window.run_command('cargo_set_toolchain', {'which': 'project_variant',
-                                                   'variant': 'clippy',
-                                                   'toolchain': 'nightly'})
+                                                   'variant': 'clippy'})
         self._run_build_wait('clippy')
         # This is a relatively simple test to verify Clippy has run.
         self._check_added_message(window, view.file_name(), r'char_lit_as_u8')
