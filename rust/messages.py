@@ -551,7 +551,7 @@ def _show_message(window, current_idx, transient=False, force_open=False):
             # show_at_center is buggy with newly opened views (see
             # https://github.com/SublimeTextIssues/Core/issues/538).
             # ENCODED_POSITION is 1-based.
-            row, col = msg.span[0]
+            row, col = msg.span[1]
         else:
             row, col = (999999999, 1)
         view = window.open_file('%s:%d:%d' % (path, row + 1, col + 1),
@@ -586,7 +586,7 @@ def _scroll_to_message(view, message, transient):
     if not transient:
         view.window().focus_view(view)
     r = message.sublime_region(view)
-    view.run_command('rust_scroll_to_region', {'region': (r.a, r.a)})
+    view.run_command('rust_scroll_to_region', {'region': (r.end(), r.end())})
 
 
 def redraw_all_open_views(window):
