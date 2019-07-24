@@ -5,14 +5,65 @@ import re
 from rust_test_common import *
 
 
+# Test data for message order tests.
+#
+# 'command': The command to run.
+# 'path': The path to open.
+# 'messages': List of expected messages. Tuples of:
+#     (sequence, path, level, rowcol, inline_highlight, raw_highlight)
+#
+#     sequence: The order the messages should be visited. The messages should
+#         be listed in the order that they are emitted by rustc. The number
+#         indicates the order that the Rust Enhanced plugin will visit them.
+#         This is different because we visit based by level (warnings first).
+#     path: The file that this message is for.
+#     level: The message level ('WARN', 'ERR', etc.)
+#     rowcol: The 0-based row/col where the cursor should appear.
+#     inline_highlight: The message that is displayed in the build output when
+#         `show_inline_messages` is True.
+#     raw_highlight: The message that is displayed in the build output when
+#         `show_inline_messages` is False.
+#
+#     The highlight messages are regular expressions.
+TEST_DATA = [
+    {'command': 'build',
+     'path': 'examples/ex_warning1.rs',
+     'messages': [
+        (1, 'examples/warning1.rs', 'WARN', (0, 13), 'examples/warning1.rs:1', ' --> examples/warning1.rs:1:1'),
+        (2, 'examples/warning1.rs', 'WARN', (4, 13), 'examples/warning1.rs:5', ' --> examples/warning1.rs:5:1'),
+        (3, 'examples/warning2.rs', 'WARN', (81, 16), 'examples/warning2.rs:82', '  --> examples/warning2.rs:82:1'),
+     ]
+    },
+
+    {'command': 'build',
+     'path': 'tests/test_all_levels.rs',
+     'messages': [
+        (2, 'tests/test_all_levels.rs', 'WARN', (3, 17), 'tests/test_all_levels.rs:4', ' --> tests/test_all_levels.rs:4:7'),
+        (1, 'tests/test_all_levels.rs', 'ERR', (8, 25), 'tests/test_all_levels.rs:9', ' --> tests/test_all_levels.rs:9:25'),
+     ]
+    },
+
+    {'command': 'test',
+     'path': 'tests/test_test_output.rs',
+     'messages': [
+        (1, 'tests/test_test_output.rs', 'ERR', (8, 4), 'tests/test_test_output.rs:9:5', 'tests/test_test_output.rs:9:5'),
+        (2, 'tests/test_test_output.rs', 'ERR', (13, 4), 'tests/test_test_output.rs:14:5', 'tests/test_test_output.rs:14:5'),
+        (3, 'tests/test_test_output.rs', 'ERR', (18, 4), 'tests/test_test_output.rs:19:5', 'tests/test_test_output.rs:19:5'),
+        (4, 'tests/test_test_output.rs', 'ERR', (23, 4), 'tests/test_test_output.rs:24:5', 'tests/test_test_output.rs:24:5'),
+        (5, 'tests/test_test_output.rs', 'ERR', (28, 4), 'tests/test_test_output.rs:29:5', 'tests/test_test_output.rs:29:5'),
+     ]
+    }
+]
+
+
 class TestMessageOrder(TestBase):
 
     def setUp(self):
         super(TestMessageOrder, self).setUp()
         # Set a base version for these tests.
         version = util.get_rustc_version(sublime.active_window(), plugin_path)
-        if semver.match(version, '<1.20.0'):
-            self.skipTest('Tests require rust 1.20 or newer.')
+        if semver.match(version, '<1.27.0'):
+            self.skipTest('Tests require rust 1.27 or newer.')
 
         # Make it so that the build target is automatically determined from
         # the active view so each test doesn't have to specify it.
@@ -31,40 +82,19 @@ class TestMessageOrder(TestBase):
 
         This opens a file and runs the build command on it.  It then verifies
         that next/prev message goes to the correct message in order.
-
-        The files are annotated with comments to indicate where each message
-        should appear and in which order.  The annotations should look like:
-
-            /*ERR 1 "build_output_selection_inline" "build_output_selection_raw"*/
-            /*WARN 1 "build_output_selection_inline" "build_output_selection_raw"*/
-
-        The number is the order the message should appear.  Two numbers can be
-        specified separated with a comma, where the second number is the
-        "unsorted" sequence (the order the message is emitted from rustc).
-
-        The "inline" message is the message in the build output panel that
-        should be displayed when inline phantoms are being used.  The "raw"
-        version is what is displayed when inline phantoms are not being used.
-        These value is a regular expressions tested against region in the
-        output panel.
         """
-        to_test = [
-            ('build', 'examples/ex_warning1.rs',
-                'examples/warning1.rs', 'examples/warning2.rs'),
-            ('build', 'tests/test_all_levels.rs',),
-            ('test', 'tests/test_test_output.rs',),
-        ]
-        for command, *paths in to_test:
-            rel_paths = [os.path.join('tests/message-order', path)
-                for path in paths]
-            sorted_msgs, unsorted_msgs = self._collect_message_order(rel_paths)
-            self.assertTrue(sorted_msgs)
-            self.assertTrue(unsorted_msgs)
-            self._with_open_file(rel_paths[0], self._test_message_order,
-                messages=sorted_msgs, inline=True, command=command)
-            self._with_open_file(rel_paths[0],
-                self._test_message_order, messages=unsorted_msgs,
-                inline=False, command=command)
+        for data in TEST_DATA:
+            path = os.path.join('tests/message-order', data['path'])
+
+            # rust_next_message sorts based on error level.
+            inline_sort = [x[1:] for x in sorted(data['messages'])]
+            # Sublime's built-in next/prev message goes in source order.
+            unsorted = [x[1:] for x in data['messages']]
+
+            self._with_open_file(path, self._test_message_order,
+                messages=inline_sort, inline=True, command=data['command'])
+            self._with_open_file(path, self._test_message_order,
+                messages=unsorted, inline=False, command=data['command'])
 
     def _test_message_order(self, view, messages, inline, command):
         self._override_setting('show_errors_inline', inline)
@@ -83,6 +113,8 @@ class TestMessageOrder(TestBase):
                 for _ in range(times):
                     for (next_filename, next_level, next_row_col,
                          inline_highlight, raw_highlight) in omsgs:
+                        next_filename = os.path.join(plugin_path,
+                            'tests', 'message-order', next_filename)
                         if inline and (
                            (level == 'error' and next_level != 'ERR') or
                            (level == 'warning' and next_level != 'WARN')):
@@ -98,7 +130,13 @@ class TestMessageOrder(TestBase):
                         self.assertEqual(next_view.file_name(), next_filename)
                         region = next_view.sel()[0]
                         rowcol = next_view.rowcol(region.begin())
-                        self.assertEqual(rowcol, next_row_col)
+                        if inline:
+                            self.assertEqual(rowcol, next_row_col)
+                        else:
+                            # When inline is disabled, we use Sublime's
+                            # built-in next/prev, which goes to the beginning.
+                            # Just validate the row is correct.
+                            self.assertEqual(rowcol[0], next_row_col[0])
                         # Verify the output panel is highlighting the correct
                         # thing.
                         build_panel = window.find_output_panel(
@@ -125,58 +163,6 @@ class TestMessageOrder(TestBase):
             if close_view.window():
                 window.focus_view(close_view)
                 window.run_command('close_file')
-
-    def _collect_message_order(self, paths):
-        """Scan test files for comments that indicate the order of messages.
-
-        :param paths: List of paths relative to the plugin.
-
-        :returns: Returns a tuple of two lists.  The first list is the sorted
-            order of messages.  The first list is the unsorted order of
-            messages.  Each list has tuples (path, level, (row, col),
-            inline_highlight, raw_highlight).
-        """
-        result = []
-        for path in paths:
-            self._with_open_file(path, self._collect_message_order_view,
-                result=result)
-        # Sort the result.
-        sorted_result = sorted(result, key=lambda x: x[0])
-        unsorted_result = sorted(result, key=lambda x: x[1])
-        # Verify that the markup was entered correctly.
-        self.assertEqual([x[0] for x in sorted_result],
-            list(range(1, len(sorted_result) + 1)))
-        # Strip the sequence number.
-        return ([x[2:] for x in sorted_result],
-                [x[2:] for x in unsorted_result])
-
-    def _collect_message_order_view(self, view, result):
-        pattern = r'/\*(ERR|WARN) ([0-9,]+) "([^"]+)"(?: "([^"]+)")?\*/'
-        regions = view.find_all(pattern)
-
-        def path_fixup(p):
-            if sys.platform == 'win32':
-                # Double backslash since it is a regex.
-                return p.replace('/', '\\\\')
-            else:
-                return p
-
-        for region in regions:
-            text = view.substr(region)
-            m = re.match(pattern, text)
-            rowcol = view.rowcol(region.end())
-            if ',' in m.group(2):
-                sort_index, unsorted = map(int, m.group(2).split(','))
-            else:
-                sort_index = int(m.group(2))
-                unsorted = sort_index
-            inline_highlight = path_fixup(m.group(3))
-            if m.group(4):
-                raw_highlight = path_fixup(m.group(4))
-            else:
-                raw_highlight = inline_highlight
-            result.append((sort_index, unsorted, view.file_name(),
-                m.group(1), rowcol, inline_highlight, raw_highlight))
 
     def test_no_messages(self):
         self._with_open_file('tests/message-order/examples/ex_no_messages.rs',
