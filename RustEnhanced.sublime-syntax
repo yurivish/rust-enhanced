@@ -1193,6 +1193,10 @@ contexts:
         - match: \*/
           scope: punctuation.definition.comment.rust
           pop: true
+        # Javadoc style comment with leading * on each line. Helps with word-wrapping.
+        - match: ^\s*(\*)(?!/)
+          captures:
+            1: punctuation.definition.comment.rust
         - include: block-comments
     - match: /\*
       scope: punctuation.definition.comment.rust

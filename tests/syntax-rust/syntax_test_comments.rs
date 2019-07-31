@@ -20,6 +20,11 @@ Block doc comments
 // ^^^^^^^^^^^^^^^^^^ comment.block.documentation comment.block
 */
 
+/**
+    *
+//  ^ comment.block.documentation punctuation.definition.comment
+*/
+
 // Verify comment is cleared.
 mod a {}
 // ^^^^^ -comment
