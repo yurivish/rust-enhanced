@@ -455,7 +455,7 @@ contexts:
       scope: punctuation.definition.generic.begin.rust
       push: generic-angles-contents
     # Alert the user of a broken generic construct
-    - match: '.'
+    - match: '(?=\S)'
       scope: invalid.illegal.rust
       pop: true
 
@@ -478,7 +478,7 @@ contexts:
       scope: punctuation.separator.rust
     - match: '\+|\bas\b|='
       scope: keyword.operator.rust
-    - match: '\S'
+    - match: '(?=\S)'
       scope: invalid.illegal.rust
       pop: true
 
