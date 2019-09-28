@@ -144,22 +144,12 @@ class RustSyntaxCheckThread(rust_thread.RustThread, rust_proc.ProcListener):
         settings.load()
         command_info = cargo_settings.CARGO_COMMANDS[method]
 
-        if method == 'clippy':
-            # Clippy does not support cargo target filters, must be run for
-            # all targets.
-            cmd = settings.get_command(method, command_info, self.cwd,
-                self.cwd, force_json=True)
-            self.msg_rel_path = cmd['msg_rel_path']
-            p = rust_proc.RustProc()
-            p.run(self.window, cmd['command'], self.cwd, self, env=cmd['env'])
-            return p.wait()
-
         if method == 'no-trans':
             print('rust_syntax_checking_method == "no-trans" is no longer supported.')
             print('Please change the config setting to "check".')
             method = 'check'
 
-        if method != 'check':
+        if method not in ['check', 'clippy']:
             print('Unknown setting for `rust_syntax_checking_method`: %r' % (method,))
             return -1
 

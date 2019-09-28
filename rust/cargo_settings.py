@@ -93,7 +93,7 @@ CARGO_COMMANDS = {
     'clippy': {
         'name': 'Clippy',
         'command': 'clippy',
-        'allows_target': False,
+        'allows_target': True,
         'allows_target_triple': True,
         'allows_release': True,
         'allows_features': True,
