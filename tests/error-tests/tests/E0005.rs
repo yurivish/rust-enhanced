@@ -15,6 +15,10 @@ fn main() {
 //      ^^^^^^^ERR pattern `None` not covered
 //      ^^^^^^^ERR refutable pattern in local binding
 //      ^^^^^^^MSG(>=1.39.0-beta) See Also: ↑:1
+//      ^^^^^^^NOTE(>=1.40.0-beta) `let` bindings require
+//      ^^^^^^^NOTE(>=1.40.0-beta) for more information
+//  ^^^^^^^^^^^^^^^^HELP(>=1.40.0-beta) you might want to use `if let`
+//  ^^^^^^^^^^^^^^^^HELP(>=1.40.0-beta) /Accept Replacement:.*/
 }
 // Bug: https://github.com/rust-lang/rust/issues/64769
 // start-msg: ERR(>=1.39.0-beta) not covered
