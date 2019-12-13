@@ -684,6 +684,9 @@ contexts:
     - match: '{{identifier}}'
       scope: entity.name.enum.rust
       set: enum-maybe-where
+    - match: '(?=\S)'
+      # Abort on invalid character.
+      pop: true
 
   enum-maybe-where:
     - meta_scope: meta.enum.rust
@@ -693,6 +696,9 @@ contexts:
     - match: '\{'
       scope: punctuation.definition.block.begin.rust
       set: enum-body
+    - match: '(?=\S)'
+      # Abort on invalid character.
+      pop: true
 
   enum-body:
     - meta_scope: meta.enum.rust
