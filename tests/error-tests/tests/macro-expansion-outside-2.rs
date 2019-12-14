@@ -9,7 +9,9 @@ fn f() {
     let x: () = example_bad_value!();
 //              ^^^^^^^^^^^^^^^^^^^^ERR mismatched types
 //              ^^^^^^^^^^^^^^^^^^^^ERR this error originates in a macro outside
-//              ^^^^^^^^^^^^^^^^^^^^ERR expected (), found i32
-//              ^^^^^^^^^^^^^^^^^^^^NOTE expected type
+//              ^^^^^^^^^^^^^^^^^^^^ERR(>=1.41.0-beta) expected `()`, found `i32`
+//              ^^^^^^^^^^^^^^^^^^^^ERR(<1.41.0-beta) expected (), found i32
+//         ^^ERR(>=1.41.0-beta) expected due to this
+//              ^^^^^^^^^^^^^^^^^^^^NOTE(<1.41.0-beta) expected type
 //              ^^^^^^^^^^^^^^^^^^^^NOTE(<1.16.0) found type
 }
