@@ -29,9 +29,9 @@ TEST_DATA = [
     {'command': 'build',
      'path': 'examples/ex_warning1.rs',
      'messages': [
-        (1, 'examples/warning1.rs', 'WARN', (0, 13), 'examples/warning1.rs:1', ' --> examples/warning1.rs:1:1'),
-        (2, 'examples/warning1.rs', 'WARN', (4, 13), 'examples/warning1.rs:5', ' --> examples/warning1.rs:5:1'),
-        (3, 'examples/warning2.rs', 'WARN', (81, 16), 'examples/warning2.rs:82', '  --> examples/warning2.rs:82:1'),
+        (1, 'examples/warning1.rs', 'WARN', (0, 11), 'examples/warning1.rs:1', ' --> examples/warning1.rs:1:4'),
+        (2, 'examples/warning1.rs', 'WARN', (4, 11), 'examples/warning1.rs:5', ' --> examples/warning1.rs:5:4'),
+        (3, 'examples/warning2.rs', 'WARN', (81, 14), 'examples/warning2.rs:82', '  --> examples/warning2.rs:82:4'),
      ]
     },
 
@@ -62,8 +62,8 @@ class TestMessageOrder(TestBase):
         super(TestMessageOrder, self).setUp()
         # Set a base version for these tests.
         version = util.get_rustc_version(sublime.active_window(), plugin_path)
-        if semver.match(version, '<1.27.0'):
-            self.skipTest('Tests require rust 1.27 or newer.')
+        if semver.match(version, '<1.41.0-beta'):
+            self.skipTest('Tests require rust 1.41 or newer.')
 
         # Make it so that the build target is automatically determined from
         # the active view so each test doesn't have to specify it.

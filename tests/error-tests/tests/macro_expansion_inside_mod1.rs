@@ -6,7 +6,8 @@ macro_rules! example_bad_syntax {
             // syntax errors.
             Kind(x: u32)
 //                ^ERR /expected one of .*, found `:`/
-//                ^ERR(>=1.18.0) /expected one of .* here/
+//                ^ERR(>=1.41.0-beta) /expected one of .* tokens/
+//                ^ERR(>=1.18.0,<1.41.0-beta) /expected one of .* here/
 //                ^MSG(>=1.20.0) See Also: macro-expansion-inside-1.rs:6
 //                ^ERR(<1.34.0-beta) /expected one of .*, found `:`/
 //                ^ERR(>=1.18.0,<1.34.0-beta) expected one of
