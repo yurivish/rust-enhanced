@@ -11,7 +11,7 @@
 // error-pattern: unreachable statement
 
 #![deny(unreachable_code)]
-//      ^^^^^^^^^^^^^^^^NOTE lint level defined here
+//      ^^^^^^^^^^^^^^^^NOTE defined here
 //      ^^^^^^^^^^^^^^^^MSG See Primary: ↓:20
 
 fn main() {
