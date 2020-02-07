@@ -56,6 +56,6 @@ fn slow() {
 #[test]
 fn panic_outside_crate() {
     // This (unfortunately) should not show up as an error when running tests
-    // since Rust prints the path to src/libcore/result.rs.
+    // since Rust prints the path to src/libcore/result.rs. (This has been fixed in 1.42.)
     Err::<i32, &str>("err").unwrap();
 }

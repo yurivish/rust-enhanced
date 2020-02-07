@@ -232,7 +232,8 @@ class TestSyntaxCheck(TestBase):
                     else:
                         actual_text = msg.text
                     if check_actual_text(emsg_info['message'], actual_text):
-                        self.assertEqual(emsg_info['level'], msg.level)
+                        self.assertEqual(emsg_info['level'], msg.level,
+                            'Level mismatch. Expected:\n%s\nGot:\n%s' % (emsg_info, msg))
                         break
             else:
                 raise AssertionError('Did not find expected message "%s:%s" for region %r:%r for file %r\nsetup=%s\nversion=%s\nAvailable messages=%r' % (
