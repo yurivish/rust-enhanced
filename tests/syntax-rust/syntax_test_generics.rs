@@ -317,3 +317,17 @@ fn f(a: for<'a, 'b> fn() -> String) {}
 //            ^ meta.generic punctuation.separator
 //              ^^ meta.generic storage.modifier.lifetime
 //                ^ meta.function meta.function.parameters meta.generic punctuation.definition.generic.end
+
+// Function in type path with return type.
+fn factory() -> Box<Fn(i32) -> i32> {
+// <- storage.type.function
+// ^^^^^^^ entity.name.function
+//                 ^^^^^^^^^^^^^^^^ meta.generic
+//                  ^^ support.type
+//                    ^ punctuation.definition.type.begin
+//                     ^^^ storage.type
+//                        ^ punctuation.definition.type.end
+//                          ^^ punctuation.separator
+//                             ^^^ storage.type
+    Box::new(|x| x + 1)
+}
