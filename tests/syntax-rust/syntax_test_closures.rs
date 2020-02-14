@@ -6,6 +6,7 @@ let inferred_closure = |i, j: u32| i + 1;
 //                     ^^^^^^^^^^^ meta.function.parameters
 //                     ^ punctuation.definition.parameters.begin
 //                      ^ variable.parameter
+//                       ^ punctuation.separator
 //                         ^ variable.parameter
 //                          ^ punctuation.separator
 //                            ^^^ storage.type
@@ -179,3 +180,20 @@ let x = |/*comment*/(/*c*/a, [b/*c*/], S{/*c*/f: c})| {};
 //                                      ^^^^^^^^^^^ meta.block
 //                                       ^^^^^ comment.block
 //                                               ^ variable.parameter
+
+ let f = |(x, y): (u32, &mut u32)| { x + y };
+ //      ^ punctuation.definition.parameters.begin
+ //       ^^^^^^ meta.group
+ //        ^ variable.parameter
+ //         ^ punctuation.separator
+ //           ^ variable.parameter
+ //            ^ punctuation.section.group.end
+ //             ^ punctuation.separator
+ //               ^ punctuation.definition.type.begin
+ //                ^^^ storage.type
+ //                   ^ punctuation.separator
+ //                     ^ keyword.operator
+ //                      ^^^ storage.modifier
+ //                          ^^^ storage.type
+ //                             ^ punctuation.definition.type.end
+ //                              ^ punctuation.definition.parameters.end

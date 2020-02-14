@@ -130,3 +130,17 @@ fn foo(&'a self) {}
 //     ^ keyword.operator
 //      ^^ storage.modifier.lifetime
 //         ^^^^ variable.parameter
+
+fn sum((x, y): (i32, i32)) -> i32 {
+//     ^^^^^^ meta.group
+//     ^ punctuation.section.group.begin
+//      ^ variable.parameter
+//       ^ punctuation.separator
+//         ^ variable.parameter
+//          ^ punctuation.section.group.end
+//           ^ punctuation.separator
+//             ^ punctuation.definition.type.begin
+//              ^^^ storage.type
+//                 ^ punctuation.separator
+//                   ^^^ storage.type
+//                      ^ punctuation.definition.type.end
