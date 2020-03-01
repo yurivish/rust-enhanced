@@ -610,6 +610,7 @@ contexts:
     - match: '\('
       scope: punctuation.section.group.begin.rust
       push:
+        - meta_scope: meta.group.rust
         - match: '\)'
           scope: punctuation.section.group.end.rust
           pop: true

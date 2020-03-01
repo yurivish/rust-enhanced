@@ -102,6 +102,13 @@ let p: Pair<'static> = (10, "ten");
 //                          ^^^^^ string.quoted.double
 //                               ^ punctuation.section.group.end
 //                                ^ punctuation.terminator
+fn tuple(x: (u32, u32)) {}
+//          ^^^^^^^^^^ meta.group
+//          ^ meta.group punctuation.section.group.begin
+//           ^^^ storage.type
+//              ^ punctuation.separator
+//                ^^^ storage.type
+//                   ^ meta.group punctuation.section.group.end
 
 // Array types.
 let xs: [i32; 5] = [1, 2, 3, 4, 5];
