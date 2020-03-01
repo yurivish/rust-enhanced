@@ -31,6 +31,8 @@ contexts:
       scope: variable.other.rust
 
   statements:
+    # This isn't really just "statements", it also includes all types,
+    # expressions, items, etc.
 
     - include: visibility
 
@@ -338,6 +340,8 @@ contexts:
     - include: statements
 
   after-operator:
+    # after-operator tries to handle ambiguous < and | symbols which can be
+    # either binary operators, or the start of a generic or closure.
     - match: '(?=<)'
       set: generic-angles
     - include: try-closure
@@ -383,6 +387,7 @@ contexts:
           pop: true
 
   pattern-param:
+    # A pattern used in a function or closure parameter.
     - include: comments
     - match: '&'
       scope: keyword.operator.rust
@@ -494,6 +499,8 @@ contexts:
     - include: block
 
   type:
+    # A low-level type. Typically you want type-any-identifier for the full
+    # type grammar.
     - match: '{{identifier}}(?=<)'
       push: generic-angles
     - match: \b(Self|{{int_suffixes}}|{{float_suffixes}}|bool|char|str)\b
