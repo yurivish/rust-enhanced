@@ -5,7 +5,7 @@ enum OperatingSystem
 // ^^^^^^^^^^^^^^^^^ meta.enum
 //   ^^^^^^^^^^^^^^^ entity.name.enum
 {
-// <- meta.enum punctuation.section.block.begin
+// <- meta.block meta.enum punctuation.section.block.begin
     Osx,
 //  ^^^ meta.enum storage.type.source
     Windows,
@@ -18,7 +18,7 @@ enum OperatingSystem
     //                        ^^^ storage.type
     //                            ^ meta.block punctuation.section.block.end
 }
-// <- meta.enum punctuation.section.block.end
+// <- meta.block meta.enum punctuation.section.block.end
 
 let q = Message::Quit;
 //      ^^^^^^^ storage.type.source

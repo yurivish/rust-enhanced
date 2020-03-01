@@ -808,7 +808,7 @@ contexts:
       pop: true
 
   enum-body:
-    - meta_scope: meta.enum.rust
+    - meta_scope: meta.block.rust meta.enum.rust
     - include: comments
     - include: attribute
     - match: '\}'
