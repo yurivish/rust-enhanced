@@ -2,7 +2,8 @@
 ---
 # http://www.sublimetext.com/docs/3/syntax.html
 name: Cargo Build Results
-file_extensions: rs
+file_extensions:
+  - rs
 scope: source.build_results
 
 variables:
