@@ -14,12 +14,17 @@ fn main() {
     let Some(y) = x;
 //      ^^^^^^^ERR pattern `None` not covered
 //      ^^^^^^^ERR refutable pattern in local binding
-//      ^^^^^^^MSG(>=1.39.0-beta) See Also: ↑:1
+//      ^^^^^^^MSG(>=1.39.0-beta,<1.44.0-beta) See Also: ↑:1
+//      ^^^^^^^MSG(>=1.44.0-beta) See Also: ↓
 //      ^^^^^^^NOTE(>=1.40.0-beta) `let` bindings require
 //      ^^^^^^^NOTE(>=1.40.0-beta) for more information
+//      ^^^^^^^NOTE(>=1.44.0-beta) the matched value
 //  ^^^^^^^^^^^^^^^^HELP(>=1.40.0-beta) you might want to use `if let`
 //  ^^^^^^^^^^^^^^^^HELP(>=1.40.0-beta) /Accept Replacement:.*/
 }
 // Bug: https://github.com/rust-lang/rust/issues/64769
-// start-msg: ERR(>=1.39.0-beta) not covered
-// start-msg: MSG(>=1.39.0-beta) See Primary: ↓:14
+// start-msg: ERR(>=1.39.0-beta,<1.44.0-beta) not covered
+// start-msg: MSG(>=1.39.0-beta,<1.44.0-beta) See Primary: ↓:14
+// end-msg: ERR(>=1.44.0-beta) Errors occurred in macro
+// end-msg: ERR(>=1.44.0-beta) not covered
+// end-msg: MSG(>=1.44.0-beta) See Primary: ↑:14

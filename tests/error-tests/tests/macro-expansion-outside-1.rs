@@ -7,10 +7,12 @@ extern crate dcrate;
 // at the bottom of the "root" source file.
 
 /*BEGIN*/example_bad_syntax!{}/*END*/
-// ~ERR(>=1.20.0) /expected one of .*, found `:`/
-// ~ERR(>=1.20.0) this error originates in a macro outside of the current crate
+//       ^^^^^^^^^^^^^^^^^^^^^HELP(>=1.44.0-beta) in this macro invocation
+//       ^^^^^^^^^^^^^^^^^^^^^MSG(>=1.44.0-beta) See Primary: lib.rs:20
+// ~ERR(>=1.20.0,<1.44.0-beta) /expected one of .*, found `:`/
+// ~ERR(>=1.20.0,<1.44.0-beta) this error originates in a macro outside of the current crate
 // ~ERR(>=1.20.0,<1.41.0-beta) /expected one of .* here/
-// ~ERR(>=1.41.0-beta) /expected one of .* tokens/
+// ~ERR(>=1.41.0-beta,<1.44.0-beta) /expected one of .* tokens/
 // ~ERR(>=1.20.0,<1.24.0-beta) unexpected token
 // ~ERR(>=1.20.0,<1.34.0-beta) /expected one of .*, found `:`/
 // ~ERR(>=1.20.0,<1.34.0-beta) this error originates in a macro outside of the current crate

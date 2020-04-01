@@ -367,11 +367,19 @@ class TestSyntaxCheck(TestBase):
             else:
                 last_line = row
                 last_line_offset = 1
-            try:
-                actual_region = region_map[row - 1]
-            except KeyError:
-                raise AssertionError('Invalid test:  %r did not have region on row %r' % (
-                    view.file_name(), row - 1))
+            # Look upwards to find the most recent BEGIN/END.
+            region_row = row - 1
+            while region_row >= 0:
+                try:
+                    actual_region = region_map[region_row]
+                except KeyError:
+                    pass
+                else:
+                    break
+                region_row -= 1
+            else:
+                raise AssertionError('Invalid test:  %r did not have region before row %r' % (
+                    view.file_name(), row))
             result.append({
                 'begin': actual_region[0],
                 'end': actual_region[1],
