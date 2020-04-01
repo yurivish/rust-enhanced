@@ -6,7 +6,7 @@
 //        ^^^WARN(<1.42.0-beta) conflicting representation hints
 //     ^ERR(>=1.42.0-beta) conflicting representation hints
 //        ^^^ERR(>=1.42.0-beta) conflicting representation hints
-//     ^NOTE(>=1.43.0-beta) `#[deny(conflicting_repr_hints)]` on by default
-//     ^WARN(>=1.43.0-beta) this was previously
-//     ^NOTE(>=1.43.0-beta) for more information
+//     ^NOTE(>=1.42.0-beta) `#[deny(conflicting_repr_hints)]` on by default
+//     ^WARN(>=1.42.0-beta) this was previously
+//     ^NOTE(>=1.42.0-beta) for more information
 pub enum C { C }

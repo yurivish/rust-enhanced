@@ -830,6 +830,10 @@ def _is_duplicate_message(window, primary_message):
     return False
 
 
+def _is_external_macro(span):
+    return 'macros>' in span['file_name'] or span['file_name'].startswith('/rustc/')
+
+
 def _collect_rust_messages(window, base_path, info, target_path,
                            msg_cb, parent_info,
                            message):
@@ -851,7 +855,7 @@ def _collect_rust_messages(window, base_path, info, target_path,
 
             - 'file_name': Filename for the message.  For spans located in the
               'expansion' section, this will be the name of the expanded macro
-              in the format '<macroname macros>'.
+              in the format '<macroname macros>'. (No longer true in 1.44)
             - 'byte_start':
             - 'byte_end':
             - 'line_start':
@@ -933,7 +937,7 @@ def _collect_rust_messages(window, base_path, info, target_path,
         child.suggested_replacement = suggested_replacement
         child.level = level_from_str(level)
         child.primary = False
-        if 'macros>' in span['file_name']:
+        if _is_external_macro(span):
             # Nowhere to display this, just send it to the console via msg_cb.
             msg_cb(child)
         else:
@@ -986,7 +990,7 @@ def _collect_rust_messages(window, base_path, info, target_path,
             return span, expansion
 
     for span in info['spans']:
-        if 'macros>' in span['file_name']:
+        if _is_external_macro(span):
             # Rust gives the chain of expansions for the macro, which we don't
             # really care about.  We want to find the site where the macro was
             # invoked.  I'm not entirely confident this is the best way to do
@@ -1001,7 +1005,7 @@ def _collect_rust_messages(window, base_path, info, target_path,
             updated['suggested_replacement'] = span['suggested_replacement']
             span = updated
 
-            if 'macros>' in span['file_name']:
+            if _is_external_macro(span):
                 # Macros from extern crates do not have 'expansion', and thus
                 # we do not have a location to highlight.  Place the result at
                 # the bottom of the primary target path.
@@ -1014,12 +1018,14 @@ def _collect_rust_messages(window, base_path, info, target_path,
                     'Errors occurred in macro %s from external crate' % (macro_name,),
                     info['level'])
                 text = ''.join([x['text'] for x in span['text']])
-                add_additional(span,
-                    'Macro text: %s' % (text,),
-                    info['level'])
+                print('macro text: `%s`' % (text,))
+                if text:
+                    add_additional(span,
+                        'Macro text: %s' % (text,),
+                        info['level'])
             else:
                 if not expansion or not expansion['def_site_span'] \
-                        or 'macros>' in expansion['def_site_span']['file_name']:
+                        or _is_external_macro(expansion['def_site_span']):
                     add_additional(span,
                         'this error originates in a macro outside of the current crate',
                         info['level'])
@@ -1027,7 +1033,7 @@ def _collect_rust_messages(window, base_path, info, target_path,
         # Add a message for macro invocation site if available in the local
         # crate.
         if span['expansion'] and \
-                'macros>' not in span['file_name'] and \
+                not _is_external_macro(span) and \
                 not span['expansion']['macro_decl_name'].startswith('#['):
             invoke_span, expansion = find_span_r(span)
             add_additional(invoke_span, 'in this macro invocation', 'help')
