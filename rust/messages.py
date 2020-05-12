@@ -968,7 +968,9 @@ def _collect_rust_messages(window, base_path, info, target_path,
                     imsg.startswith('cannot continue') or
                     imsg.startswith('Some errors occurred') or
                     imsg.startswith('Some errors have detailed') or
-                    imsg.startswith('For more information about')):
+                    imsg.startswith('For more information about') or
+                    imsg.endswith('warning emitted') or
+                    imsg.endswith('warnings emitted')):
                 if target_path:
                     # Display at the bottom of the root path (like main.rs)
                     # for lack of a better place to put it.
