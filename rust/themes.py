@@ -125,7 +125,7 @@ class ClearTheme(Theme):
         if isinstance(batch, PrimaryBatch):
             for url, path in batch.child_links:
                 msgs.append(self.LINK_TMPL.format(
-                    url=url, text='See Also:', path=path))
+                    url=url, text=see_also(url), path=path))
         else:
             if batch.back_link:
                 msgs.append(self.LINK_TMPL.format(
@@ -274,7 +274,7 @@ class SolidTheme(Theme):
             for url, path in batch.child_links:
                 links.append(
                     self.LINK_TMPL.format(
-                        url=url, text='See Also:', path=path))
+                        url=url, text=see_also(url), path=path))
             text = batch.primary_message.escaped_text(view, '&nbsp;' + icon('none'))
             if not text and not children:
                 return None
@@ -327,8 +327,8 @@ class TestTheme(Theme):
             messages.append(fake)
 
         if isinstance(batch, PrimaryBatch):
-            for link in batch.child_links:
-                add_fake(batch.primary_message, 'See Also: ' + link[1])
+            for url, path in batch.child_links:
+                add_fake(batch.primary_message, see_also(url) + ' ' + path)
         else:
             if batch.back_link:
                 add_fake(batch.first(), 'See Primary: ' + batch.back_link[1])
@@ -340,3 +340,10 @@ THEMES = {
     'solid': SolidTheme(),
     'test': TestTheme(),
 }
+
+def see_also(path):
+    print(path)
+    if path.endswith(':external'):
+        return 'See Also (external):'
+    else:
+        return 'See Also:'
