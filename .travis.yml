@@ -40,13 +40,14 @@ install:
   # Pin a known good version of nightly.
   - >
     if [ "$TRAVIS_RUST_VERSION" != "nightly" ]; then
-      rustup install nightly-2019-07-13;
+      rustup install nightly-2020-05-15;
       host=$(rustc -Vv | grep ^host: | sed -e "s/host: //g");
       toolchains=$(dirname $(dirname $(dirname $(rustup which rustc))));
       mv $toolchains/nightly-* $toolchains/nightly-$host;
     fi
   # Install Rust packages needed by integration tests.
   - rustup component add clippy
+  - rustup component add rust-src
   - cargo install cargo-script
 
 
