@@ -376,7 +376,14 @@ def _click_handler(view, url, hide_popup=False):
         if hide_popup:
             view.hide_popup()
     elif url.startswith('file:///'):
-        view.window().open_file(url[8:], sublime.ENCODED_POSITION)
+        path = url[8:]
+        external = False
+        if path.endswith(':external'):
+            path = path[:-9]
+            external = True
+        new_view = view.window().open_file(path, sublime.ENCODED_POSITION)
+        if external:
+            new_view.set_read_only(True)
     elif url.startswith('replace:'):
         info = urllib.parse.parse_qs(url[8:], keep_blank_values=True)
         _accept_replace(view, info['id'][0], info['replacement'][0])
@@ -796,7 +803,7 @@ def add_rust_messages(window, base_path, info, target_path, msg_cb):
     :param target_path: Absolute path to the top-level source file of the
       target (lib.rs, main.rs, etc.).  May be None if it is not known.
     :param msg_cb: Callback that will be given the message object (and each
-        child separately).
+        child separately). May be None.
     """
     # cargo check emits in a slightly different format.
     if 'reason' in info:
@@ -815,7 +822,7 @@ def add_rust_messages(window, base_path, info, target_path, msg_cb):
         return
     if _is_duplicate_message(window, primary_message):
         return
-    batches = _batch_and_cross_link(primary_message)
+    batches = _batch_and_cross_link(window, primary_message)
     _save_batches(window, batches, msg_cb)
 
 
@@ -830,8 +837,15 @@ def _is_duplicate_message(window, primary_message):
     return False
 
 
-def _is_external_macro(span):
-    return 'macros>' in span['file_name'] or span['file_name'].startswith('/rustc/')
+def _is_external(window, path):
+    if 'macros>' in path:
+        return True
+    if not os.path.isabs(path):
+        return False
+    for folder in window.folders():
+        if path.startswith(folder + os.sep):
+            return False
+    return True
 
 
 def _collect_rust_messages(window, base_path, info, target_path,
@@ -931,33 +945,31 @@ def _collect_rust_messages(window, base_path, info, target_path,
         message.text = text
         message.level = level_from_str(info['level'])
 
-    def add_additional(span, text, level, suggested_replacement=None):
+    def add_additional(window, span, text, level, suggested_replacement=None):
         child = Message()
         child.text = text
         child.suggested_replacement = suggested_replacement
         child.level = level_from_str(level)
         child.primary = False
-        if _is_external_macro(span):
-            # Nowhere to display this, just send it to the console via msg_cb.
-            msg_cb(child)
-        else:
-            child.path = make_span_path(span)
-            if not os.path.exists(child.path):
-                # Sometimes rust gives messages that link to libstd in the
-                # directory where it was built (such as on Travis).
-                return
-            child.span = make_span_region(span)
-            if any(map(lambda m: m.is_similar(child), message.children)):
-                # Duplicate message, skip.  This happens with some of the
-                # macro help messages.
-                return
-            child.parent = message
-            message.children.append(child)
+        child.path = make_span_path(span)
+        if not os.path.exists(child.path):
+            # Sometimes rust gives messages that link to libstd in the
+            # directory where it was built (such as on CI).
+            if msg_cb:
+                msg_cb(child)
+            return
+        child.span = make_span_region(span)
+        if any(map(lambda m: m.is_similar(child), message.children)):
+            # Duplicate message, skip.  This happens with some of the
+            # macro help messages.
+            return
+        child.parent = message
+        message.children.append(child)
 
     if len(info['spans']) == 0:
         if parent_info:
             # This is extra info attached to the parent message.
-            add_additional(parent_info['span'], info['message'], info['level'])
+            add_additional(window, parent_info['span'], info['message'], info['level'])
         else:
             # Messages without spans are global session messages (like "main
             # function not found").
@@ -992,7 +1004,7 @@ def _collect_rust_messages(window, base_path, info, target_path,
             return span, expansion
 
     for span in info['spans']:
-        if _is_external_macro(span):
+        if _is_external(window, span['file_name']):
             # Rust gives the chain of expansions for the macro, which we don't
             # really care about.  We want to find the site where the macro was
             # invoked.  I'm not entirely confident this is the best way to do
@@ -1007,43 +1019,62 @@ def _collect_rust_messages(window, base_path, info, target_path,
             updated['suggested_replacement'] = span['suggested_replacement']
             span = updated
 
-            if _is_external_macro(span):
-                # Macros from extern crates do not have 'expansion', and thus
-                # we do not have a location to highlight.  Place the result at
-                # the bottom of the primary target path.
+            if _is_external(window, span['file_name']):
                 macro_name = span['file_name']
-                if target_path:
-                    span['file_name'] = target_path
-                    span['line_start'] = None
-                # else, messages will be shown in console via msg_cb.
-                add_additional(span,
-                    'Errors occurred in macro %s from external crate' % (macro_name,),
+                if not os.path.exists(span['file_name']):
+                    # Macros from extern crates do not have 'expansion', and thus
+                    # we do not have a location to highlight.  Place the result at
+                    # somewhere relevant.
+                    if parent_info:
+                        show_in_span = parent_info['span']
+                    else:
+                        for span in info['spans']:
+                            if span['is_primary']:
+                                show_in_span = span
+                                break
+                        else:
+                            # This shouldn't happen.
+                            show_in_span = None
+
+                    if show_in_span:
+                        span['file_name'] = show_in_span['file_name']
+                        span['byte_start'] = show_in_span['byte_start']
+                        span['byte_end'] = show_in_span['byte_end']
+                        span['line_start'] = show_in_span['line_start']
+                        span['line_end'] = show_in_span['line_end']
+                        span['column_start'] = show_in_span['column_start']
+                        span['column_end'] = show_in_span['column_end']
+                    elif target_path:
+                        span['file_name'] = target_path
+                        span['line_start'] = None
+                    # else, messages will be shown in console via msg_cb.
+                add_additional(window, span,
+                    'Errors occurred in %s from external crate' % (macro_name,),
                     info['level'])
                 text = ''.join([x['text'] for x in span['text']])
-                print('macro text: `%s`' % (text,))
                 if text:
-                    add_additional(span,
+                    add_additional(window, span,
                         'Macro text: %s' % (text,),
                         info['level'])
             else:
                 if not expansion or not expansion['def_site_span'] \
-                        or _is_external_macro(expansion['def_site_span']):
-                    add_additional(span,
+                        or _is_external(window, expansion['def_site_span']['file_name']):
+                    add_additional(window, span,
                         'this error originates in a macro outside of the current crate',
                         info['level'])
 
         # Add a message for macro invocation site if available in the local
         # crate.
         if span['expansion'] and \
-                not _is_external_macro(span) and \
+                not _is_external(window, span['file_name']) and \
                 not span['expansion']['macro_decl_name'].startswith('#['):
             invoke_span, expansion = find_span_r(span)
-            add_additional(invoke_span, 'in this macro invocation', 'help')
+            add_additional(window, invoke_span, 'in this macro invocation', 'help')
 
         if span['is_primary']:
             if parent_info:
                 # Primary child message.
-                add_additional(span, info['message'], info['level'])
+                add_additional(window, span, info['message'], info['level'])
             else:
                 set_primary_message(span, info['message'])
 
@@ -1058,11 +1089,11 @@ def _collect_rust_messages(window, base_path, info, target_path,
         # multiple spans (starting in 1.21).
         if label is not None:
             # Display the label for this Span.
-            add_additional(span, label, info['level'])
+            add_additional(window, span, label, info['level'])
         if span['suggested_replacement'] is not None:
             # The "suggested_replacement" contains the code that should
             # replace the span.
-            add_additional(span, None, 'help',
+            add_additional(window, span, None, 'help',
                 suggested_replacement=span['suggested_replacement'])
 
     # Recurse into children (which typically hold notes).
@@ -1072,19 +1103,24 @@ def _collect_rust_messages(window, base_path, info, target_path,
                                message)
 
 
-def _batch_and_cross_link(primary_message):
+def _batch_and_cross_link(window, primary_message):
     """Creates a list of MessageBatch objects with appropriate cross links."""
     def make_file_path(msg):
+        if _is_external(window, msg.path):
+            external = ':external'
+        else:
+            external = ''
         if msg.span:
-            return 'file:///%s:%s:%s' % (
+            return 'file:///%s:%s:%s%s' % (
                 msg.path.replace('\\', '/'),
                 msg.span[1][0] + 1,
                 msg.span[1][1] + 1,
+                external,
             )
         else:
             # Arbitrarily large line number to force it to the bottom of the
             # file, since we don't know ahead of time how large the file is.
-            return 'file:///%s:999999999' % (msg.path,)
+            return 'file:///%s:999999999%s' % (msg.path, external)
 
     # Group messages by line.
     primary_batch = PrimaryBatch(primary_message)

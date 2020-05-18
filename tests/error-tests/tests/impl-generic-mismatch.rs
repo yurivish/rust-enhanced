@@ -59,8 +59,8 @@ impl Hash for X {
 //                              ^^^^^^^^^^^ERR method `hash` has incompatible signature
 //                              ^^^^^^^^^^^ERR(>=1.28.0-beta) expected generic parameter
 //                              ^^^^^^^^^^^ERR(<1.28.0-beta) annotation in impl
-//                              ^^^^^^^^^^^MSG(>=1.32.0) See Also: ↓
+//                              ^^^^^^^^^^^ERR(>=1.32.0,<1.44.0-beta) Errors occurred in
+//                              ^^^^^^^^^^^ERR(>=1.32.0,<1.44.0-beta) Macro text:
+//                              ^^^^^^^^^^^ERR(>=1.32.0,<1.44.0-beta) method `hash` has incompatible
+//                              ^^^^^^^^^^^MSG(>=1.44.0-beta) See Also (external): mod.rs:
 }
-// end-msg: ERR(>=1.32.0) Errors occurred in macro
-// end-msg: ERR(>=1.32.0) declaration in trait here
-// end-msg: MSG(>=1.32.0) See Primary: ↑:58
