@@ -90,19 +90,19 @@ Projects with multiple build targets are supported too (--lib, --bin, --example,
        }
    }
 ```
-## RLS Support
-[RLS (Rust Language Server)](https://github.com/rust-lang-nursery/rls) support is experimental, because RLS is still in Alpha and the Sublime LSP plugin is work in progress. However, it's quite usable, and trying it is easy:
-* Set up RLS - follow the [instructions](https://github.com/rust-lang-nursery/rls#setup), using the **Nightly** toolchain
-* Check that RLS is working correctly by running `rustup run nightly rls --version`. If you get a version back RLS is installed
-* Install [LSP](https://github.com/tomv564/LSP) using Package Control
-* Enable LSP for Rust:
-  * Open a Rust project, and open its `lib.rs` or `main.rs` file
-  * Open the Command Palette, and select the `LSP: Enable Language Server Globally | Project` command
-* RLS should then initialise: you'll see a message in the status bar, and once the initial build has completed (this can be slow initially, as the RLS has to build your project), it is ready to use.
 
-Note that as well as error checking, code-completion, and renaming, RLS can run [`rustfmt`](https://github.com/rust-lang-nursery/rustfmt) on your code: right-click, and select `Format Document` or `Format Selection` in a Rust source file.
+## Language Servers
 
-You can keep RLS updated by running `rustup update nightly`, which will ensure that you get the latest features. LSP is also developing quickly, so it's worth checking package control for updates.
+Language servers can provide Rust-specific diagnostics, helpers, and navigation. There are two language server implementations for Rust:
+
+* [RLS (Rust Language Server)](https://github.com/rust-lang/rls)
+* [rust-analyzer](https://rust-analyzer.github.io/)
+
+RLS is being replaced by rust-analyzer, but may provide better support at this time depending on your needs.
+
+To use one of the language servers, you need to install the [Sublime LSP](https://github.com/sublimelsp/LSP) plugin. With both the plugin and one of the above servers installed, you should be able to follow the [LSP docs](https://lsp.readthedocs.io/en/latest/) for how to configure the server. Generally this involves running either the `LSP: Enable Language Server Globally` or `LSP: Enable Language Server in Project` and then selecting either `rls` or `rust-analyzer`. Depending on the size of your project, it may take some time for it to process and index.
+
+Note that as well as error checking, code-completion, and renaming, RLS can run [`rustfmt`](https://github.com/rust-lang/rustfmt) on your code: right-click, and select `LSP > Format Document` or `Format Selection` in a Rust source file.
 
 ## Context Menu
 The Sublime context menu includes a Rust entry with a variety of commands.
