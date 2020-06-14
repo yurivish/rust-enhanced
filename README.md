@@ -6,7 +6,7 @@ This is a Sublime Text 3 package which supports Rust starting with version 1.0,
 it makes no attempt at supporting earlier incompatible versions.
 
 This package used to be called 'Rust', but as of version 3, Sublime now comes with Rust built-in.  The built-in version on Sublime is actually just a snapshot of this package [with some fixes](https://github.com/sublimehq/Packages/issues/178#issuecomment-197050427) from quite some time ago.
-This package is still active and will continue to update and release, so if you want up to date features, and extra tools (such as syntax checking or building) we recommend using this package. It does not automatically override the built-in Rust package so you will have to disable it, and check "Rust Enhanced" is set.
+This package is still active and will continue to update and release, so if you want up to date features, and extra tools (such as syntax checking or building) we recommend using this package. It does automatically override the built-in Rust package so won't have to disable it, if you receive any error, check if "Rust Enhanced" is set.
 There is currently no plan to push upstream changes back into the Sublime Core Packages repo, and extra features will stay here.
 
 For syntax highlighting for Cargo files. Its recommended installing this with the TOML package.
