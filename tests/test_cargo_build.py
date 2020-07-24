@@ -341,7 +341,7 @@ class TestCargoBuild(TestBase):
         self._cargo_clean(view)
         self._run_build_wait('doc')
         self._check_added_message(view.window(), view.file_name(),
-            r'cannot be resolved')
+            r'unresolved link')
 
     def _test_document_messages_invalid(self, view):
         self._cargo_clean(view)

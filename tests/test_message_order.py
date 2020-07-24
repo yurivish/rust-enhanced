@@ -51,7 +51,7 @@ TEST_DATA = [
         (3, 'tests/test_test_output.rs', 'ERR', (18, 4), 'tests/test_test_output.rs:19:5', 'tests/test_test_output.rs:19:5'),
         (4, 'tests/test_test_output.rs', 'ERR', (23, 4), 'tests/test_test_output.rs:24:5', 'tests/test_test_output.rs:24:5'),
         (5, 'tests/test_test_output.rs', 'ERR', (28, 4), 'tests/test_test_output.rs:29:5', 'tests/test_test_output.rs:29:5'),
-        (6, 'tests/test_test_output.rs', 'ERR', (59, 4), 'tests/test_test_output.rs:60:5', 'tests/test_test_output.rs:60:5'),
+        (6, 'tests/test_test_output.rs', 'ERR', (59, 28), 'tests/test_test_output.rs:60:29', 'tests/test_test_output.rs:60:29'),
      ]
     }
 ]
@@ -63,8 +63,8 @@ class TestMessageOrder(TestBase):
         super(TestMessageOrder, self).setUp()
         # Set a base version for these tests.
         version = util.get_rustc_version(sublime.active_window(), plugin_path)
-        if semver.match(version, '<1.42.0-beta'):
-            self.skipTest('Tests require rust 1.42 or newer.')
+        if semver.match(version, '<1.46.0-beta'):
+            self.skipTest('Tests require rust 1.46 or newer.')
 
         # Make it so that the build target is automatically determined from
         # the active view so each test doesn't have to specify it.
