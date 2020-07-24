@@ -15,6 +15,7 @@ fn main() {
 //        ^^^^^^^^HELP /Accept Replacement:.*&dyn Send/
     Box::new(1) as dyn Send;
 //  ^^^^^^^^^^^^^^^^^^^^^^^ERR cast to unsized type
-//                 ^^^^^^^^HELP try casting to a `Box` instead
+//                 ^^^^^^^^HELP(<1.46.0-beta) try casting to a `Box` instead
+//                 ^^^^^^^^HELP(>=1.46.0-beta) you can cast to a `Box` instead
 //                 ^^^^^^^^HELP /Accept Replacement:.*Box<dyn Send>/
 }
