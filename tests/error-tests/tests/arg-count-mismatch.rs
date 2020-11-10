@@ -11,11 +11,14 @@
 // error-pattern: parameters were supplied
 
 /*BEGIN*/fn f(x: isize) {
-//       ^^^^^^^^^^^^^^ERR(>=1.24.0-beta) defined here
-//       ^^^^^^^^^^^^^^MSG(>=1.24.0-beta) See Primary: ↓:22
+//       ^^^^^^^^^^^^^^ERR(>=1.24.0-beta,<1.49.0-beta) defined here
+//       ^^^^^^^^^^^^^^MSG(>=1.24.0-beta,<1.49.0-beta) See Primary: ↓:25
+//          ^NOTE(>=1.49.0-beta) defined here
+//            ^^^^^^^^NOTE(>=1.49.0-beta)
+//          ^MSG(>=1.49.0-beta) See Primary: ↓:25
 }/*END*/
 // ~ERR(<1.24.0-beta) defined here
-// ~MSG(<1.24.0-beta) See Primary: ↓:22
+// ~MSG(<1.24.0-beta) See Primary: ↓:25
 
 // children without spans, spans with no labels
 // Should display error (with link) and a note of expected type.
