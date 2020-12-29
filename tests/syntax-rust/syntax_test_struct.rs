@@ -5,21 +5,22 @@ struct BasicStruct(i32);
 // <- storage.type.struct
 //^^^^ storage.type.struct
 //     ^^^^^^^^^^^ entity.name.struct
-//                ^ punctuation.definition.group.begin
+//                ^ punctuation.section.group.begin
 //                 ^^^ storage.type
-//                    ^ punctuation.definition.group.end
+//                    ^ punctuation.section.group.end
 
 struct PrintableStruct(Box<i32>);
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.struct
 // <- storage.type.struct
 //^^^^ storage.type.struct
 //     ^^^^^^^^^^^^^^^ entity.name.struct
-//                    ^ punctuation.definition.group.begin
+//                    ^ punctuation.section.group.begin
 //                     ^^^^^^^^ meta.generic
+//                     ^^^ support.type
 //                        ^ punctuation.definition.generic.begin
 //                         ^^^ storage.type
 //                            ^ punctuation.definition.generic.end
-//                             ^ punctuation.definition.group.end
+//                             ^ punctuation.section.group.end
 
 struct Nil;
 // ^^^^^^^ meta.struct
@@ -37,7 +38,7 @@ struct /*comment*/ Comments {}
 struct Point
 // ^^^^^^^^^ meta.struct
 {
-// <- meta.struct meta.block punctuation.definition.block.begin
+// <- meta.struct meta.block punctuation.section.block.begin
     x: i32,
 //  ^ variable.other.member
 //   ^ punctuation.separator
@@ -47,12 +48,12 @@ struct Point
 //   ^ punctuation.separator
 //     ^^^ storage.type
 }
-// <-  meta.block punctuation.definition.block.end
+// <-  meta.block punctuation.section.block.end
 
 impl Point
 //^^^^^^^^ meta.impl
 {
-// <- meta.impl meta.block punctuation.definition.block.begin
+// <- meta.impl meta.block punctuation.section.block.begin
     fn new(x: i32, y: i32) -> Point
     // <- storage.type.function
     // ^^^ entity.name.function
@@ -64,6 +65,9 @@ impl Point
     fn double(&mut self) {
     // ^^^^^^ entity.name.function
         self.x *= 2;
+    //  ^^^^ variable.language
+    //      ^ punctuation.accessor.dot
+    //         ^^ keyword.operator.assignment
         self.y *= 2;
     }
 }
@@ -73,9 +77,9 @@ struct Val (f64,);
 //^^^^^^^^^^^^^^^ meta.struct
 //     ^^^ entity.name.struct
 //         ^^^^^ meta.group
-//         ^ punctuation.definition.group.begin
+//         ^ punctuation.section.group.begin
 //          ^^^ storage.type
-//              ^ punctuation.definition.group.end
+//              ^ punctuation.section.group.end
 //               ^ punctuation.terminator
 
 struct F {
@@ -105,10 +109,10 @@ let mut j = BasicStruct(10);
 let p = Point {x: 10.0, y: 20.0};
 //      ^^^^^ storage.type.source
 //            ^^^^^^^^^^^^^^^^^^ meta.block
-//            ^ punctuation.definition.block.begin
+//            ^ punctuation.section.block.begin
 //              ^ punctuation.separator
 //                ^^^^ constant.numeric.float
-//                             ^ punctuation.definition.block.end
+//                             ^ punctuation.section.block.end
 let n = NothingInMe {};
 //      ^^^^^^^^^^^ storage.type.source
 //                  ^^ meta.block

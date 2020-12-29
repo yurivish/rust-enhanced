@@ -4,15 +4,15 @@ fn my_func(x: i32)
 // <- storage.type.function
 // ^^^^^^^ entity.name.function
 //        ^^^^^^^^ meta.function.parameters
-//        ^ punctuation.definition.parameters.begin
+//        ^ punctuation.section.parameters.begin
 //         ^ variable.parameter
 //          ^ punctuation.separator
-//               ^ punctuation.definition.parameters.end
+//               ^ punctuation.section.parameters.end
 {
-// <-  meta.function meta.block punctuation.definition.block.begin
+// <-  meta.function meta.block punctuation.section.block.begin
 
 }
-// <-  meta.function meta.block punctuation.definition.block.end
+// <-  meta.function meta.block punctuation.section.block.end
 
 fn foo<A>(i: u32, b: i64) -> u32 {
 // <- storage.type.function
@@ -21,10 +21,10 @@ fn foo<A>(i: u32, b: i64) -> u32 {
 //      ^ punctuation.definition.generic.end
 //       ^^^^^^^^^^^^^^^^ meta.function.parameters
 //                           ^^^ storage.type
-//                               ^ meta.block punctuation.definition.block.begin
+//                               ^ meta.block punctuation.section.block.begin
 
 }
-// <- meta.block punctuation.definition.block.end
+// <- meta.block punctuation.section.block.end
 
 
 fn my_other_func(e: OperatingSystem) -> &'a f64 {
@@ -55,15 +55,15 @@ pub unsafe extern "C" fn __sync_synchronize() { }
 //                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function
 //                    ^^ storage.type.function
 //                       ^^^^^^^^^^^^^^^^^^ entity.name.function
-//                                         ^ meta.function.parameters punctuation.definition.parameters.begin
-//                                          ^ meta.function.parameters punctuation.definition.parameters.end
+//                                         ^ meta.function.parameters punctuation.section.parameters.begin
+//                                          ^ meta.function.parameters punctuation.section.parameters.end
 
 let f: extern "C" fn () = mem::transmute(0xffff0fa0u32);
 //     ^^^^^^ keyword.other
 //            ^^^ string.quoted.double
 //                ^^ storage.type.function
 //                   ^^ meta.group
-//                      ^ keyword.operator
+//                      ^ keyword.operator.assignment
 //                                       ^^^^^^^^^^ meta.group constant.numeric.integer.hexadecimal
 //                                                 ^^^ meta.group storage.type.numeric
 
@@ -130,3 +130,17 @@ fn foo(&'a self) {}
 //     ^ keyword.operator
 //      ^^ storage.modifier.lifetime
 //         ^^^^ variable.parameter
+
+fn sum((x, y): (i32, i32)) -> i32 {
+//     ^^^^^^ meta.group
+//     ^ punctuation.section.group.begin
+//      ^ variable.parameter
+//       ^ punctuation.separator
+//         ^ variable.parameter
+//          ^ punctuation.section.group.end
+//           ^ punctuation.separator
+//             ^ punctuation.section.group.begin
+//              ^^^ storage.type
+//                 ^ punctuation.separator
+//                   ^^^ storage.type
+//                      ^ punctuation.section.group.end

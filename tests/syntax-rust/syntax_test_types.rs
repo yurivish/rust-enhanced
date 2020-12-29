@@ -36,7 +36,7 @@ const ZERO: u64 = 0;
 //    ^^^^ entity.name.constant
 //        ^ punctuation.separator
 //          ^^^ storage.type
-//              ^ keyword.operator
+//              ^ keyword.operator.assignment
 //                ^ constant.numeric.integer.decimal
 static NAME: &'static str = "John";
 // <- storage.type
@@ -44,7 +44,7 @@ static NAME: &'static str = "John";
 //           ^ keyword.operator
 //            ^^^^^^^ storage.modifier.lifetime
 //                    ^^^ storage.type
-//                        ^ keyword.operator
+//                        ^ keyword.operator.assignment
 //                          ^^^^^^ string.quoted.double
 static mut BRAVO: u32 = 0;
 // <- storage.type
@@ -79,14 +79,14 @@ type Pair<'a> = (i32, &'a str);
 //       ^ keyword.operator
 //        ^^ storage.modifier.lifetime
 //          ^ keyword.operator
-//            ^ keyword.operator
+//            ^ keyword.operator.assignment
 //              ^^^^^^^^^^^^^^ meta.group
-//              ^ punctuation.definition.group.begin
+//              ^ punctuation.section.group.begin
 //               ^^^ storage.type
 //                    ^ keyword.operator
 //                     ^^ storage.modifier.lifetime
 //                        ^^^ storage.type
-//                           ^ punctuation.definition.group.end
+//                           ^ punctuation.section.group.end
 //                            ^ punctuation.terminator
 let p: Pair<'static> = (10, "ten");
 // <- storage.type
@@ -95,32 +95,40 @@ let p: Pair<'static> = (10, "ten");
 //         ^ punctuation.definition.generic.begin
 //          ^^^^^^^ storage.modifier.lifetime
 //                 ^ punctuation.definition.generic.end
-//                   ^ keyword.operator
+//                   ^ keyword.operator.assignment
 //                     ^^^^^^^^^^^ meta.group
-//                     ^ punctuation.definition.group.begin
+//                     ^ punctuation.section.group.begin
 //                      ^^ constant.numeric.integer.decimal
 //                          ^^^^^ string.quoted.double
-//                               ^ punctuation.definition.group.end
+//                               ^ punctuation.section.group.end
 //                                ^ punctuation.terminator
+fn tuple(x: (u32, u32)) {}
+//          ^^^^^^^^^^ meta.group
+//          ^ meta.group punctuation.section.group.begin
+//           ^^^ storage.type
+//              ^ punctuation.separator
+//                ^^^ storage.type
+//                   ^ meta.group punctuation.section.group.end
 
 // Array types.
 let xs: [i32; 5] = [1, 2, 3, 4, 5];
 //    ^ punctuation.separator
 //      ^^^^^^^^ meta.group
-//      ^ punctuation.definition.group.begin
+//      ^ punctuation.section.group.begin
 //       ^^^ storage.type
+//          ^ punctuation.separator
 //            ^ constant.numeric.integer.decimal
-//             ^ punctuation.definition.group.end
+//             ^ punctuation.section.group.end
 //                 ^^^^^^^^^^^^^^^ meta.group
-//                 ^ punctuation.definition.group.begin
-//                               ^ punctuation.definition.group.end
+//                 ^ punctuation.section.group.begin
+//                               ^ punctuation.section.group.end
 
 // Slice types.
 let slice: &[i32];
 //         ^ keyword.operator
 //          ^^^^^ meta.group
-//          ^ punctuation.definition.group.begin
-//              ^ punctuation.definition.group.end
+//          ^ punctuation.section.group.begin
+//              ^ punctuation.section.group.end
 //           ^^^ storage.type
 
 
@@ -157,3 +165,12 @@ fn f(string: &str) -> StrWrap<'_> { }
 // Never type.
 fn from_str() -> Result<Foo, !> {}
 //                           ^ meta.function meta.function.return-type meta.generic keyword.operator
+
+// Qualified path with type.
+// Note: This isn't actually a generics, but that gets reused for this purpose.
+type Item = <I as Iterator>::Item;
+//          ^^^^^^^^^^^^^^^ meta.generic
+//             ^^ keyword.operator
+//                ^^^^^^^^ support.type
+//                         ^^ punctuation.accessor
+//                           ^^^^ storage.type.source

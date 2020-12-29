@@ -56,3 +56,8 @@ let y = future.await;
 // try keyword in 2018 edition
 let x = try {}
 //      ^^^ keyword.control.rust
+
+// Performance test for catastrophic backtracking.
+impl ApplicationPreferenceseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee {
+//   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ entity.name.impl
+}

@@ -4,28 +4,29 @@ let inferred_closure = |i, j: u32| i + 1;
 //  ^^^^^^^^^^^^^^^^ entity.name.function
 //                     ^^^^^^^^^^^^^^^^^ meta.function.closure
 //                     ^^^^^^^^^^^ meta.function.parameters
-//                     ^ punctuation.definition.parameters.begin
+//                     ^ punctuation.section.parameters.begin
 //                      ^ variable.parameter
+//                       ^ punctuation.separator
 //                         ^ variable.parameter
 //                          ^ punctuation.separator
 //                            ^^^ storage.type
-//                               ^ punctuation.definition.parameters.end
+//                               ^ punctuation.section.parameters.end
 let closure = || -> i32 { | | 1 + 2 };
 //  ^^^^^^^ entity.name.function
 //            ^^^^^^^^^^^^^^^^^^^^^^^ meta.function.closure
 //            ^^ meta.function.parameters
-//            ^ punctuation.definition.parameters.begin
-//             ^ punctuation.definition.parameters.end
+//            ^ punctuation.section.parameters.begin
+//             ^ punctuation.section.parameters.end
 //                  ^^^ storage.type
 //                      ^^^^^^^^^^^^^ meta.block
-//                      ^ meta.block punctuation.definition.block.begin
+//                      ^ meta.block punctuation.section.block.begin
 //                            ^ constant.numeric.integer.decimal
 //                                ^ constant.numeric.integer.decimal
-//                                  ^ meta.block punctuation.definition.block.end
+//                                  ^ meta.block punctuation.section.block.end
 
 // Make sure "or" is not confused with closure.
 let c = a | b;
-//        ^ keyword.operator
+//        ^ keyword.operator.bitwise
 
 call_func(|c| 1 + 2 + c);
 //        ^^^^^^^^^^^^^ meta.function.closure
@@ -33,18 +34,18 @@ call_func(|c| 1 + 2 + c);
 
 fn lambdas() {
     let c = |foo,
-//          ^ meta.function.closure meta.function.parameters punctuation.definition.parameters.begin
+//          ^ meta.function.closure meta.function.parameters punctuation.section.parameters.begin
 //           ^^^ meta.function.parameters variable.parameter
              bar| {};
 //           ^^^ meta.function.parameters variable.parameter
-//              ^ meta.function.closure meta.function.parameters punctuation.definition.parameters.end
+//              ^ meta.function.closure meta.function.parameters punctuation.section.parameters.end
     let c = |foo,  // weird, but should work
-//          ^ meta.function.closure meta.function.parameters punctuation.definition.parameters.begin
+//          ^ meta.function.closure meta.function.parameters punctuation.section.parameters.begin
 //           ^^^ meta.function.parameters variable.parameter
 //                 ^^^^^^^^^^^^^^^^^^^^^^^^^ comment.line
              bar| {};
 //           ^^^ meta.function.parameters variable.parameter
-//              ^ meta.function.closure meta.function.parameters punctuation.definition.parameters.end
+//              ^ meta.function.closure meta.function.parameters punctuation.section.parameters.end
 }
 
 
@@ -179,3 +180,20 @@ let x = |/*comment*/(/*c*/a, [b/*c*/], S{/*c*/f: c})| {};
 //                                      ^^^^^^^^^^^ meta.block
 //                                       ^^^^^ comment.block
 //                                               ^ variable.parameter
+
+ let f = |(x, y): (u32, &mut u32)| { x + y };
+ //      ^ punctuation.section.parameters.begin
+ //       ^^^^^^ meta.group
+ //        ^ variable.parameter
+ //         ^ punctuation.separator
+ //           ^ variable.parameter
+ //            ^ punctuation.section.group.end
+ //             ^ punctuation.separator
+ //               ^ punctuation.section.group.begin
+ //                ^^^ storage.type
+ //                   ^ punctuation.separator
+ //                     ^ keyword.operator
+ //                      ^^^ storage.modifier
+ //                          ^^^ storage.type
+ //                             ^ punctuation.section.group.end
+ //                              ^ punctuation.section.parameters.end

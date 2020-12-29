@@ -2,22 +2,22 @@
 
 String my_var = format!("Hello {0}", "World");
 // ^^^ support.type
-//            ^ keyword.operator
+//            ^ keyword.operator.assignment
 //              ^^^^^^^ support.macro
-//                     ^ punctuation.definition.group.begin
+//                     ^ punctuation.section.group.begin
 //                     ^^^^^^^^^^^^^^^^^^^^^^ meta.group
 //                      ^^^^^^^^^^^ string.quoted.double
 //                             ^^^ constant.other.placeholder
-//                                          ^ punctuation.definition.group.end
+//                                          ^ punctuation.section.group.end
 
 pub fn macro_tests() {
     println!();
 //  ^^^^^^^^ support.macro
     println!("Example");
 //  ^^^^^^^^ support.macro
-//          ^ punctuation.definition.group.begin
+//          ^ punctuation.section.group.begin
 //           ^^^^^^^^^ string.quoted.double
-//                    ^ punctuation.definition.group.end
+//                    ^ punctuation.section.group.end
     println!("Example {} {message}", "test", message="hi");
 //                    ^^ constant.other.placeholder
 //                       ^^^^^^^^^ constant.other.placeholder
@@ -25,9 +25,9 @@ pub fn macro_tests() {
 //  ^^^^^^ support.macro
     panic!("Example");
 //  ^^^^^^ support.macro
-//        ^ punctuation.definition.group.begin
+//        ^ punctuation.section.group.begin
 //         ^^^^^^^^^ string.quoted.double
-//                  ^ punctuation.definition.group.end
+//                  ^ punctuation.section.group.end
     panic!("Example {} {message}", "test", message="hi");
 //                  ^^ constant.other.placeholder
 //                     ^^^^^^^^^ constant.other.placeholder
@@ -44,25 +44,27 @@ pub fn macro_tests() {
 }
 
 my_var = format!("Hello {name}, how are you?",
-//     ^ keyword.operator
+//     ^ keyword.operator.assignment
 //       ^^^^^^^ support.macro
-//              ^ punctuation.definition.group.begin
+//              ^ punctuation.section.group.begin
 //              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.group
 //               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ string.quoted.double
 //                      ^^^^^^ constant.other.placeholder
     name="John");
 // ^^^^^^^^^^^^^ meta.group
-//      ^ keyword.operator
+//      ^ keyword.operator.assignment
 //       ^^^^^^ string.quoted.double
-//             ^ punctuation.definition.group.end
+//             ^ punctuation.section.group.end
 
         write!(f, "{}", self.0)
 //      ^^^^^^ support.macro
 //            ^^^^^^^^^^^^^^^^^ meta.group
-//            ^ punctuation.definition.group.begin
+//            ^ punctuation.section.group.begin
 //                ^^^^ string.quoted.double
 //                 ^^ constant.other.placeholder
-//                            ^ punctuation.definition.group.end
+//                      ^^^^ variable.language
+//                          ^ punctuation.accessor.dot
+//                            ^ punctuation.section.group.end
         write!(f, "{:10}", self.0)
 //                 ^^^^^ constant.other.placeholder
         eprint!("{:^10}", self.0)
@@ -86,18 +88,18 @@ my_var = format!("Hello {name}, how are you?",
 //                           ^^^^ string.quoted.double
 //                            ^^ constant.other.placeholder
 //                                 ^^^^ string.quoted.double
-//            ^ punctuation.definition.group.begin
-//                                     ^ punctuation.definition.group.end
+//            ^ punctuation.section.group.begin
+//                                     ^ punctuation.section.group.end
         writeln!(w)
 //      ^^^^^^^^ support.macro
 //              ^^^ meta.group
-//              ^ punctuation.definition.group.begin
-//                ^ punctuation.definition.group.end
+//              ^ punctuation.section.group.begin
+//                ^ punctuation.section.group.end
         println!()
 //      ^^^^^^^^ support.macro
 //              ^^ meta.group
-//              ^ punctuation.definition.group.begin
-//               ^ punctuation.definition.group.end
+//              ^ punctuation.section.group.begin
+//               ^ punctuation.section.group.end
 
 /*******************************************************************/
 // The outer brackets can be any type.
@@ -209,9 +211,10 @@ macro_rules! forward_ref_binop [
 //                                    ^ keyword.operator
 //                                     ^^ storage.modifier.lifetime
 //                                        ^^ variable.other
-//                                           ^ meta.macro meta.macro.transcribers meta.impl meta.block punctuation.definition.block.begin
+//                                           ^ meta.macro meta.macro.transcribers meta.impl meta.block punctuation.section.block.begin
             type Output = <$t as $imp<$u>>::Output;
 //                        ^^^^^^^^^^^^^^^^ meta.generic
+//                            ^^ keyword.operator
 //                                        ^^ meta.path
 
             #[inline]
@@ -225,8 +228,9 @@ macro_rules! forward_ref_binop [
 //                                      ^^ variable.other
 //                                          ^^ punctuation.separator
 //                                             ^^^^^^^^^^^^^^^^ meta.generic
+//                                                 ^^ keyword.operator
 //                                                             ^^ meta.path
-//                                                                      ^ meta.macro meta.macro.transcribers meta.impl meta.block meta.block punctuation.definition.block.begin
+//                                                                      ^ meta.macro meta.macro.transcribers meta.impl meta.block meta.block punctuation.section.block.begin
                 $imp::$method(*self, *other)
 //              ^^^^ variable.other
 //                    ^^^^^^^ variable.other
@@ -248,7 +252,7 @@ macro_rules! kleene_star {
 //     ^^^^ variable.parameter
 //         ^ punctuation.separator
 //          ^^ storage.type
-//            ^ punctuation.definition.group.end
+//            ^ punctuation.section.group.end
 //             ^ keyword.operator
 //              ^ punctuation.section.block.end
 //                ^^ meta.macro keyword.operator
@@ -292,7 +296,7 @@ macro_rules! kleene_star {
 //        ^^^^^ variable.parameter
 //              ^ punctuation.separator
 //                ^^ storage.type
-//                   ^ punctuation.definition.group.end
+//                   ^ punctuation.section.group.end
 //                       ^ keyword.operator
 //                         ^ punctuation.section.block.end
 //                           ^^ meta.macro keyword.operator

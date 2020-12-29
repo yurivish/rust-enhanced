@@ -1,20 +1,28 @@
 // SYNTAX TEST "Packages/Rust Enhanced/RustEnhanced.sublime-syntax"
 
 // Line comments
-// <- comment.line.double-slash
+// <- comment.line.double-slash punctuation.definition.comment
 // ^^^^^^^^^^^^^^ comment.line.double-slash
+
+// <- -comment
+
 /// Line doc comments
 // <- comment.line.documentation
 // ^^^^^^^^^^^^^ comment.line.documentation
 
 /*!
-// <- comment.block.documentation
+// <- comment.block.documentation punctuation.definition.comment
  // <- comment.block.documentation
 //^ comment.block.documentation
 Block doc comments
 // ^^^^^^^^^^^^^^^^ comment.block.documentation
 /* Nested comments */
 // ^^^^^^^^^^^^^^^^^^ comment.block.documentation comment.block
+*/
+
+/**
+    *
+//  ^ comment.block.documentation punctuation.definition.comment
 */
 
 // Verify comment is cleared.
