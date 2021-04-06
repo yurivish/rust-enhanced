@@ -117,6 +117,7 @@ class TestCargoBuild(TestBase):
                 os.path.isfile(os.path.join(debug, x)) and
                 not x.startswith('.') and
                 not x.endswith('.d') and
+                not x.endswith('.o') and
                 not x.endswith('.pdb')]
             files.sort()
             # Remove any option (None) entries.
