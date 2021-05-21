@@ -146,13 +146,13 @@ class Message:
         html_suggestion = html_suggestion\
             .replace(' ', '&nbsp;')\
             .replace('\n', '<br>\n')
-        return replacement_template % (
-            urllib.parse.urlencode({
-                'id': self.id,
-                'replacement': self.suggested_replacement,
-            }),
-            html_suggestion,
-        )
+        url_param = urllib.parse.urlencode({
+            'id': self.id,
+            'replacement': self.suggested_replacement,
+        })
+        if int(sublime.version()) > 4000:
+            url_param = url_param.replace('&', '&amp;')
+        return replacement_template % (url_param, html_suggestion)
 
     def suggestion_count(self):
         """Number of suggestions in this message.
