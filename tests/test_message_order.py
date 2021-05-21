@@ -128,7 +128,8 @@ class TestMessageOrder(TestBase):
                         time.sleep(0.1)
                         next_view = window.active_view()
                         to_close.append(next_view)
-                        self.assertEqual(next_view.file_name(), next_filename)
+                        self.assertEqual(os.path.normpath(next_view.file_name()),
+                                         os.path.normpath(next_filename))
                         region = next_view.sel()[0]
                         rowcol = next_view.rowcol(region.begin())
                         if inline:
@@ -143,6 +144,8 @@ class TestMessageOrder(TestBase):
                         build_panel = window.find_output_panel(
                             plugin.rust.opanel.PANEL_NAME)
                         panel_text = build_panel.substr(build_panel.sel()[0])
+                        if sys.platform == 'win32':
+                            panel_text = panel_text.replace('\\', '/')
                         if inline:
                             self.assertRegex(panel_text, inline_highlight)
                         else:

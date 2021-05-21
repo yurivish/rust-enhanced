@@ -292,3 +292,6 @@ class UiIntercept(object):
         m._sublime_add_phantom = self.orig_add_phantom
         m._sublime_add_regions = self.orig_add_regions
         m._sublime_show_popup = self.orig_show_popup
+
+def has_nightly():
+    return subprocess.call(['rustc', '+nightly', '-V']) == 0

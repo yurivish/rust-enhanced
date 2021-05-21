@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches-ignore: [master]
+  pull_request:
+    branches: ['*']
+  schedule:
+    - cron: '20 6 * * *'
+
+# if need master branch of UnitTesting
+#  env:
+#     UNITTESTING_TAG: master
+
+env:
+  PACKAGE: "Rust Enhanced"
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    container: sublimetext/unittesting
+    strategy:
+      matrix:
+        include:
+        - rust: stable
+        - rust: beta
+        - rust: nightly
+    steps:
+      - uses: actions/checkout@v1
+      - run: bash ci/install-rust.sh ${{ matrix.rust }}
+      - run: sh -e /etc/init.d/xvfb start
+      - name: Download UnitTesting script
+        run: curl -OL https://raw.githubusercontent.com/SublimeText/UnitTesting/master/sbin/github.sh
+      - name: Run tests
+        shell: bash
+        run: |
+          PATH="$HOME/.local/bin:$PATH"
+          source $HOME/.cargo/env
+          sh github.sh bootstrap
+          sh github.sh install_package_control
+          sh github.sh run_syntax_tests
+          sh github.sh run_syntax_compatibility
+          sh github.sh run_tests
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: bash ci/install-rust.sh stable
+      - name: Download UnitTesting script
+        run: curl -OL https://raw.githubusercontent.com/SublimeText/UnitTesting/master/sbin/github.sh
+      - name: Run tests
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          sh github.sh bootstrap
+          sh github.sh install_package_control
+          sh github.sh run_syntax_tests
+          sh github.sh run_syntax_compatibility
+          sh github.sh run_tests
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: bash ci/install-rust.sh stable
+      - name: Download UnitTesting script
+        run: (new-object net.webclient).DownloadFile("https://raw.githubusercontent.com/SublimeText/UnitTesting/master/sbin/github.ps1","github.ps1")
+      - name: Run tests
+        run: |
+          ./github.ps1 "bootstrap" -verbose
+          ./github.ps1 "install_package_control" -verbose
+          ./github.ps1 "run_syntax_tests" -verbose
+          ./github.ps1 "run_syntax_compatibility" -verbose
+          ./github.ps1 "run_tests" -verbose

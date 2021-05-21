@@ -20,6 +20,13 @@ def exe(s):
         return s
 
 
+def linux(s):
+    if sys.platform == 'linux':
+        return s
+    else:
+        return None
+
+
 def version(filename, check_version):
     """Wrapper around a filename to make it optional based on the rustc version."""
     rustc_version = util.get_rustc_version(sublime.active_window(),
@@ -74,10 +81,10 @@ class TestCargoBuild(TestBase):
         targets = [
             ('--bin bin1', [
                 exe('bin1'),
-                'libmulti_targets.rlib']),
+                version('libmulti_targets.rlib', '<1.28.0-beta')]),
             ('--bin bin2', [
                 exe('bin2'),
-                'libmulti_targets.rlib']),
+                version('libmulti_targets.rlib', '<1.28.0-beta')]),
             ('--bin otherbin', [
                 exe('otherbin'),
                 # Changed by https://github.com/rust-lang/cargo/pull/5460
@@ -90,8 +97,8 @@ class TestCargoBuild(TestBase):
             # Not clear to me why it produces ex1-* files.
             ('--example ex1', [
                 exe('examples/ex1'),
-                exe('examples/ex1-*'),
-                'libmulti_targets.rlib']),
+                linux('examples/ex1-*'),
+                version('libmulti_targets.rlib', '<1.28.0-beta')]),
             ('--test test1', [
                 exe('bin1'),
                 exe('bin2'),
@@ -100,7 +107,7 @@ class TestCargoBuild(TestBase):
                 exe('feats'),
                 exe('penv'),
                 version('libmulti_targets.rlib', '<1.28.0-beta'),
-                'test1-*']),
+                version('test1-*', '<1.44.0')]),
             # bench requires nightly
         ]
         window = view.window()
@@ -123,6 +130,8 @@ class TestCargoBuild(TestBase):
             # Remove any option (None) entries.
             expected_files = list(filter(None, expected_files))
             expected_files.sort()
+            if len(files) != len(expected_files):
+                raise AssertionError('Lists differ: %r != %r' % (files, expected_files))
             for file, expected_file in zip(files, expected_files):
                 if not fnmatch.fnmatch(file, expected_file):
                     raise AssertionError('Lists differ: %r != %r' % (
@@ -172,6 +181,7 @@ class TestCargoBuild(TestBase):
         self.assertEqual(cmd, ['cargo', 'build', '--target', 'a-b-c',
                                '--message-format=json'])
 
+    @unittest.skipIf(not has_nightly(), "nightly not available")
     def test_toolchain(self):
         """Test changing toolchain."""
         self._with_open_file('tests/multi-targets/src/main.rs',
@@ -284,6 +294,7 @@ class TestCargoBuild(TestBase):
         self._check_added_message(view.window(), view.file_name(),
             r'not found in this scope')
 
+    @unittest.skipIf(not has_nightly(), "nightly not available")
     def test_bench(self):
         """Test "Bench" variant."""
         self._with_open_file('tests/multi-targets/benches/bench1.rs',
@@ -361,12 +372,9 @@ class TestCargoBuild(TestBase):
 
     def _test_clippy(self, view):
         self._cargo_clean(view)
-        window = view.window()
-        window.run_command('cargo_set_toolchain', {'which': 'project_variant',
-                                                   'variant': 'clippy'})
         self._run_build_wait('clippy')
         # This is a relatively simple test to verify Clippy has run.
-        self._check_added_message(window, view.file_name(), r'char_lit_as_u8')
+        self._check_added_message(view.window(), view.file_name(), r'char_lit_as_u8')
 
     def _check_added_message(self, window, filename, pattern):
         batches = messages.WINDOW_MESSAGES[window.id()]['paths'][filename]
