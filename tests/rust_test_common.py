@@ -187,7 +187,17 @@ class TestBase(unittest.TestCase):
                 window.focus_view(view)
                 if view.is_dirty():
                     view.run_command('revert')
+                    for n in range(500):
+                        if not view.is_dirty():
+                            break
+                        time.sleep(0.01)
+                    else:
+                        raise AssertionError('View did not revert')
                 window.run_command('close_file')
+                # I don't know why, but there were problems with sublime
+                # seg-faulting when the tests were run in Docker (and seemed
+                # worse with `--cpus 2`). This seems to help.
+                time.sleep(1)
 
     def _cargo_clean(self, view_or_path):
         if isinstance(view_or_path, sublime.View):

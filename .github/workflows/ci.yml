@@ -18,6 +18,7 @@ env:
 jobs:
   linux:
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # default is 6 hours!
     container: sublimetext/unittesting
     strategy:
       matrix:
@@ -43,6 +44,7 @@ jobs:
           sh github.sh run_tests
   macos:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v1
       - run: bash ci/install-rust.sh stable
@@ -58,6 +60,7 @@ jobs:
           sh github.sh run_tests
   windows:
     runs-on: windows-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v1
       - run: bash ci/install-rust.sh stable

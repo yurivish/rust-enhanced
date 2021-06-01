@@ -137,6 +137,9 @@ class TargetDetector(object):
         found = False
         found_lib = False
         found_bin = False
+        # Sort the targets by name for consistent results, which cargo doesn't
+        # guarantee.
+        targets.sort(key=lambda x: x['name'])
         while not found:
             for target in targets:
                 if os.path.dirname(target['src_path']) == path_match:
