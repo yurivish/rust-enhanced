@@ -115,7 +115,6 @@ class TestSyntaxCheck(TestBase):
             ('error-tests/tests/macro-expansion-inside-1.rs', 'error-tests/tests/macro_expansion_inside_mod1.rs'),
             ('error-tests/tests/macro-expansion-inside-2.rs', 'error-tests/tests/macro_expansion_inside_mod2.rs'),
             ('error-tests/tests/error_across_mod.rs', 'error-tests/tests/error_across_mod_f.rs'),
-            'error-tests/tests/derive-error.rs',
             'error-tests/tests/test_new_lifetime_message.rs',
             'error-tests/tests/test_multiple_primary_spans.rs',
             'error-tests/tests/impl-generic-mismatch.rs',
