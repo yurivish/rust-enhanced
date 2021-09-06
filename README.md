@@ -10,7 +10,7 @@ This is a replacement for the built-in "Rust" package and provides several exten
 * Automatic checking every time you save a file.
 * Custom highlighting for Cargo output.
 
-<img src="docs/img/running_tests.gif?raw=true" alt="Running Tests with Rust Enhanced" width=430 style="margin-right:10px"> <img src="docs/img/showing_errors.gif?raw=true" alt="Highlighting errors and warnings with Rust Enhanced" width=430>
+<img src="docs/src/images/running_tests.gif?raw=true" alt="Running Tests with Rust Enhanced" width=430 style="margin-right:10px"> <img src="docs/src/images/showing_errors.gif?raw=true" alt="Highlighting errors and warnings with Rust Enhanced" width=430>
 
 ## Installation and Usage
 
