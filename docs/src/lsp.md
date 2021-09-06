@@ -8,7 +8,7 @@ There are two language server implementations for Rust:
 * [RLS (Rust Language Server)](https://github.com/rust-lang/rls)
 * [rust-analyzer](https://rust-analyzer.github.io/)
 
-RLS is being replaced by rust-analyzer, and you it is recommended to use rust-analyzer at this time.
+RLS is being replaced by rust-analyzer, and it is recommended to use rust-analyzer at this time.
 
 To use one of the language servers, you need to install the [Sublime LSP](https://github.com/sublimelsp/LSP) plugin.
 With both the plugin and one of the above servers installed, you should be able to follow the [LSP docs](https://lsp.readthedocs.io/en/latest/) for how to configure the server.

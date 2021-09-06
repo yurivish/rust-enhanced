@@ -4,3 +4,6 @@ language = "en"
 multilingual = false
 src = "src"
 title = "Rust Enhanced User Guide"
+
+[output.html]
+git-repository-url = "https://github.com/rust-lang/rust-enhanced/tree/master/docs"
