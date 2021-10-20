@@ -29,6 +29,8 @@ macro_rules! myprintln {
 
 fn main() {
     myprintln!("{}");
-//  ^^^^^^^^^^^^^^^^^HELP in this macro invocation
-//  ^^^^^^^^^^^^^^^^^MSG See Primary: ↑:24
+//  ^^^^^^^^^^^^^^^^HELP(>=1.57.0-beta) in this macro invocation
+//  ^^^^^^^^^^^^^^^^MSG(>=1.57.0-beta) See Primary: ↑:24
+//  ^^^^^^^^^^^^^^^^^HELP(<1.57.0-beta) in this macro invocation
+//  ^^^^^^^^^^^^^^^^^MSG(<1.57.0-beta) See Primary: ↑:24
 }
