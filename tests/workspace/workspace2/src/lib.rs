@@ -15,6 +15,6 @@ pub fn f() {
 //                      ^NOTE(>=1.29.0,<1.41.0-beta) expected type `&dyn Trait`
 //                      ^NOTE(<1.16.0) found type
 //                      ^HELP(>=1.18.0,<1.24.0) try with `&x`
-//                      ^HELP(>=1.24.0-beta) consider borrowing here
-//                      ^HELP(>=1.24.0-beta) &x
+//                      ^HELP(>=1.24.0-beta,<1.57.0-beta) consider borrowing here
+//                      ^HELP(>=1.24.0-beta,<1.57.0-beta) &x
 }
