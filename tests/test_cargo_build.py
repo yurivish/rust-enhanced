@@ -20,8 +20,8 @@ def exe(s):
         return s
 
 
-def linux(s):
-    if sys.platform == 'linux':
+def linux_or_mac(s):
+    if sys.platform == 'linux' or sys.platform == 'darwin':
         return s
     else:
         return None
@@ -97,7 +97,7 @@ class TestCargoBuild(TestBase):
             # Not clear to me why it produces ex1-* files.
             ('--example ex1', [
                 exe('examples/ex1'),
-                linux('examples/ex1-*'),
+                linux_or_mac('examples/ex1-*'),
                 version('libmulti_targets.rlib', '<1.28.0-beta')]),
             ('--test test1', [
                 exe('bin1'),
