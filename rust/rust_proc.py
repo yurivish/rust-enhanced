@@ -244,7 +244,7 @@ class RustProc(object):
         Termination may not happen immediately.  Use wait() if you need to
         ensure when it is finished.
         """
-        if self.finished:
+        if self.finished or self.proc is None:
             return
         self.finished = True
         self.terminated = True
