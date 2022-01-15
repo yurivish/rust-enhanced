@@ -214,7 +214,7 @@ contexts:
       scope: punctuation.separator.rust
       push: after-operator
 
-    - match: '\b[[:lower:]_][[:lower:][:digit:]_]*(?=\()'
+    - match: '\b[[:lower:]_][[:lower:][:digit:]_]*\s*(?=\()'
       scope: variable.function.rust
 
     - match: '{{identifier}}'

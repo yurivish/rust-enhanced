@@ -167,3 +167,22 @@ a <<= b;
 //^^^ keyword.operator.assignment
 a >>= b;
 //^^^ keyword.operator.assignment
+
+fn call_expressions() {
+    call();
+//  ^^^^ variable.function
+//      ^ meta.group punctuation.section.group.begin
+//       ^ meta.group punctuation.section.group.end
+//        ^ punctuation.terminator
+
+    call_with_space ();
+//  ^^^^^^^^^^^^^^^^ meta.function meta.block variable.function
+//                  ^ meta.group punctuation.section.group.begin
+//                   ^ meta.group punctuation.section.group.end
+    self.method();
+//  ^^^^ variable.language
+//      ^ punctuation.accessor.dot
+//       ^^^^^^ variable.function
+//             ^ meta.group punctuation.section.group.begin
+//              ^ meta.group punctuation.section.group.end
+}
