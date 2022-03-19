@@ -60,9 +60,9 @@ class TargetDetector(object):
             if result:
                 return result
 
-        log.critical(self.window,
+        log.log(self.window,
             'Rust Enhanced: Failed to find target for %r', file_name)
-        return []
+        return [(None, [])]
 
     def _targets_manual_config(self, file_name):
         """Check for Cargo targets in the Sublime settings."""
