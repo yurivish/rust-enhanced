@@ -27,8 +27,8 @@ class TestTargetDetect(TestBase):
             # Random module in src/, defaults to --lib.
             ('src/lmod1.rs', [('src/lib.rs', '--lib')]),
             # Target failure.  Perhaps this should run rustc directly?
-            ('mystery.rs', []),
-            ('build.rs', []),
+            ('mystery.rs', [(None, '')]),
+            ('build.rs', [(None, '')]),
             # Shared module in test, not possible to easily determine which
             # test it belongs to.
             ('tests/common/helpers.rs', [('tests/test1.rs', '--test test1'),
@@ -53,11 +53,17 @@ class TestTargetDetect(TestBase):
 
         for (path, targets) in expected_targets:
             path = os.path.join('tests', 'multi-targets', path)
-            targets = [(os.path.normpath(
-                os.path.join(plugin_path, 'tests', 'multi-targets', x[0])),
-                x[1].split()) for x in targets]
+            joined_targets = []
+            for (target_path, args) in targets:
+                args = args.split()
+                if target_path:
+                    joined = os.path.normpath(
+                        os.path.join(plugin_path, 'tests', 'multi-targets', target_path))
+                    joined_targets.append((joined, args))
+                else:
+                    joined_targets.append((None, args))
             self._with_open_file(path,
-                lambda view: self._test_multi_targets(view, targets))
+                lambda view: self._test_multi_targets(view, joined_targets))
 
     def _test_multi_targets(self, view, expected_targets):
         expected_targets.sort()
