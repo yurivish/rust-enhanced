@@ -23,11 +23,11 @@ fn main() {
 //  ^^^^^^^^^^^^^^^^HELP(>=1.40.0-beta,<1.61.0-beta) you might want to use `if let`
 //  ^^^^^^^^^^^^^^^^HELP(>=1.40.0-beta,<1.61.0-beta) /Accept Replacement:.*/
 //  |HELP(>=1.61.0-beta) /Accept Replacement:.*/
-//  |HELP(>=1.61.0-beta) /alternatively.*let_else/
 //                 |HELP(>=1.61.0-beta) you might want to use `if let`
 //                 |HELP(>=1.61.0-beta) you might want to use `if let`
 //                 |HELP(>=1.61.0-beta) /Accept Replacement:.*/
-//                 |HELP(>=1.61.0-beta) /Accept Replacement:.*/
+//                 |HELP(nightly) alternatively, on nightly, you might want to use `#![feature(let_else)]`
+//                 |HELP(nightly) /Accept Replacement:.*todo!.*/
 }
 // Bug: https://github.com/rust-lang/rust/issues/64769
 // start-msg: ERR(>=1.39.0-beta,<1.44.0-beta) not covered
