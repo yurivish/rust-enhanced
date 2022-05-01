@@ -28,6 +28,9 @@ fn main() { let i: (); i = f(); }
 //                         ^^^MSG(<1.24.0-beta) See Also: ↑:16
 //                         ^^^MSG(>=1.24.0-beta,<1.43.0-beta) See Also: ↑:13
 //                         ^ERR(>=1.43.0-beta) this function takes 1
-//                          ^^ERR(>=1.43.0-beta) supplied 0
-//                          ^^ERR(>=1.43.0-beta) expected 1
+//                          ^^ERR(>=1.43.0-beta,<1.62.0-beta) supplied 0
+//                          ^^ERR(>=1.43.0-beta,<1.62.0-beta) expected 1
+//                          ^^ERR(>=1.62.0-beta) an argument of type `isize` is missing
+//                         ^^^HELP(>=1.62.0-beta) provide the argument
+//                         ^^^HELP(>=1.62.0-beta) /Accept Replacement:.*/
 //                         ^MSG(>=1.43.0-beta) See Also: ↑:13
