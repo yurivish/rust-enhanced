@@ -38,7 +38,7 @@ TEST_DATA = [
     {'command': 'build',
      'path': 'tests/test_all_levels.rs',
      'messages': [
-        (2, 'tests/test_all_levels.rs', 'WARN', (3, 17), 'tests/test_all_levels.rs:4', ' --> tests/test_all_levels.rs:4:7'),
+        (2, 'tests/test_all_levels.rs', 'WARN', (3, 8), 'tests/test_all_levels.rs:4', ' --> tests/test_all_levels.rs:4:7'),
         (1, 'tests/test_all_levels.rs', 'ERR', (8, 25), 'tests/test_all_levels.rs:9', ' --> tests/test_all_levels.rs:9:25'),
      ]
     },
@@ -63,7 +63,7 @@ class TestMessageOrder(TestBase):
         super(TestMessageOrder, self).setUp()
         # Set a base version for these tests.
         version = util.get_rustc_version(sublime.active_window(), plugin_path)
-        if semver.match(version, '<1.46.0-beta'):
+        if semver.match(version, '<1.62.0-beta'):
             self.skipTest('Tests require rust 1.46 or newer.')
 
         # Make it so that the build target is automatically determined from
@@ -85,6 +85,7 @@ class TestMessageOrder(TestBase):
         that next/prev message goes to the correct message in order.
         """
         for data in TEST_DATA:
+            print('testing %s' % (data['path'],))
             path = os.path.join('tests/message-order', data['path'])
 
             # rust_next_message sorts based on error level.
