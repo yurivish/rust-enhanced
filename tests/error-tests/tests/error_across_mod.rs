@@ -9,10 +9,10 @@ fn test() {
 //  ^^^^^^^^^^^^^^^^^^^^^^^^ERR(>=1.24.0-beta,<1.43.0-beta) expected 0 parameters
 //  ^^^^^^^^^^^^^^^^^^^^^^^^MSG(>=1.24.0-beta,<1.43.0-beta) See Also: error_across_mod_f.rs:1
 //  ^^^^^^^^^^^^^^^^^^^^^ERR(>=1.43.0-beta) this function takes 0 arguments but 1
-//                        ^ERR(>=1.43.0-beta,<1.62.0-beta) supplied 1 argument
-//                        ^ERR(>=1.43.0-beta,<1.62.0-beta) expected 0 arguments
-//                        ^ERR(>=1.62.0-beta) argument unexpected
-//  ^^^^^^^^^^^^^^^^^^^^^^^^HELP(>=1.62.0-beta) remove the extra argument
-//  ^^^^^^^^^^^^^^^^^^^^^^^^HELP(>=1.62.0-beta) /Accept Replacement:.*/
+//                        ^ERR(>=1.43.0-beta,<1.63.0-beta) supplied 1 argument
+//                        ^ERR(>=1.43.0-beta,<1.63.0-beta) expected 0 arguments
+//                        ^ERR(>=1.63.0-beta) argument unexpected
+//  ^^^^^^^^^^^^^^^^^^^^^^^^HELP(>=1.63.0-beta) remove the extra argument
+//  ^^^^^^^^^^^^^^^^^^^^^^^^HELP(>=1.63.0-beta) /Accept Replacement:.*/
 //  ^^^^^^^^^^^^^^^^^^^^^MSG(>=1.43.0-beta) See Also: error_across_mod_f.rs:1
 }
