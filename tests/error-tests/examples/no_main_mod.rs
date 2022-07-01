@@ -1,5 +1,5 @@
 /*BEGIN*/fn main() {
-//          ^^^^WARN(>=1.41.0-beta,rust_syntax_checking_include_tests=True) function is never used
+//          ^^^^WARN(>=1.41.0-beta,rust_syntax_checking_include_tests=True) never used
 //          ^^^^NOTE(>=1.41.0-beta,rust_syntax_checking_include_tests=True) #[warn(dead_code)]
 //       ^^^^^^^^^WARN(>=1.23.0,<1.41.0-beta,rust_syntax_checking_include_tests=True) function is never used
 //       ^^^^^^^^^NOTE(>=1.23.0,<1.41.0-beta,rust_syntax_checking_include_tests=True) #[warn(dead_code)]
