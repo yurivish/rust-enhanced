@@ -6,6 +6,11 @@ from rust_test_common import *
 
 class TestContext(TestBase):
 
+    def setUp(self):
+        super(TestContext, self).setUp()
+        self.rustc_version = util.get_rustc_version(sublime.active_window(),
+                                                    plugin_path)
+
     def test_pt_to_test_name(self):
         self._with_open_file('tests/multi-targets/tests/test_context.rs',
             self._test_pt_to_test_name)
@@ -120,6 +125,9 @@ class TestContext(TestBase):
             r'\[Running: cargo run --example ex1 --message-format=json\]')
 
     def test_rust_list_messages(self):
+        if semver.match(self.rustc_version, '<1.64.0-beta'):
+            # Wording of the unused lint changed.
+            self.skipTest('Tests require rust 1.64 or newer.')
         self._with_open_file('tests/message-order/examples/ex_warning1.rs',
             self._test_rust_list_messages)
 
@@ -143,11 +151,11 @@ class TestContext(TestBase):
     def _test_rust_list_messages2(self, view):
         window = view.window()
         self.quick_panel_items = [
-            ['function is never used: `unused_a`',
+            ['function `unused_a` is never used',
              os.path.join('tests', 'message-order', 'examples', 'warning1.rs') + ':1'],
-            ['function is never used: `unused_b`',
+            ['function `unused_b` is never used',
              os.path.join('tests', 'message-order', 'examples', 'warning1.rs') + ':5'],
-            ['function is never used: `unused_in_2`',
+            ['function `unused_in_2` is never used',
              os.path.join('tests', 'message-order', 'examples', 'warning2.rs') + ':82'],
         ]
         self.quick_panel_index = 2
