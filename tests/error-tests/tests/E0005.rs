@@ -26,7 +26,7 @@ fn main() {
 //                 |HELP(>=1.61.0-beta) you might want to use `if let`
 //                 |HELP(>=1.61.0-beta) you might want to use `if let`
 //                 |HELP(>=1.61.0-beta) /Accept Replacement:.*/
-//                 |HELP(nightly) alternatively, on nightly, you might want to use `#![feature(let_else)]`
+//                 |HELP(nightly) alternatively, you might want to use
 //                 |HELP(nightly) /Accept Replacement:.*todo!.*/
 }
 // Bug: https://github.com/rust-lang/rust/issues/64769
