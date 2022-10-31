@@ -26,8 +26,8 @@ fn main() {
 //                 |HELP(>=1.61.0-beta) you might want to use `if let`
 //                 |HELP(>=1.61.0-beta) you might want to use `if let`
 //                 |HELP(>=1.61.0-beta) /Accept Replacement:.*/
-//                 |HELP(nightly) alternatively, you might want to use
-//                 |HELP(nightly) /Accept Replacement:.*todo!.*/
+//                 |HELP(>=1.66.0-beta) alternatively, you might want to use
+//                 |HELP(>=1.66.0-beta) /Accept Replacement:.*todo!.*/
 }
 // Bug: https://github.com/rust-lang/rust/issues/64769
 // start-msg: ERR(>=1.39.0-beta,<1.44.0-beta) not covered
