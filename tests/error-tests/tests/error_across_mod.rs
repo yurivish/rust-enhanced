@@ -14,7 +14,9 @@ fn test() {
 //                        ^ERR(>=1.63.0-beta) unexpected
 //  ^^^^^^^^^^^^^^^^^^^^^^^^HELP(>=1.63.0,<1.65.0-beta) remove the extra argument
 //  ^^^^^^^^^^^^^^^^^^^^^^^^HELP(>=1.63.0,<1.65.0-beta) /Accept Replacement:.*/
-//                       ^^^HELP(>=1.65.0-beta) remove the extra argument
-//                       ^^^HELP(>=1.65.0-beta) /Accept Replacement:.*/
+//                       ^^^HELP(>=1.65.0-beta,<1.69.0-beta) remove the extra argument
+//                       ^^^HELP(>=1.65.0-beta,<1.69.0-beta) /Accept Replacement:.*/
+//                        ^HELP(>=1.69.0-beta) remove the extra argument
+//                        ^HELP(>=1.69.0-beta) /Accept Replacement:.*/
 //  ^^^^^^^^^^^^^^^^^^^^^MSG(>=1.43.0-beta) See Also: error_across_mod_f.rs:1
 }
