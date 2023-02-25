@@ -1,7 +1,7 @@
 trait Trait {}
 
-// This triggers a warning about lifetimes with help.
-fn f2<'a: 'static>(_: &'a i32) {}
+// This triggers a warning about missing `dyn`
+fn Foo(x: &Fn()) {}
 
 pub fn f() {
     let x = Box::new(0u32);
